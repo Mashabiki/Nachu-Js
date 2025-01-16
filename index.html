@@ -3329,88 +3329,6 @@ function toggleJuniorSchoolActions() {
     const section = document.getElementById('juniorSchoolActions');
     section.style.display = (section.style.display === 'none') ? 'block' : 'none';
 }
-
-        function generateReportForLearner() {
-            const selectedLearner = learnerSelect.value;
-            const learnerData = marks.find(mark => mark.learner === selectedLearner);
-
-            const reportContainer = `
-                <div class="header">
-                    <h2>Nachu Junior Highschool Assessment Report</h2>
-                    <h3>Ministry Of Education Science And Technology</h3>            
-                    <h4>P.O BOX 561-00902 Kikuyu </h4>
-                </div>
-                <div class="report-details">
-                    Year: 2024<br>
-                    Term: 3<br>
-                    Grade: ${learnerData.grade}<br>
-                    Learner's Name: ${selectedLearner}
-                </div>
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Scores</th>
-                            <th>Levels</th>
-                            <th>Subject Teacher</th>
-                            <th>Signature</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${generateSubjectRows(learnerData)}
-                    </tbody>
-                </table>
-                <div class="total-marks">
-                   <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="marksList"></tbody>
-        </table>
-    </div>
-             <div class="comment-section">
-    Teacher Comments On Competencies Achieved/Acquisition Of Values:<br>
-    <em>Actively participates in class discussions.</em>
-</div>
-
-<div class="comment-section">
-    Learner's General Performance Level:<br>
-    <strong>Meeting expectations</strong>
-</div>
-
-<div class="signature-section">
-    Closing Date: 24-10-2024<br>
-    Opening Date: 06-01-2025<br>
-    Class Teacher Signature: _______________<br>
-    Principal Signature: _______________<br>
-    Official Stamp:
-    <div class="stamp">
-        Nachu Junior School<br>
-        P.O BOX 561-00902 Kikuyu
-    </div>
-</div>
-
-        <div style="page-break-after: always;"></div>
-    `;
-
-    // Display the report content in the report div
-    document.getElementById("report").innerHTML = reportContent;
-}
-
-        function getComment(totalMarks) {
-            if (totalMarks >= 1 && totalMarks <= 225) return "Displays self-discipline however Should put extra effort to achieve higher scores.";
-            if (totalMarks >= 226 && totalMarks <= 449) return "Willing to help his peers; however,should focus on improving his overall performance.";
-            if (totalMarks >= 450 && totalMarks <= 675) return "Actively participates in class discussions and takes on various roles in work groups as needed.";
-            if (totalMarks >= 676 && totalMarks <= 900) return "Shown consistent improvement and tackles classroom assignments, tasks, and group work well.";
-            return "";
-        }
-
-        function getPerformanceLevel(totalMarks) {
-            if (totalMarks >= 1 && totalMarks <= 225) return "Below expectations";
-            if (totalMarks >= 226 && totalMarks <= 449) return "Approaching expectations";
-            if (totalMarks >= 450 && totalMarks <= 675) return "Meeting expectations";
-            if (totalMarks >= 676 && totalMarks <= 900) return "Exceeding expectations";
-            return "";
-        }
 function generateBulkReports() { 
     const selectedGrade = bulkGradeSelect.value;
     const learnersInGrade = marks.filter(mark => mark.grade === selectedGrade);
@@ -3441,7 +3359,7 @@ function generateBulkReports() {
                     <div style="clear:both; padding-bottom:10px;">
                         ${schoolLogo}
                         <div style="margin-left:110px;">
-                            <h2 style="margin:0; font-size:20px;"> Lusigetti Primary  School Assessment Report</h2>
+                            <h2 style="margin:0; font-size:20px;"> NACHU JUNIOR SCHOOL ASSESMENT REEPORT</h2>
                             <h3 style="margin:0; font-size:16px;">P.O BOX 104-00902 Kikuyu</h3>
                             <h4 style="margin:0; font-size:14px;">Ministry Of Education Science And Technology</h4>
                         </div>
