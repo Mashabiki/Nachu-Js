@@ -3732,7 +3732,8 @@ function printAssessmentReport() {
     printWindow.print();
 }
 
-function printMarksTable() { 
+
+ function printMarksTable() { 
     showLoadingSpinner(); // Show spinner while processing
 
     setTimeout(() => {
@@ -3805,23 +3806,25 @@ function printMarksTable() {
                     <table class="report-table">
                         <thead>
                             <tr>
+                                <th>No.</th>
                                 <th>Learner</th>
                                 <th>Grade</th>
-                                <th>Eng</th><th>Level</th>
-                                <th>Math</th><th>Level</th>
-                                <th>Pre-Tech</th><th>Level</th>
-                                <th>Kiswa</th><th>Level</th>
-                                <th>Scie</th><th>Level</th>
-                                <th>Social</th><th>Level</th>
-                                <th>Agric</th><th>Level</th>
-                                <th>Cre</th><th>Level</th>
-                                <th>C/Art</th><th>Level</th>
+                                <th>Eng</th><th>Lev</th>
+                                <th>Math</th><th>Lev</th>
+                                <th>Pre-Tech</th><th>Lev</th>
+                                <th>Kiswa</th><th>Lev</th>
+                                <th>Scie</th><th>Lev</th>
+                                <th>Social</th><th>Lev</th>
+                                <th>Agric</th><th>Lev</th>
+                                <th>Cre</th><th>Lev</th>
+                                <th>C/Art</th><th>Lev</th>
                                 <th>Total Marks</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${marks.map(mark => `
+                            ${marks.map((mark, index) => `
                                 <tr>
+                                    <td>${index + 1}</td>
                                     <td>${mark.learner}</td>
                                     <td>${mark.grade}</td>
                                     ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
@@ -3829,12 +3832,12 @@ function printMarksTable() {
                                 </tr>
                             `).join('')}
                             <tr>
-                                <td colspan="2" style="font-weight:bold;">Total</td>
+                                <td colspan="3" style="font-weight:bold;">Total</td>
                                 ${subjectTotals.map(total => `<td style="font-weight:bold;">${total}</td><td></td>`).join('')}
                                 <td style="font-weight:bold;">${totalMarksSum}</td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="font-weight:bold;">Average</td>
+                                <td colspan="3" style="font-weight:bold;">Average</td>
                                 ${averages.map(avg => `<td style="font-weight:bold;">${avg}</td><td></td>`).join('')}
                                 <td style="font-weight:bold;">${overallAverage}</td>
                             </tr>
@@ -3850,8 +3853,7 @@ function printMarksTable() {
 
         hideLoadingSpinner(); // Hide spinner after printing is complete
     }, 2000); // Simulated delay to show spinner
-}
-
+}                  
 
 function printGroupedTable(grade) {
     const schoolName = document.getElementById("schoolName").value || "School Name";
