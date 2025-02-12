@@ -6623,47 +6623,7 @@ document.getElementById("learnerSelect").addEventListener("change", function () 
     };
 });
 
-// Function to update the learner dropdown based on selected grade
-document.getElementById("marksGrade").addEventListener("input", function () {
-    const selectedGrade = this.value.trim(); // Get entered grade
-    const learnerSelect = document.getElementById("learnerSelect");
-    learnerSelect.innerHTML = ""; // Clear previous options
 
-    const request = indexedDB.open("LearnersDB", 1);
-    request.onsuccess = function (event) {
-        const db = event.target.result;
-        const transaction = db.transaction(["learners"], "readonly");
-        const objectStore = transaction.objectStore("learners");
-
-        const getAllRequest = objectStore.getAll();
-        getAllRequest.onsuccess = function () {
-            const learners = getAllRequest.result;
-
-            // Filter learners based on entered grade
-            const filteredLearners = learners.filter(learner => learner.grade === selectedGrade);
-
-            // Populate the dropdown with filtered learners
-            if (filteredLearners.length > 0) {
-                filteredLearners.forEach(learner => {
-                    const option = document.createElement("option");
-                    option.value = learner.name;
-                    option.textContent = learner.name;
-                    learnerSelect.appendChild(option);
-                });
-
-                // Automatically trigger photo display for the first learner in the dropdown
-                learnerSelect.dispatchEvent(new Event("change"));
-            } else {
-                // If no learners found, display "No Learners Available"
-                const option = document.createElement("option");
-                option.textContent = "No Learners Available";
-                option.disabled = true;
-                learnerSelect.appendChild(option);
-                document.getElementById("learnerPhotoDisplay").style.display = "none"; // Hide photo
-            }
-        };
-    };
-});
 
 </script>
 </body>
