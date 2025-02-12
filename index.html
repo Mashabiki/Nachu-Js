@@ -1150,31 +1150,34 @@ button {
     <button id="submitTeacherName" style="background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Submit</button>
 </div>
 <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-
 <div id="juniorMarksEntrySection" style="max-width: 400px; margin: auto; display: none;">
- 
-    <h2>Junior School Marks Entry Section </h2>
-    <form id="marksForm">
-        Learner: 
-        <select id="learnerSelect"></select><br>
-        Grade: 
-        <input type="text" id="marksGrade" required><br> <!-- Added Grade input field -->
-        <div>
-            Eng: <input type="number" id="english" required><br>
-            Math: <input type="number" id="math" required><br>
-            Pre-technical Studies: <input type="number" id="preTech" required><br>
-            Kiswahili: <input type="number" id="kiswahili" required><br>
-            Integrated Science: <input type="number" id="science" required><br>
-            Social Studies: <input type="number" id="social" required><br>
-            Agriculture: <input type="number" id="agriculture" required><br>
-            Religious Education: <input type="number" id="religion" required><br>
-            Creative Art: <input type="number" id="art" required><br>
-        </div>
-       <button type="submit" style="display: flex; align-items: center; gap: 5px; padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    <i class="fas fa-paper-plane"></i> Submit Marks
-</button>
+<h2>Junior School Marks Entry Section</h2>
+<form id="marksForm">
+    Grade:  
+    <input type="text" id="marksGrade" placeholder="Enter Grade (e.g., 7A)" required><br>
+    
+    Learner:  
+    <select id="learnerSelect">
+        <option disabled selected>Select Grade First</option>
+    </select><br>
+    
+    <!-- Display Learner Photo -->
+    <img id="learnerPhotoDisplay" src="default.png" alt="Learner Photo" width="100" height="100" 
+         style="display: none; border-radius: 10px; margin-top: 10px;"><br>
 
-    </form>
+    <div>
+        Eng: <input type="number" id="english" required><br>
+        Math: <input type="number" id="math" required><br>
+        Pre-technical Studies: <input type="number" id="preTech" required><br>
+        Kiswahili: <input type="number" id="kiswahili" required><br>
+        Integrated Science: <input type="number" id="science" required><br>
+        Social Studies: <input type="number" id="social" required><br>
+        Agriculture: <input type="number" id="agriculture" required><br>
+        Religious Education: <input type="number" id="religion" required><br>
+        Creative Art: <input type="number" id="art" required><br>
+    </div>
+    <button type="submit">Submit Marks</button>
+</form>
 </div>
 <!-- Success Message -->
 <div id="successMessage" style="
@@ -1571,6 +1574,13 @@ button {
     <div id="photoGallery" style="display: none; flex-wrap: wrap; gap: 10px; justify-content: center;"></div>
 </div>
 
+
+<!-- Modal Overlay -->
+<div id="modalOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="learnerDetailsModal" style="background-color: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <!-- Learner details will be injected here -->
+    </div>
+</div>
 
 <div id="alertContainer" style="position: fixed; top: 10%; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 400px;"></div>
 
@@ -6407,6 +6417,253 @@ function searchLearner() {
 
     // Run lazy loading for hidden sections
     document.addEventListener('DOMContentLoaded', lazyLoadSections);
+function deleteLearner(admissionNumber) {
+    const request = indexedDB.open("LearnersDB", 1);
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readwrite");
+        const objectStore = transaction.objectStore("learners");
+
+        const deleteRequest = objectStore.delete(admissionNumber);
+        deleteRequest.onsuccess = function () {
+            learners = learners.filter(learner => learner.admissionNumber !== admissionNumber); // Update local array
+            updateLearnersTable(); // Refresh table
+            alert("Learner deleted successfully.");
+        };
+        deleteRequest.onerror = function (event) {
+            console.error("Error deleting learner:", event.target.error);
+        };
+    };
+    request.onerror = function (event) {
+        console.error("Error opening IndexedDB:", event.target.error);
+    };
+}
+function updateLearnerField(index, field, value) {
+    learners[index][field] = value; // Update local array
+    const admissionNumber = learners[index].admissionNumber;
+
+    const request = indexedDB.open("LearnersDB", 1);
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readwrite");
+        const objectStore = transaction.objectStore("learners");
+
+        const getRequest = objectStore.get(admissionNumber);
+        getRequest.onsuccess = function () {
+            const learner = getRequest.result;
+            learner[field] = value;
+
+            const updateRequest = objectStore.put(learner);
+            updateRequest.onsuccess = function () {
+                console.log(`Updated ${field} for learner ${admissionNumber}`);
+            };
+            updateRequest.onerror = function (event) {
+                console.error(`Error updating ${field}:`, event.target.error);
+            };
+        };
+    };
+}
+function updateLearnersTable() {
+    learnersList.innerHTML = learners.map((learner, index) => `
+        <tr>
+            <td>${index + 1}</td> <!-- Serial Number -->
+            <td>
+                <img src="${learner.photo || 'default.png'}" alt="Photo" width="40" height="40">
+                <br>
+                <button onclick="viewLearnerDetails(${index})" class="small-btn btn-green">
+                    <i class="fas fa-eye"></i> <!-- View Icon -->
+                </button>
+            </td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'name', this.textContent)">${learner.name}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'gender', this.textContent)">${learner.gender}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'grade', this.textContent)">${learner.grade}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'age', this.textContent)">${learner.age}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'parentName', this.textContent)">${learner.parentName}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'phone', this.textContent)">${learner.phone}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'birthCertificateNo', this.textContent)">${learner.birthCertificateNo}</td>
+            <td>${learner.admissionNumber}</td>
+            <td>
+                <input type="file" accept="image/*" style="display: none;" onchange="changePhoto(event, '${learner.admissionNumber}')">
+                <button onclick="this.previousElementSibling.click()" class="small-btn btn-blue">
+                    <i class="fas fa-camera"></i> <!-- Change Photo Icon -->
+                </button>
+                <button onclick="deleteLearner('${learner.admissionNumber}')" class="small-btn btn-red">
+                    <i class="fas fa-trash"></i> <!-- Delete Icon -->
+                </button>
+            </td>
+        </tr>
+    `).join("");
+
+
+    updateLearnerSelect(); // Update dropdown or related components
+}
+// Function to show learner details in a modal
+function viewLearnerDetails(index) {
+    // Get the learner from the array
+    const learner = learners[index];
+    if (!learner) {
+        alert("Learner not found!");
+        return;
+    }
+
+    // Populate the modal with learner details
+    const modalContent = `
+        <h2>${learner.name}'s Details</h2>
+        <img src="${learner.photo || 'placeholder.jpg'}" alt="Learner Photo" style="width: 150px; height: 150px; border-radius: 50%;" />
+        <p><strong>Gender:</strong> ${learner.gender}</p>
+        <p><strong>Grade:</strong> ${learner.grade}</p>
+        <p><strong>Age:</strong> ${learner.age}</p>
+        <p><strong>Parent Name:</strong> ${learner.parentName}</p>
+        <p><strong>Parent Phone No:</strong> ${learner.phone}</p>
+        <p><strong>Birth Certificate No:</strong> ${learner.birthCertificateNo}</p>
+        <p><strong>Admission Number:</strong> ${learner.admissionNumber}</p>
+        <button onclick="closeModal()" class="btn-red">Close</button>
+    `;
+
+    // Insert content into the modal and display it
+    document.getElementById("learnerDetailsModal").innerHTML = modalContent;
+    document.getElementById("modalOverlay").style.display = "flex";
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById("modalOverlay").style.display = "none";
+}
+// Function to enable editing and saving updates
+function makeTableEditable() {
+    const table = document.querySelector("#learnersList"); // Select the learners table
+    table.addEventListener("input", function(event) {
+        const cell = event.target;
+        const row = cell.parentElement;
+        const admissionNumber = row.dataset.admission; // Retrieve admission number from row attribute
+        
+        // Get updated values
+        const updatedLearner = {
+            name: row.children[1].textContent,
+            gender: row.children[2].textContent,
+            grade: row.children[3].textContent,
+            age: row.children[4].textContent,
+            parentName: row.children[5].textContent,
+            phone: row.children[6].textContent,
+            birthCertificateNo: row.children[7].textContent,
+            admissionNumber: admissionNumber,
+            photo: row.children[8].querySelector("img").src
+        };
+
+        // Open IndexedDB and update the learner
+        const request = indexedDB.open("LearnersDB", 1);
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(["learners"], "readwrite");
+            const objectStore = transaction.objectStore("learners");
+            objectStore.put(updatedLearner);
+        };
+    });
+}
+
+// Call this function after the table is populated
+document.addEventListener("DOMContentLoaded", makeTableEditable);
+
+function changePhoto(event, admissionNumber) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            updateLearnerPhoto(admissionNumber, e.target.result); // Update IndexedDB with new photo
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Function to update IndexedDB when photo is changed
+function updateLearnerPhoto(admissionNumber, newPhoto) {
+    const request = indexedDB.open("LearnersDB", 1);
+
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readwrite");
+        const objectStore = transaction.objectStore("learners");
+
+        const getRequest = objectStore.get(admissionNumber);
+        getRequest.onsuccess = function () {
+            const learner = getRequest.result;
+            if (learner) {
+                learner.photo = newPhoto; // Update the learner's photo
+                
+                const updateRequest = objectStore.put(learner);
+                updateRequest.onsuccess = function () {
+                    updateLearnersTable(); // Refresh the table
+                };
+            }
+        };
+    };
+}
+// Function to display learner's photo when selected in dropdown
+document.getElementById("learnerSelect").addEventListener("change", function () {
+    const selectedLearnerName = this.value; // Get selected learner name
+    const request = indexedDB.open("LearnersDB", 1);
+
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readonly");
+        const objectStore = transaction.objectStore("learners");
+
+        const getAllRequest = objectStore.getAll();
+        getAllRequest.onsuccess = function () {
+            const learners = getAllRequest.result;
+            const selectedLearner = learners.find(learner => learner.name === selectedLearnerName);
+
+            if (selectedLearner && selectedLearner.photo) {
+                document.getElementById("learnerPhotoDisplay").src = selectedLearner.photo;
+                document.getElementById("learnerPhotoDisplay").style.display = "block"; // Show photo
+            } else {
+                document.getElementById("learnerPhotoDisplay").src = "default.png"; // Show default image if no photo
+            }
+        };
+    };
+});
+
+// Function to update the learner dropdown based on selected grade
+document.getElementById("marksGrade").addEventListener("input", function () {
+    const selectedGrade = this.value.trim(); // Get entered grade
+    const learnerSelect = document.getElementById("learnerSelect");
+    learnerSelect.innerHTML = ""; // Clear previous options
+
+    const request = indexedDB.open("LearnersDB", 1);
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readonly");
+        const objectStore = transaction.objectStore("learners");
+
+        const getAllRequest = objectStore.getAll();
+        getAllRequest.onsuccess = function () {
+            const learners = getAllRequest.result;
+
+            // Filter learners based on entered grade
+            const filteredLearners = learners.filter(learner => learner.grade === selectedGrade);
+
+            // Populate the dropdown with filtered learners
+            if (filteredLearners.length > 0) {
+                filteredLearners.forEach(learner => {
+                    const option = document.createElement("option");
+                    option.value = learner.name;
+                    option.textContent = learner.name;
+                    learnerSelect.appendChild(option);
+                });
+
+                // Automatically trigger photo display for the first learner in the dropdown
+                learnerSelect.dispatchEvent(new Event("change"));
+            } else {
+                // If no learners found, display "No Learners Available"
+                const option = document.createElement("option");
+                option.textContent = "No Learners Available";
+                option.disabled = true;
+                learnerSelect.appendChild(option);
+                document.getElementById("learnerPhotoDisplay").style.display = "none"; // Hide photo
+            }
+        };
+    };
+});
 
 </script>
 </body>
