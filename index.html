@@ -1962,64 +1962,30 @@ function toggleChampionsForm() {
     form.style.display = form.style.display === "none" ? "block" : "none";
 }
 function saveMarks() {
-    showLoadingSpinner(); // Show spinner immediately
+    showLoadingSpinner(); // Show loading spinner
+
+    // Retrieve existing archived marks
+    const archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+
+    // Append new marks
+    archivedMarks.push(...marks);
+
+    // Store updated marks instantly
+    localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
+
+    // Hide loading spinner immediately after saving
+    hideLoadingSpinner();
+
+    // Show success message
+    const successMessage = document.getElementById("saveSuccessMessage");
+    successMessage.style.display = "block";
 
     setTimeout(() => {
-        let marksTable = document.getElementById("marksList");
-        if (!marksTable || marksTable.rows.length === 0) {
-            alert("No marks available to save!");
-            hideLoadingSpinner();
-            return;
-        }
+        successMessage.style.display = "none";
+    }, 1500); // Shorter success message display time
 
-        let marksData = [];
-        for (let row of marksTable.rows) {
-            let rowData = [];
-            for (let cell of row.cells) {
-                rowData.push(cell.innerText);
-            }
-            marksData.push(rowData);
-        }
-
-        // Open IndexedDB for better storage of large data
-        let request = indexedDB.open("MarksDB", 1);
-
-        request.onerror = function (event) {
-            console.error("Error opening IndexedDB:", event.target.error);
-            alert("Failed to save marks. Try again.");
-            hideLoadingSpinner();
-        };
-
-        request.onsuccess = function (event) {
-            let db = event.target.result;
-            let transaction = db.transaction(["marks"], "readwrite");
-            let store = transaction.objectStore("marks");
-
-            // Save marks as a new archive entry with timestamp ID
-            let archiveID = "marks_" + new Date().getTime();
-            let newArchive = { id: archiveID, data: marksData };
-
-            let addRequest = store.add(newArchive);
-
-            addRequest.onsuccess = function () {
-                hideLoadingSpinner();
-                showSuccessMessage("Marks saved successfully!");
-            };
-
-            addRequest.onerror = function (event) {
-                console.error("Error saving marks:", event.target.error);
-                hideLoadingSpinner();
-            };
-        };
-
-        // Initialize IndexedDB if not already set up
-        request.onupgradeneeded = function (event) {
-            let db = event.target.result;
-            db.createObjectStore("marks", { keyPath: "id" });
-        };
-    }, 500); // Small delay for UI responsiveness
+    updateMarksTable(); // Refresh table with updated marks
 }
-
 
 
 function startFireworks() {
