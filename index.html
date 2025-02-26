@@ -1962,42 +1962,64 @@ function toggleChampionsForm() {
     form.style.display = form.style.display === "none" ? "block" : "none";
 }
 function saveMarks() {
-    showLoadingSpinner(); // Show spinner
+    showLoadingSpinner(); // Show spinner immediately
 
     setTimeout(() => {
-        let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
-
-        // Generate a unique archive ID based on timestamp
-        let archiveID = "marksArchive_" + new Date().getTime();
-        
-        // Check if marks exist before saving
-        if (marks.length === 0) {
+        let marksTable = document.getElementById("marksList");
+        if (!marksTable || marksTable.rows.length === 0) {
             alert("No marks available to save!");
             hideLoadingSpinner();
             return;
         }
 
-        // Save marks as a new batch with a unique ID
-        let newArchive = {
-            id: archiveID,
-            data: [...marks] // Clone marks array to avoid reference issues
+        let marksData = [];
+        for (let row of marksTable.rows) {
+            let rowData = [];
+            for (let cell of row.cells) {
+                rowData.push(cell.innerText);
+            }
+            marksData.push(rowData);
+        }
+
+        // Open IndexedDB for better storage of large data
+        let request = indexedDB.open("MarksDB", 1);
+
+        request.onerror = function (event) {
+            console.error("Error opening IndexedDB:", event.target.error);
+            alert("Failed to save marks. Try again.");
+            hideLoadingSpinner();
         };
 
-        archivedMarks.push(newArchive);
-        localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
+        request.onsuccess = function (event) {
+            let db = event.target.result;
+            let transaction = db.transaction(["marks"], "readwrite");
+            let store = transaction.objectStore("marks");
 
-        // Show success message
-        const successMessage = document.getElementById("saveSuccessMessage");
-        successMessage.style.display = "block";
+            // Save marks as a new archive entry with timestamp ID
+            let archiveID = "marks_" + new Date().getTime();
+            let newArchive = { id: archiveID, data: marksData };
 
-        setTimeout(() => {
-            successMessage.style.display = "none";
-            hideLoadingSpinner(); // Hide spinner after saving
-        }, 3000);
+            let addRequest = store.add(newArchive);
 
-        updateMarksTable(); // Update table after saving
-    }, 2000); // Simulated delay for saving process
+            addRequest.onsuccess = function () {
+                hideLoadingSpinner();
+                showSuccessMessage("Marks saved successfully!");
+            };
+
+            addRequest.onerror = function (event) {
+                console.error("Error saving marks:", event.target.error);
+                hideLoadingSpinner();
+            };
+        };
+
+        // Initialize IndexedDB if not already set up
+        request.onupgradeneeded = function (event) {
+            let db = event.target.result;
+            db.createObjectStore("marks", { keyPath: "id" });
+        };
+    }, 500); // Small delay for UI responsiveness
 }
+
 
 
 function startFireworks() {
