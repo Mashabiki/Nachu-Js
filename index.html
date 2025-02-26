@@ -1935,10 +1935,26 @@ function toggleChampionsForm() {
 function saveMarks() {
     showLoadingSpinner(); // Show spinner
 
-    // Simulate saving with a timeout
     setTimeout(() => {
-        const archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
-        archivedMarks.push(...marks);
+        let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+
+        // Generate a unique archive ID based on timestamp
+        let archiveID = "marksArchive_" + new Date().getTime();
+        
+        // Check if marks exist before saving
+        if (marks.length === 0) {
+            alert("No marks available to save!");
+            hideLoadingSpinner();
+            return;
+        }
+
+        // Save marks as a new batch with a unique ID
+        let newArchive = {
+            id: archiveID,
+            data: [...marks] // Clone marks array to avoid reference issues
+        };
+
+        archivedMarks.push(newArchive);
         localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
 
         // Show success message
@@ -1953,6 +1969,7 @@ function saveMarks() {
         updateMarksTable(); // Update table after saving
     }, 2000); // Simulated delay for saving process
 }
+
 
 function startFireworks() {
     const fireworksOverlay = document.getElementById('fireworks-overlay');
