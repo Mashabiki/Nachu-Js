@@ -1287,6 +1287,35 @@ button {
     </thead>
     <tbody id="marksList"></tbody>
 </table>
+    <!-- Section for Subject Levels -->
+<h2>Subject Level Summary</h2>
+<table class="report-table">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Level 1 (BE)</th>
+            <th>Level 2 (AE)</th>
+            <th>Level 3 (ME)</th>
+            <th>Level 4 (EE)</th>
+        </tr>
+    </thead>
+    <tbody id="subjectLevels"></tbody>
+</table>
+
+
+<!-- Simple Print Button -->
+<button onclick="printSubjectLevels()" style="
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    padding: 10px 15px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 5px;
+">
+    <i class="fas fa-print"></i> Print Subject Levels
+</button>
+
     </div>
 <!-- Archived Marks Section -->
 <div id="archivesSection" class="hidden-section">
@@ -6640,7 +6669,123 @@ document.getElementById("learnerSelect").addEventListener("change", function () 
     };
 });
 
+function calculateSubjectLevels() {
+    let subjects = ["english", "math", "preTech", "kiswahili", "science", "social", "agriculture", "religion", "art"];
+    let subjectLevels = {};
 
+    // Initialize level counters for each subject
+    subjects.forEach(subject => {
+        subjectLevels[subject] = { level1: 0, level2: 0, level3: 0, level4: 0 };
+    });
+
+    let marksRows = document.querySelectorAll("#marksList tr");
+
+    // If no marks are present, reset the summary table
+    if (marksRows.length === 0) {
+        document.getElementById("subjectLevels").innerHTML = "<tr><td colspan='5'>No data available</td></tr>";
+        return;
+    }
+
+    // Process each row in the marks table
+    marksRows.forEach(row => {
+        let cells = row.querySelectorAll("td");
+
+        subjects.forEach((subject, index) => {
+            let levelCellIndex;
+
+            // Fix the column index for Maths and English (adjust their position)
+            if (subject === "english") {
+                levelCellIndex = 4; // "Lev" column for English
+            } else if (subject === "math") {
+                levelCellIndex = 6; // "Lev" column for Math
+            } else {
+                levelCellIndex = (index * 2) + 4; // General calculation for other subjects
+            }
+
+            let levelText = cells[levelCellIndex]?.innerText.trim(); // Extract level text
+
+            if (levelText) {
+                let level = parseInt(levelText, 10); // Convert to a number
+
+                // Count learners for each level
+                if (level === 1) {
+                    subjectLevels[subject].level1++;
+                } else if (level === 2) {
+                    subjectLevels[subject].level2++;
+                } else if (level === 3) {
+                    subjectLevels[subject].level3++;
+                } else if (level === 4) {
+                    subjectLevels[subject].level4++;
+                }
+            }
+        });
+    });
+
+    // Update the Subject Level Summary Table
+    let subjectLevelsTable = document.getElementById("subjectLevels");
+    subjectLevelsTable.innerHTML = ""; // Clear existing data
+
+    subjects.forEach(subject => {
+        let row = `<tr>
+            <td>${subject.toUpperCase()}</td>
+            <td>${subjectLevels[subject].level1} learners (BE)</td>
+            <td>${subjectLevels[subject].level2} learners (AE)</td>
+            <td>${subjectLevels[subject].level3} learners (ME)</td>
+            <td>${subjectLevels[subject].level4} learners (EE)</td>
+        </tr>`;
+        subjectLevelsTable.innerHTML += row;
+    });
+}
+
+// Call function after marks are loaded
+document.addEventListener("DOMContentLoaded", function () {
+    calculateSubjectLevels();
+});
+
+// Attach this function to events like adding/editing marks dynamically
+function refreshLevels() {
+    calculateSubjectLevels();
+}
+
+function printSubjectLevels() {
+    let printContents = `
+        <html>
+        <head>
+            <title>Subject Level Summary</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid black; padding: 8px; text-align: center; }
+                th { background-color: #4CAF50; color: white; }
+                h2 { color: #4CAF50; }
+            </style>
+        </head>
+        <body>
+            <h2>Subject Level Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Level 1</th>
+                        <th>Level 2</th>
+                        <th>Level 3</th>
+                        <th>Level 4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${document.getElementById("subjectLevels").innerHTML}
+                </tbody>
+            </table>
+            <br>
+            <button onclick="window.print()">Print</button>
+        </body>
+        </html>
+    `;
+
+    let newWindow = window.open("", "_blank");
+    newWindow.document.write(printContents);
+    newWindow.document.close();
+}
 
 </script>
 </body>
