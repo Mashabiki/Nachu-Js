@@ -1366,6 +1366,9 @@ button {
   <button onclick="generateGenderPerformance()" class="neon-button">
     <i class="fas fa-genderless"></i> Generate Gender Performance
   </button>
+<button onclick="togglePathwaysTable()" class="button toggle-button">
+        <i class="fas fa-chart-bar"></i> Group Learners by Pathways
+    </button>
   <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
     <i class="fas fa-arrow-left"></i> Back
   </button>
@@ -1614,6 +1617,50 @@ button {
 <div id="alertContainer" style="position: fixed; top: 10%; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 400px;"></div>
 
 <div id="savedTablesContainer"></div>
+</div> 
+</div>
+
+<!-- Table Section -->
+<div id="resultsSection" style="display: none; margin: 20px;">
+    <h3>Career Pathways Results</h3>
+    <table id="pathwaysResultsTable" class="report-table">
+        <thead>
+            <tr>
+
+  <button onclick="printPathwayReport()" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-print"></i> Print Career Pathway Report
+</button>
+              <th rowspan="2">Learner</th>
+                <th rowspan="2">Grade</th>
+                <th colspan="6">STEM Subjects</th>
+                <th colspan="4">Social Sciences Subjects</th>
+                <th colspan="3">Sports, Arts & Science Subjects</th>
+                <th rowspan="2">STEM Average</th>
+                <th rowspan="2">Social Sciences Average</th>
+                <th rowspan="2">Sports, Arts & Science Average</th>
+                <th rowspan="2">Best Pathway</th>
+            </tr>
+            <tr>
+                <!-- STEM Subjects -->
+                <th>ENG</th>
+                <th>MATHS</th>
+                <th>PRE-TECH</th>
+                <th>KISWA</th>
+                <th>I Scie</th>
+                <th>AGRIC</th>
+                <!-- Social Sciences Subjects -->
+                <th>Kiswa</th>
+                <th>ENG</th>
+                <th>SST</th>
+                <th>CRE</th>
+                <!-- Sports, Arts & Science Subjects -->
+                <th>KISWA</th>
+                <th>ENG</th>
+                <th>C/A</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
     <!-- Footer Section -->
     <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 5px 0; text-align: center;">
@@ -6736,20 +6783,40 @@ function refreshLevels() {
 }
 
 function printSubjectLevels() {
+    const subjectTable = document.getElementById("subjectLevels");
+    if (!subjectTable) {
+        alert("No subject level data available to print.");
+        return;
+    }
+
+    // Get the first available grade dynamically
+    const firstRow = document.querySelector("#marksTableSection .report-table tbody tr");
+    const grade = firstRow ? firstRow.children[2].textContent.trim() : "N/A";
+
     let printContents = `
         <html>
         <head>
-            <title>Subject Level Summary</title>
+            <title>Nachu Junior School Subject Level Summary Report</title>
             <style>
-                body { font-family: Arial, sans-serif; text-align: center; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+                h2, p { margin: 5px 0; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
                 th, td { border: 1px solid black; padding: 8px; text-align: center; }
                 th { background-color: #4CAF50; color: white; }
-                h2 { color: #4CAF50; }
+                .school-logo { max-width: 100px; display: block; margin: 0 auto; }
             </style>
         </head>
         <body>
-            <h2>Subject Level Summary</h2>
+            <div>
+                <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" class="school-logo">
+                <h2>Nachu Junior School Subject Level Summary Report</h2>
+                <p><strong>P.O BOX 123, Nairobi, Kenya</strong></p>
+                <p><strong>Phone: +254-700-123456</strong></p>
+                <p><em>School Motto: "Excellence Through Knowledge"</em></p>
+                <p><strong>Year: 2025</strong></p>
+                <p><strong>Grade: ${grade}</strong></p>
+            </div>
+            <hr>
             <table>
                 <thead>
                     <tr>
@@ -6761,11 +6828,11 @@ function printSubjectLevels() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${document.getElementById("subjectLevels").innerHTML}
+                    ${subjectTable.innerHTML}
                 </tbody>
             </table>
             <br>
-            <button onclick="window.print()">Print</button>
+            <button onclick="window.print()">Print Report</button>
         </body>
         </html>
     `;
@@ -6773,6 +6840,147 @@ function printSubjectLevels() {
     let newWindow = window.open("", "_blank");
     newWindow.document.write(printContents);
     newWindow.document.close();
+}
+
+function groupLearnersByPathways() {
+    const learnersTable = document.querySelector("#marksTableSection .report-table tbody");
+    const learnersRows = Array.from(learnersTable.querySelectorAll("tr"));
+    const resultsTable = document.querySelector("#pathwaysResultsTable tbody");
+
+    // Clear previous results
+    resultsTable.innerHTML = "";
+
+    learnersRows.forEach((row) => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length < 22) return; // Ensure row has enough data
+
+        const learnerName = cells[1].textContent.trim();
+        const grade = cells[2].textContent.trim();
+
+        // Extract scores from table cells
+        const scores = {
+            English: parseInt(cells[3].textContent.trim()) || 0,
+            Math: parseInt(cells[5].textContent.trim()) || 0,
+            "Pre-technical Studies": parseInt(cells[7].textContent.trim()) || 0,
+            Kiswahili: parseInt(cells[9].textContent.trim()) || 0,
+            "Integrated Science": parseInt(cells[11].textContent.trim()) || 0,
+            "Social Studies": parseInt(cells[13].textContent.trim()) || 0,
+            Agriculture: parseInt(cells[15].textContent.trim()) || 0,
+            "Religious Education": parseInt(cells[17].textContent.trim()) || 0,
+            "Creative Art": parseInt(cells[19].textContent.trim()) || 0,
+        };
+
+        // Pathways and their subject associations
+        const pathways = {
+            STEM: ["English", "Math", "Pre-technical Studies", "Kiswahili", "Integrated Science", "Agriculture"],
+            "Social Sciences": ["Kiswahili", "English", "Social Studies", "Religious Education"],
+            "Sports, Arts & Science": ["Kiswahili", "English", "Creative Art"],
+        };
+
+        const pathwayResults = {};
+
+        // Calculate average scores for each pathway
+        Object.keys(pathways).forEach((pathway) => {
+            const subjects = pathways[pathway];
+            const total = subjects.reduce((sum, subject) => sum + (scores[subject] || 0), 0);
+            const average = total / subjects.length;
+            pathwayResults[pathway] = average;
+        });
+
+        // Determine the best pathway
+        const bestPathway = Object.keys(pathwayResults).reduce((a, b) => (pathwayResults[a] > pathwayResults[b] ? a : b));
+
+        // Append results to the results table
+        const resultRow = document.createElement("tr");
+        resultRow.innerHTML = `
+            <td>${learnerName}</td>
+            <td>${grade}</td>
+            ${pathways.STEM.map(subject => `<td>${scores[subject]}</td>`).join("")}
+            ${pathways["Social Sciences"].map(subject => `<td>${scores[subject]}</td>`).join("")}
+            ${pathways["Sports, Arts & Science"].map(subject => `<td>${scores[subject]}</td>`).join("")}
+            <td>${pathwayResults.STEM.toFixed(2)}</td>
+            <td>${pathwayResults["Social Sciences"].toFixed(2)}</td>
+            <td>${pathwayResults["Sports, Arts & Science"].toFixed(2)}</td>
+            <td><strong>${bestPathway}</strong></td>
+        `;
+        resultsTable.appendChild(resultRow);
+    });
+}
+
+function togglePathwaysTable() {
+    const resultsSection = document.getElementById("resultsSection");
+    const toggleButton = document.querySelector(".toggle-button");
+
+    if (resultsSection.style.display === "none") {
+        resultsSection.style.display = "block";
+        groupLearnersByPathways(); // Populate the table with updated data
+        toggleButton.innerHTML = `<i class="fas fa-eye-slash"></i> Hide Pathways Table`;
+    } else {
+        resultsSection.style.display = "none";
+        toggleButton.innerHTML = `<i class="fas fa-chart-bar"></i> Group Learners by Pathways`;
+    }
+}
+function printPathwayReport() {
+    const resultsSection = document.getElementById("resultsSection");
+    if (!resultsSection || resultsSection.style.display === "none") {
+        alert("Please generate the pathway report first before printing.");
+        return;
+    }
+
+    const reportContent = `
+        <div style="text-align: center; font-family: Arial, sans-serif;">
+            <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 100px; display: block; margin: 0 auto;">
+            <h2 style="margin: 5px 0;">Nachu Junior School Pathway Report</h2>
+            <p>P.O BOX 123, Nairobi, Kenya</p>
+            <p>Phone: +254-700-123456</p>
+            <p style="font-style: italic; font-weight: bold;">School Motto: "Excellence Through Knowledge"</p>
+            <p><strong>Year: 2025</strong></p>
+        </div>
+        <hr>
+
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; text-align: center; font-family: Arial, sans-serif;">
+            <thead>
+                <tr>
+                    <th rowspan="2">Learner</th>
+                    <th rowspan="2">Grade</th>
+                    <th colspan="6">STEM Subjects</th>
+                    <th colspan="4">Social Sciences Subjects</th>
+                    <th colspan="3">Sports, Arts & Science Subjects</th>
+                    <th rowspan="2">STEM Average</th>
+                    <th rowspan="2">Social Sciences Average</th>
+                    <th rowspan="2">Sports, Arts & Science Average</th>
+                    <th rowspan="2">Best Pathway</th>
+                </tr>
+                <tr>
+                    <th>ENG</th><th>MATH</th><th>PRE-TECH</th><th>KISWA</th><th>I SCIE</th><th>AGRIC</th>
+                    <th>KISWA</th><th>ENG</th><th>SST</th><th>CRE</th>
+                    <th>KISWA</th><th>ENG</th><th>C/A</th>
+                </tr>
+            </thead>
+            <tbody>${document.querySelector("#pathwaysResultsTable tbody").innerHTML}</tbody>
+        </table>
+    `;
+
+    // Open print window
+    const printWindow = window.open("", "", "width=900,height=600");
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Career Pathway Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th, td { border: 1px solid black; padding: 5px; }
+                th { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+            ${reportContent}
+            <br><button onclick="window.print()">Print Report</button>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
 }
 
 </script>
