@@ -1253,10 +1253,10 @@ button {
         <button onclick="printMarksTable()" class="neon-button">
   <i class="fas fa-print"></i> Print Merit List
 </button>
-
-<button onclick="saveMarks()" class="neon-button">
-  <i class="fas fa-save"></i> Save Marks
+<button onclick="sendToArchives()" class="neon-button">
+    <i class="fas fa-archive"></i> Send to Archives
 </button>
+
 
 <button onclick="saveCurrentMarksTable()" class="neon-button">
   <i class="fas fa-table"></i> Save Current Marks Table
@@ -2008,30 +2008,70 @@ function toggleChampionsForm() {
     const form = document.getElementById("championsForm");
     form.style.display = form.style.display === "none" ? "block" : "none";
 }
-function saveMarks() {
-    showLoadingSpinner(); // Show loading spinner
-
-    // Retrieve existing archived marks
-    const archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
-
-    // Append new marks
-    archivedMarks.push(...marks);
-
-    // Store updated marks instantly
-    localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
-
-    // Hide loading spinner immediately after saving
-    hideLoadingSpinner();
-
-    // Show success message
-    const successMessage = document.getElementById("saveSuccessMessage");
-    successMessage.style.display = "block";
+function sendToArchives() {
+    showLoadingSpinner(); // Show spinner
 
     setTimeout(() => {
-        successMessage.style.display = "none";
-    }, 1500); // Shorter success message display time
+        let archivedMarks;
+        
+        // Retrieve existing archived marks safely
+        try {
+            archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+        } catch (e) {
+            console.error("Error parsing archived marks:", e);
+            archivedMarks = [];
+        }
 
-    updateMarksTable(); // Refresh table with updated marks
+        // Ensure marks exist before archiving
+        console.log("Marks before archiving:", marks);
+        if (!marks || marks.length === 0) {
+            alert("No marks available to archive!");
+            hideLoadingSpinner();
+            return;
+        }
+
+        // Archive the marks
+        archivedMarks.push(...marks);
+        localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
+
+        // Debugging: Verify saved data
+        console.log("Archived Marks after archiving:", JSON.parse(localStorage.getItem("archivedMarks")));
+
+        // Show success message
+        const successMessage = document.getElementById("saveSuccessMessage");
+        successMessage.textContent = "Marks successfully archived!";
+        successMessage.style.display = "block";
+
+        setTimeout(() => {
+            successMessage.style.display = "none";
+            hideLoadingSpinner(); // Hide spinner after saving
+        }, 3000);
+
+        updateArchivedMarksTable(); // Refresh archived marks display
+    }, 2000); // Simulated delay for saving process
+}
+function updateArchivedMarksTable() {
+    let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+    const archivedMarksList = document.getElementById("archivedMarksList");
+
+    if (!archivedMarksList) {
+        console.error("Archived marks list container not found!");
+        return;
+    }
+
+    archivedMarksList.innerHTML = archivedMarks.length === 0 
+        ? "<tr><td colspan='10'>No archived marks available.</td></tr>"
+        : archivedMarks.map((entry, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${entry.learner}</td>
+                <td>${entry.grade}</td>
+                ${Object.values(entry.scores).map(score => `<td>${score}</td>`).join("")}
+                <td>${entry.totalMarks}</td>
+            </tr>
+        `).join("");
+
+    console.log("Archived marks table updated!");
 }
 
 
