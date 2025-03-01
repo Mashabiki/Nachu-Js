@@ -10,10 +10,6 @@
 <script src="https://cdn.sheetjs.com/xlsx-latest/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
-   
 <style>
     .report-logo {
         display: block;
@@ -1154,28 +1150,34 @@ button {
     <button id="submitTeacherName" style="background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Submit</button>
 </div>
 <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-
 <div id="juniorMarksEntrySection" style="max-width: 400px; margin: auto; display: none;">
- 
-    <h2>Junior School Marks Entry Section </h2>
-    <form id="marksForm">
-        Learner: 
-        <select id="learnerSelect"></select><br>
-        Grade: 
-        <input type="text" id="marksGrade" required><br> <!-- Added Grade input field -->
-        <div>
-            Eng: <input type="number" id="english" required><br>
-            Math: <input type="number" id="math" required><br>
-            Pre-technical Studies: <input type="number" id="preTech" required><br>
-            Kiswahili: <input type="number" id="kiswahili" required><br>
-            Integrated Science: <input type="number" id="science" required><br>
-            Social Studies: <input type="number" id="social" required><br>
-            Agriculture: <input type="number" id="agriculture" required><br>
-            Religious Education: <input type="number" id="religion" required><br>
-            Creative Art: <input type="number" id="art" required><br>
-        </div>
-        <button type="submit">Submit Marks</button>
-    </form>
+<h2>Junior School Marks Entry Section</h2>
+<form id="marksForm">
+    Grade:  
+    <input type="text" id="marksGrade" placeholder="Enter Grade (e.g., 7A)" required><br>
+    
+    Learner:  
+    <select id="learnerSelect">
+        <option disabled selected>Select Grade First</option>
+    </select><br>
+    
+    <!-- Display Learner Photo -->
+    <img id="learnerPhotoDisplay" src="default.png" alt="Learner Photo" width="100" height="100" 
+         style="display: none; border-radius: 10px; margin-top: 10px;"><br>
+
+    <div>
+        Eng: <input type="number" id="english" required><br>
+        Math: <input type="number" id="math" required><br>
+        Pre-technical Studies: <input type="number" id="preTech" required><br>
+        Kiswahili: <input type="number" id="kiswahili" required><br>
+        Integrated Science: <input type="number" id="science" required><br>
+        Social Studies: <input type="number" id="social" required><br>
+        Agriculture: <input type="number" id="agriculture" required><br>
+        Religious Education: <input type="number" id="religion" required><br>
+        Creative Art: <input type="number" id="art" required><br>
+    </div>
+    <button type="submit">Submit Marks</button>
+</form>
 </div>
 <!-- Success Message -->
 <div id="successMessage" style="
@@ -1251,10 +1253,10 @@ button {
         <button onclick="printMarksTable()" class="neon-button">
   <i class="fas fa-print"></i> Print Merit List
 </button>
-
-<button onclick="saveMarks()" class="neon-button">
-  <i class="fas fa-save"></i> Save Marks
+<button onclick="sendToArchives()" class="neon-button">
+    <i class="fas fa-archive"></i> Send to Archives
 </button>
+
 
 <button onclick="saveCurrentMarksTable()" class="neon-button">
   <i class="fas fa-table"></i> Save Current Marks Table
@@ -1285,6 +1287,35 @@ button {
     </thead>
     <tbody id="marksList"></tbody>
 </table>
+    <!-- Section for Subject Levels -->
+<h2>Subject Level Summary</h2>
+<table class="report-table">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Level 1 (BE)</th>
+            <th>Level 2 (AE)</th>
+            <th>Level 3 (ME)</th>
+            <th>Level 4 (EE)</th>
+        </tr>
+    </thead>
+    <tbody id="subjectLevels"></tbody>
+</table>
+
+
+<!-- Simple Print Button -->
+<button onclick="printSubjectLevels()" style="
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    padding: 10px 15px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 5px;
+">
+    <i class="fas fa-print"></i> Print Subject Levels
+</button>
+
     </div>
 <!-- Archived Marks Section -->
 <div id="archivesSection" class="hidden-section">
@@ -1335,6 +1366,9 @@ button {
   <button onclick="generateGenderPerformance()" class="neon-button">
     <i class="fas fa-genderless"></i> Generate Gender Performance
   </button>
+<button onclick="togglePathwaysTable()" class="button toggle-button">
+        <i class="fas fa-chart-bar"></i> Group Learners by Pathways
+    </button>
   <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
     <i class="fas fa-arrow-left"></i> Back
   </button>
@@ -1573,33 +1607,61 @@ button {
 </div>
 
 
+<!-- Modal Overlay -->
+<div id="modalOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="learnerDetailsModal" style="background-color: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <!-- Learner details will be injected here -->
+    </div>
+</div>
+
 <div id="alertContainer" style="position: fixed; top: 10%; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 400px;"></div>
 
 <div id="savedTablesContainer"></div>
+</div> 
 </div>
 
-<div id="paymentRecordsSection" style="display: none; max-width: 400px; margin: auto; padding: 20px; border: 2px solid #4CAF50; border-radius: 10px; background-color: #e8f5e9;">
-    <h2>Payment Records</h2>
-    <form id="paymentForm">
-        Learner: 
-        <select id="paymentLearnerSelect" required></select><br>
-        Grade: <input type="text" id="paymentGrade" required readonly><br>
-        Term: 
-        <select id="paymentTerm" required>
-            <option value="1">Term 1</option>
-            <option value="2">Term 2</option>
-            <option value="3">Term 3</option>
-        </select><br>
-        Tuition Fee: <input type="number" id="tuitionFee" required><br>
-        Activity Fee: <input type="number" id="activityFee" required><br>
-        BOM Fee: <input type="number" id="bomFee" required><br>
-        Security Fee: <input type="number" id="securityFee" required><br>
-        Exam Fee: <input type="number" id="examFee" required><br>
-        <button type="submit">Save Payment</button>
-    </form>
-    <div id="paymentSuccessMessage" style="color: green; font-weight: bold; display: none;">Payment record saved successfully!</div>
-</div>
+<!-- Table Section -->
+<div id="resultsSection" style="display: none; margin: 20px;">
+    <h3>Career Pathways Results</h3>
+    <table id="pathwaysResultsTable" class="report-table">
+        <thead>
+            <tr>
 
+  <button onclick="printPathwayReport()" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-print"></i> Print Career Pathway Report
+</button>
+              <th rowspan="2">Learner</th>
+                <th rowspan="2">Grade</th>
+                <th colspan="6">STEM Subjects</th>
+                <th colspan="4">Social Sciences Subjects</th>
+                <th colspan="3">Sports, Arts & Science Subjects</th>
+                <th rowspan="2">STEM Average</th>
+                <th rowspan="2">Social Sciences Average</th>
+                <th rowspan="2">Sports, Arts & Science Average</th>
+                <th rowspan="2">Best Pathway</th>
+            </tr>
+            <tr>
+                <!-- STEM Subjects -->
+                <th>ENG</th>
+                <th>MATHS</th>
+                <th>PRE-TECH</th>
+                <th>KISWA</th>
+                <th>I Scie</th>
+                <th>AGRIC</th>
+                <!-- Social Sciences Subjects -->
+                <th>Kiswa</th>
+                <th>ENG</th>
+                <th>SST</th>
+                <th>CRE</th>
+                <!-- Sports, Arts & Science Subjects -->
+                <th>KISWA</th>
+                <th>ENG</th>
+                <th>C/A</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
     <!-- Footer Section -->
     <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 5px 0; text-align: center;">
         <p>&copy; 2025 Nachu Junior School | All Rights Reserved</p>
@@ -1946,43 +2008,73 @@ function toggleChampionsForm() {
     const form = document.getElementById("championsForm");
     form.style.display = form.style.display === "none" ? "block" : "none";
 }
-
-function saveMarks() {
+function sendToArchives() {
     showLoadingSpinner(); // Show spinner
 
     setTimeout(() => {
-        let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+        let archivedMarks;
+        
+        // Retrieve existing archived marks safely
+        try {
+            archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+        } catch (e) {
+            console.error("Error parsing archived marks:", e);
+            archivedMarks = [];
+        }
 
-        if (!Array.isArray(marks) || marks.length === 0) {
-            console.error("No marks available to save.");
+        // Ensure marks exist before archiving
+        console.log("Marks before archiving:", marks);
+        if (!marks || marks.length === 0) {
+            alert("No marks available to archive!");
             hideLoadingSpinner();
             return;
         }
 
-        console.log(`Saving ${marks.length} marks...`);
-
-        // Ensure no duplicate records
-        const uniqueMarks = marks.filter(newMark => 
-            !archivedMarks.some(existing => existing.admissionNumber === newMark.admissionNumber)
-        );
-
-        archivedMarks.push(...uniqueMarks); // Add new unique marks
+        // Archive the marks
+        archivedMarks.push(...marks);
         localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
 
-        console.log(`Total marks saved: ${archivedMarks.length}`);
+        // Debugging: Verify saved data
+        console.log("Archived Marks after archiving:", JSON.parse(localStorage.getItem("archivedMarks")));
 
         // Show success message
         const successMessage = document.getElementById("saveSuccessMessage");
+        successMessage.textContent = "Marks successfully archived!";
         successMessage.style.display = "block";
 
         setTimeout(() => {
             successMessage.style.display = "none";
-            hideLoadingSpinner();
+            hideLoadingSpinner(); // Hide spinner after saving
         }, 3000);
 
-        updateMarksTable(); // Update table after saving
+        updateArchivedMarksTable(); // Refresh archived marks display
     }, 2000); // Simulated delay for saving process
 }
+function updateArchivedMarksTable() {
+    let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+    const archivedMarksList = document.getElementById("archivedMarksList");
+
+    if (!archivedMarksList) {
+        console.error("Archived marks list container not found!");
+        return;
+    }
+
+    archivedMarksList.innerHTML = archivedMarks.length === 0 
+        ? "<tr><td colspan='10'>No archived marks available.</td></tr>"
+        : archivedMarks.map((entry, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${entry.learner}</td>
+                <td>${entry.grade}</td>
+                ${Object.values(entry.scores).map(score => `<td>${score}</td>`).join("")}
+                <td>${entry.totalMarks}</td>
+            </tr>
+        `).join("");
+
+    console.log("Archived marks table updated!");
+}
+
+
 function startFireworks() {
     const fireworksOverlay = document.getElementById('fireworks-overlay');
     fireworksOverlay.style.display = 'block';
@@ -3368,88 +3460,6 @@ function toggleJuniorSchoolActions() {
     const section = document.getElementById('juniorSchoolActions');
     section.style.display = (section.style.display === 'none') ? 'block' : 'none';
 }
-
-        function generateReportForLearner() {
-            const selectedLearner = learnerSelect.value;
-            const learnerData = marks.find(mark => mark.learner === selectedLearner);
-
-            const reportContainer = `
-                <div class="header">
-                    <h2>Nachu Junior Highschool Assessment Report</h2>
-                    <h3>Ministry Of Education Science And Technology</h3>            
-                    <h4>P.O BOX 561-00902 Kikuyu </h4>
-                </div>
-                <div class="report-details">
-                    Year: 2024<br>
-                    Term: 3<br>
-                    Grade: ${learnerData.grade}<br>
-                    Learner's Name: ${selectedLearner}
-                </div>
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Scores</th>
-                            <th>Levels</th>
-                            <th>Subject Teacher</th>
-                            <th>Signature</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${generateSubjectRows(learnerData)}
-                    </tbody>
-                </table>
-                <div class="total-marks">
-                   <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="marksList"></tbody>
-        </table>
-    </div>
-             <div class="comment-section">
-    Teacher Comments On Competencies Achieved/Acquisition Of Values:<br>
-    <em>Actively participates in class discussions.</em>
-</div>
-
-<div class="comment-section">
-    Learner's General Performance Level:<br>
-    <strong>Meeting expectations</strong>
-</div>
-
-<div class="signature-section">
-    Closing Date: 24-10-2024<br>
-    Opening Date: 06-01-2025<br>
-    Class Teacher Signature: _______________<br>
-    Principal Signature: _______________<br>
-    Official Stamp:
-    <div class="stamp">
-        Nachu Junior School<br>
-        P.O BOX 561-00902 Kikuyu
-    </div>
-</div>
-
-        <div style="page-break-after: always;"></div>
-    `;
-
-    // Display the report content in the report div
-    document.getElementById("report").innerHTML = reportContent;
-}
-
-        function getComment(totalMarks) {
-            if (totalMarks >= 1 && totalMarks <= 225) return "Displays self-discipline however Should put extra effort to achieve higher scores.";
-            if (totalMarks >= 226 && totalMarks <= 449) return "Willing to help his peers; however,should focus on improving his overall performance.";
-            if (totalMarks >= 450 && totalMarks <= 675) return "Actively participates in class discussions and takes on various roles in work groups as needed.";
-            if (totalMarks >= 676 && totalMarks <= 900) return "Shown consistent improvement and tackles classroom assignments, tasks, and group work well.";
-            return "";
-        }
-
-        function getPerformanceLevel(totalMarks) {
-            if (totalMarks >= 1 && totalMarks <= 225) return "Below expectations";
-            if (totalMarks >= 226 && totalMarks <= 449) return "Approaching expectations";
-            if (totalMarks >= 450 && totalMarks <= 675) return "Meeting expectations";
-            if (totalMarks >= 676 && totalMarks <= 900) return "Exceeding expectations";
-            return "";
-        }
 function generateBulkReports() { 
     const selectedGrade = bulkGradeSelect.value;
     const learnersInGrade = marks.filter(mark => mark.grade === selectedGrade);
@@ -3480,8 +3490,8 @@ function generateBulkReports() {
                     <div style="clear:both; padding-bottom:10px;">
                         ${schoolLogo}
                         <div style="margin-left:110px;">
-                            <h2 style="margin:0; font-size:20px;"> Lusigetti Primary  School Assessment Report</h2>
-                            <h3 style="margin:0; font-size:16px;">P.O BOX 104-00902 Kikuyu</h3>
+                            <h2 style="margin:0; font-size:20px;"> NACHU JUNIOR SCHOOL ASSESMENT REPORT</h2>
+                            <h3 style="margin:0; font-size:16px;">P.O BOX 561-00902 Kikuyu</h3>
                             <h4 style="margin:0; font-size:14px;">Ministry Of Education Science And Technology</h4>
                         </div>
                     </div>
@@ -3853,7 +3863,8 @@ function printAssessmentReport() {
     printWindow.print();
 }
 
-function printMarksTable() { 
+
+ function printMarksTable() { 
     showLoadingSpinner(); // Show spinner while processing
 
     setTimeout(() => {
@@ -3926,23 +3937,25 @@ function printMarksTable() {
                     <table class="report-table">
                         <thead>
                             <tr>
+                                <th>No.</th>
                                 <th>Learner</th>
                                 <th>Grade</th>
-                                <th>Eng</th><th>Level</th>
-                                <th>Math</th><th>Level</th>
-                                <th>Pre-Tech</th><th>Level</th>
-                                <th>Kiswa</th><th>Level</th>
-                                <th>Scie</th><th>Level</th>
-                                <th>Social</th><th>Level</th>
-                                <th>Agric</th><th>Level</th>
-                                <th>Cre</th><th>Level</th>
-                                <th>C/Art</th><th>Level</th>
+                                <th>Eng</th><th>Lev</th>
+                                <th>Math</th><th>Lev</th>
+                                <th>Pre-Tech</th><th>Lev</th>
+                                <th>Kiswa</th><th>Lev</th>
+                                <th>Scie</th><th>Lev</th>
+                                <th>Social</th><th>Lev</th>
+                                <th>Agric</th><th>Lev</th>
+                                <th>Cre</th><th>Lev</th>
+                                <th>C/Art</th><th>Lev</th>
                                 <th>Total Marks</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${marks.map(mark => `
+                            ${marks.map((mark, index) => `
                                 <tr>
+                                    <td>${index + 1}</td>
                                     <td>${mark.learner}</td>
                                     <td>${mark.grade}</td>
                                     ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
@@ -3950,12 +3963,12 @@ function printMarksTable() {
                                 </tr>
                             `).join('')}
                             <tr>
-                                <td colspan="2" style="font-weight:bold;">Total</td>
+                                <td colspan="3" style="font-weight:bold;">Total</td>
                                 ${subjectTotals.map(total => `<td style="font-weight:bold;">${total}</td><td></td>`).join('')}
                                 <td style="font-weight:bold;">${totalMarksSum}</td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="font-weight:bold;">Average</td>
+                                <td colspan="3" style="font-weight:bold;">Average</td>
                                 ${averages.map(avg => `<td style="font-weight:bold;">${avg}</td><td></td>`).join('')}
                                 <td style="font-weight:bold;">${overallAverage}</td>
                             </tr>
@@ -3971,8 +3984,7 @@ function printMarksTable() {
 
         hideLoadingSpinner(); // Hide spinner after printing is complete
     }, 2000); // Simulated delay to show spinner
-}
-
+}                  
 
 function printGroupedTable(grade) {
     const schoolName = document.getElementById("schoolName").value || "School Name";
@@ -4210,20 +4222,21 @@ function printSubjectRanking() {
     printWindow.print();
  
 }
-    function updateLearnerSelect() {
-        const learnersWithoutMarks = learners.filter(learner => 
-            !marks.some(mark => mark.learner === learner.name)
-        );
+     function updateLearnerSelect() {
+    const learnersWithoutMarks = learners.filter(learner =>
+        !marks.some(mark => mark.learner === learner.name)
+    );
 
-        learnerSelect.innerHTML = learnersWithoutMarks.map(learner => 
-            `<option value="${learner.name}">${learner.name}</option>`
-        ).join("");
+    learnerSelect.innerHTML = learnersWithoutMarks.map(learner =>
+        `<option value="${learner.name}">${learner.name} (Grade ${learner.grade})</option>`
+    ).join("");
 
-        if (learnersWithoutMarks.length === 0) {
-            learnerSelect.innerHTML = `<option value="" disabled>No learners available</option>`;
-        }
+    if (learnersWithoutMarks.length === 0) {
+        learnerSelect.innerHTML = `<option value="" disabled>No learners available</option>`;
     }
+}
 
+     
     document.getElementById("marksForm").addEventListener("submit", function (e) {
         e.preventDefault();
         // Existing logic for form submission...
@@ -6525,64 +6538,490 @@ function searchLearner() {
 
     // Run lazy loading for hidden sections
     document.addEventListener('DOMContentLoaded', lazyLoadSections);
-const paymentLearnerSelect = document.getElementById("paymentLearnerSelect");
-const paymentGrade = document.getElementById("paymentGrade");
-const paymentForm = document.getElementById("paymentForm");
-const paymentSuccessMessage = document.getElementById("paymentSuccessMessage");
+function deleteLearner(admissionNumber) {
+    const request = indexedDB.open("LearnersDB", 1);
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readwrite");
+        const objectStore = transaction.objectStore("learners");
 
-let paymentRecords = []; // Array to store payment records
+        const deleteRequest = objectStore.delete(admissionNumber);
+        deleteRequest.onsuccess = function () {
+            learners = learners.filter(learner => learner.admissionNumber !== admissionNumber); // Update local array
+            updateLearnersTable(); // Refresh table
+            alert("Learner deleted successfully.");
+        };
+        deleteRequest.onerror = function (event) {
+            console.error("Error deleting learner:", event.target.error);
+        };
+    };
+    request.onerror = function (event) {
+        console.error("Error opening IndexedDB:", event.target.error);
+    };
+}
+function updateLearnerField(index, field, value) {
+    learners[index][field] = value; // Update local array
+    const admissionNumber = learners[index].admissionNumber;
 
-// Populate learner dropdown
-function populatePaymentLearnerSelect() {
-    paymentLearnerSelect.innerHTML = "";
-    learners.forEach(learner => {
-        const option = document.createElement("option");
-        option.value = learner.admissionNumber;
-        option.textContent = learner.name;
-        paymentLearnerSelect.appendChild(option);
+    const request = indexedDB.open("LearnersDB", 1);
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readwrite");
+        const objectStore = transaction.objectStore("learners");
+
+        const getRequest = objectStore.get(admissionNumber);
+        getRequest.onsuccess = function () {
+            const learner = getRequest.result;
+            learner[field] = value;
+
+            const updateRequest = objectStore.put(learner);
+            updateRequest.onsuccess = function () {
+                console.log(`Updated ${field} for learner ${admissionNumber}`);
+            };
+            updateRequest.onerror = function (event) {
+                console.error(`Error updating ${field}:`, event.target.error);
+            };
+        };
+    };
+}
+function updateLearnersTable() {
+    learnersList.innerHTML = learners.map((learner, index) => `
+        <tr>
+            <td>${index + 1}</td> <!-- Serial Number -->
+            <td>
+                <img src="${learner.photo || 'default.png'}" alt="Photo" width="40" height="40">
+                <br>
+                <button onclick="viewLearnerDetails(${index})" class="small-btn btn-green">
+                    <i class="fas fa-eye"></i> <!-- View Icon -->
+                </button>
+            </td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'name', this.textContent)">${learner.name}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'gender', this.textContent)">${learner.gender}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'grade', this.textContent)">${learner.grade}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'age', this.textContent)">${learner.age}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'parentName', this.textContent)">${learner.parentName}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'phone', this.textContent)">${learner.phone}</td>
+            <td contenteditable="true" onblur="updateLearnerField(${index}, 'birthCertificateNo', this.textContent)">${learner.birthCertificateNo}</td>
+            <td>${learner.admissionNumber}</td>
+            <td>
+                <input type="file" accept="image/*" style="display: none;" onchange="changePhoto(event, '${learner.admissionNumber}')">
+                <button onclick="this.previousElementSibling.click()" class="small-btn btn-blue">
+                    <i class="fas fa-camera"></i> <!-- Change Photo Icon -->
+                </button>
+                <button onclick="deleteLearner('${learner.admissionNumber}')" class="small-btn btn-red">
+                    <i class="fas fa-trash"></i> <!-- Delete Icon -->
+                </button>
+            </td>
+        </tr>
+    `).join("");
+
+
+    updateLearnerSelect(); // Update dropdown or related components
+}
+// Function to show learner details in a modal
+function viewLearnerDetails(index) {
+    // Get the learner from the array
+    const learner = learners[index];
+    if (!learner) {
+        alert("Learner not found!");
+        return;
+    }
+
+    // Populate the modal with learner details
+    const modalContent = `
+        <h2>${learner.name}'s Details</h2>
+        <img src="${learner.photo || 'placeholder.jpg'}" alt="Learner Photo" style="width: 150px; height: 150px; border-radius: 50%;" />
+        <p><strong>Gender:</strong> ${learner.gender}</p>
+        <p><strong>Grade:</strong> ${learner.grade}</p>
+        <p><strong>Age:</strong> ${learner.age}</p>
+        <p><strong>Parent Name:</strong> ${learner.parentName}</p>
+        <p><strong>Parent Phone No:</strong> ${learner.phone}</p>
+        <p><strong>Birth Certificate No:</strong> ${learner.birthCertificateNo}</p>
+        <p><strong>Admission Number:</strong> ${learner.admissionNumber}</p>
+        <button onclick="closeModal()" class="btn-red">Close</button>
+    `;
+
+    // Insert content into the modal and display it
+    document.getElementById("learnerDetailsModal").innerHTML = modalContent;
+    document.getElementById("modalOverlay").style.display = "flex";
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById("modalOverlay").style.display = "none";
+}
+// Function to enable editing and saving updates
+function makeTableEditable() {
+    const table = document.querySelector("#learnersList"); // Select the learners table
+    table.addEventListener("input", function(event) {
+        const cell = event.target;
+        const row = cell.parentElement;
+        const admissionNumber = row.dataset.admission; // Retrieve admission number from row attribute
+        
+        // Get updated values
+        const updatedLearner = {
+            name: row.children[1].textContent,
+            gender: row.children[2].textContent,
+            grade: row.children[3].textContent,
+            age: row.children[4].textContent,
+            parentName: row.children[5].textContent,
+            phone: row.children[6].textContent,
+            birthCertificateNo: row.children[7].textContent,
+            admissionNumber: admissionNumber,
+            photo: row.children[8].querySelector("img").src
+        };
+
+        // Open IndexedDB and update the learner
+        const request = indexedDB.open("LearnersDB", 1);
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(["learners"], "readwrite");
+            const objectStore = transaction.objectStore("learners");
+            objectStore.put(updatedLearner);
+        };
     });
 }
 
-// Update grade based on selected learner
-paymentLearnerSelect.addEventListener("change", function () {
-    const selectedLearner = learners.find(learner => learner.admissionNumber === this.value);
-    if (selectedLearner) {
-        paymentGrade.value = selectedLearner.grade;
-    } else {
-        paymentGrade.value = "";
+// Call this function after the table is populated
+document.addEventListener("DOMContentLoaded", makeTableEditable);
+
+function changePhoto(event, admissionNumber) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            updateLearnerPhoto(admissionNumber, e.target.result); // Update IndexedDB with new photo
+        };
+        reader.readAsDataURL(file);
     }
-});
+}
 
-// Handle form submission
-paymentForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+// Function to update IndexedDB when photo is changed
+function updateLearnerPhoto(admissionNumber, newPhoto) {
+    const request = indexedDB.open("LearnersDB", 1);
 
-    const paymentRecord = {
-        learner: paymentLearnerSelect.value,
-        grade: paymentGrade.value,
-        term: document.getElementById("paymentTerm").value,
-        tuitionFee: document.getElementById("tuitionFee").value,
-        activityFee: document.getElementById("activityFee").value,
-        bomFee: document.getElementById("bomFee").value,
-        securityFee: document.getElementById("securityFee").value,
-        examFee: document.getElementById("examFee").value,
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readwrite");
+        const objectStore = transaction.objectStore("learners");
+
+        const getRequest = objectStore.get(admissionNumber);
+        getRequest.onsuccess = function () {
+            const learner = getRequest.result;
+            if (learner) {
+                learner.photo = newPhoto; // Update the learner's photo
+                
+                const updateRequest = objectStore.put(learner);
+                updateRequest.onsuccess = function () {
+                    updateLearnersTable(); // Refresh the table
+                };
+            }
+        };
     };
+}
+// Function to display learner's photo when selected in dropdown
+document.getElementById("learnerSelect").addEventListener("change", function () {
+    const selectedLearnerName = this.value; // Get selected learner name
+    const request = indexedDB.open("LearnersDB", 1);
 
-    paymentRecords.push(paymentRecord);
+    request.onsuccess = function (event) {
+        const db = event.target.result;
+        const transaction = db.transaction(["learners"], "readonly");
+        const objectStore = transaction.objectStore("learners");
 
-    // Reset form
-    paymentForm.reset();
-    paymentGrade.value = "";
+        const getAllRequest = objectStore.getAll();
+        getAllRequest.onsuccess = function () {
+            const learners = getAllRequest.result;
+            const selectedLearner = learners.find(learner => learner.name === selectedLearnerName);
 
-    // Show success message
-    paymentSuccessMessage.style.display = "block";
-    setTimeout(() => {
-        paymentSuccessMessage.style.display = "none";
-    }, 3000);
+            if (selectedLearner && selectedLearner.photo) {
+                document.getElementById("learnerPhotoDisplay").src = selectedLearner.photo;
+                document.getElementById("learnerPhotoDisplay").style.display = "block"; // Show photo
+            } else {
+                document.getElementById("learnerPhotoDisplay").src = "default.png"; // Show default image if no photo
+            }
+        };
+    };
 });
 
-// Call this function after fetching learners to populate the dropdown
-populatePaymentLearnerSelect();
+function calculateSubjectLevels() {
+    let subjects = ["english", "math", "preTech", "kiswahili", "science", "social", "agriculture", "religion", "art"];
+    let subjectLevels = {};
+
+    // Initialize level counters for each subject
+    subjects.forEach(subject => {
+        subjectLevels[subject] = { level1: 0, level2: 0, level3: 0, level4: 0 };
+    });
+
+    let marksRows = document.querySelectorAll("#marksList tr");
+
+    // If no marks are present, reset the summary table
+    if (marksRows.length === 0) {
+        document.getElementById("subjectLevels").innerHTML = "<tr><td colspan='5'>No data available</td></tr>";
+        return;
+    }
+
+    // Process each row in the marks table
+    marksRows.forEach(row => {
+        let cells = row.querySelectorAll("td");
+
+        subjects.forEach((subject, index) => {
+            let levelCellIndex;
+
+            // Fix the column index for Maths and English (adjust their position)
+            if (subject === "english") {
+                levelCellIndex = 4; // "Lev" column for English
+            } else if (subject === "math") {
+                levelCellIndex = 6; // "Lev" column for Math
+            } else {
+                levelCellIndex = (index * 2) + 4; // General calculation for other subjects
+            }
+
+            let levelText = cells[levelCellIndex]?.innerText.trim(); // Extract level text
+
+            if (levelText) {
+                let level = parseInt(levelText, 10); // Convert to a number
+
+                // Count learners for each level
+                if (level === 1) {
+                    subjectLevels[subject].level1++;
+                } else if (level === 2) {
+                    subjectLevels[subject].level2++;
+                } else if (level === 3) {
+                    subjectLevels[subject].level3++;
+                } else if (level === 4) {
+                    subjectLevels[subject].level4++;
+                }
+            }
+        });
+    });
+
+    // Update the Subject Level Summary Table
+    let subjectLevelsTable = document.getElementById("subjectLevels");
+    subjectLevelsTable.innerHTML = ""; // Clear existing data
+
+    subjects.forEach(subject => {
+        let row = `<tr>
+            <td>${subject.toUpperCase()}</td>
+            <td>${subjectLevels[subject].level1} learners (BE)</td>
+            <td>${subjectLevels[subject].level2} learners (AE)</td>
+            <td>${subjectLevels[subject].level3} learners (ME)</td>
+            <td>${subjectLevels[subject].level4} learners (EE)</td>
+        </tr>`;
+        subjectLevelsTable.innerHTML += row;
+    });
+}
+
+// Call function after marks are loaded
+document.addEventListener("DOMContentLoaded", function () {
+    calculateSubjectLevels();
+});
+
+// Attach this function to events like adding/editing marks dynamically
+function refreshLevels() {
+    calculateSubjectLevels();
+}
+
+function printSubjectLevels() {
+    const subjectTable = document.getElementById("subjectLevels");
+    if (!subjectTable) {
+        alert("No subject level data available to print.");
+        return;
+    }
+
+    // Get the first available grade dynamically
+    const firstRow = document.querySelector("#marksTableSection .report-table tbody tr");
+    const grade = firstRow ? firstRow.children[2].textContent.trim() : "N/A";
+
+    let printContents = `
+        <html>
+        <head>
+            <title>Nachu Junior School Subject Level Summary Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+                h2, p { margin: 5px 0; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th, td { border: 1px solid black; padding: 8px; text-align: center; }
+                th { background-color: #4CAF50; color: white; }
+                .school-logo { max-width: 100px; display: block; margin: 0 auto; }
+            </style>
+        </head>
+        <body>
+            <div>
+                <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" class="school-logo">
+                <h2>Nachu Junior School Subject Level Summary Report</h2>
+                <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+                <p><strong>Phone: +254-700-123456</strong></p>
+                <p><em>School Motto: "Excellence Through Knowledge"</em></p>
+                <p><strong>Year: 2025</strong></p>
+                <p><strong>Grade: ${grade}</strong></p>
+            </div>
+            <hr>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Level 1</th>
+                        <th>Level 2</th>
+                        <th>Level 3</th>
+                        <th>Level 4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${subjectTable.innerHTML}
+                </tbody>
+            </table>
+            <br>
+            <button onclick="window.print()">Print Report</button>
+        </body>
+        </html>
+    `;
+
+    let newWindow = window.open("", "_blank");
+    newWindow.document.write(printContents);
+    newWindow.document.close();
+}
+
+function groupLearnersByPathways() {
+    const learnersTable = document.querySelector("#marksTableSection .report-table tbody");
+    const learnersRows = Array.from(learnersTable.querySelectorAll("tr"));
+    const resultsTable = document.querySelector("#pathwaysResultsTable tbody");
+
+    // Clear previous results
+    resultsTable.innerHTML = "";
+
+    learnersRows.forEach((row) => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length < 22) return; // Ensure row has enough data
+
+        const learnerName = cells[1].textContent.trim();
+        const grade = cells[2].textContent.trim();
+
+        // Extract scores from table cells
+        const scores = {
+            English: parseInt(cells[3].textContent.trim()) || 0,
+            Math: parseInt(cells[5].textContent.trim()) || 0,
+            "Pre-technical Studies": parseInt(cells[7].textContent.trim()) || 0,
+            Kiswahili: parseInt(cells[9].textContent.trim()) || 0,
+            "Integrated Science": parseInt(cells[11].textContent.trim()) || 0,
+            "Social Studies": parseInt(cells[13].textContent.trim()) || 0,
+            Agriculture: parseInt(cells[15].textContent.trim()) || 0,
+            "Religious Education": parseInt(cells[17].textContent.trim()) || 0,
+            "Creative Art": parseInt(cells[19].textContent.trim()) || 0,
+        };
+
+        // Pathways and their subject associations
+        const pathways = {
+            STEM: ["English", "Math", "Pre-technical Studies", "Kiswahili", "Integrated Science", "Agriculture"],
+            "Social Sciences": ["Kiswahili", "English", "Social Studies", "Religious Education"],
+            "Sports, Arts & Science": ["Kiswahili", "English", "Creative Art"],
+        };
+
+        const pathwayResults = {};
+
+        // Calculate average scores for each pathway
+        Object.keys(pathways).forEach((pathway) => {
+            const subjects = pathways[pathway];
+            const total = subjects.reduce((sum, subject) => sum + (scores[subject] || 0), 0);
+            const average = total / subjects.length;
+            pathwayResults[pathway] = average;
+        });
+
+        // Determine the best pathway
+        const bestPathway = Object.keys(pathwayResults).reduce((a, b) => (pathwayResults[a] > pathwayResults[b] ? a : b));
+
+        // Append results to the results table
+        const resultRow = document.createElement("tr");
+        resultRow.innerHTML = `
+            <td>${learnerName}</td>
+            <td>${grade}</td>
+            ${pathways.STEM.map(subject => `<td>${scores[subject]}</td>`).join("")}
+            ${pathways["Social Sciences"].map(subject => `<td>${scores[subject]}</td>`).join("")}
+            ${pathways["Sports, Arts & Science"].map(subject => `<td>${scores[subject]}</td>`).join("")}
+            <td>${pathwayResults.STEM.toFixed(2)}</td>
+            <td>${pathwayResults["Social Sciences"].toFixed(2)}</td>
+            <td>${pathwayResults["Sports, Arts & Science"].toFixed(2)}</td>
+            <td><strong>${bestPathway}</strong></td>
+        `;
+        resultsTable.appendChild(resultRow);
+    });
+}
+
+function togglePathwaysTable() {
+    const resultsSection = document.getElementById("resultsSection");
+    const toggleButton = document.querySelector(".toggle-button");
+
+    if (resultsSection.style.display === "none") {
+        resultsSection.style.display = "block";
+        groupLearnersByPathways(); // Populate the table with updated data
+        toggleButton.innerHTML = `<i class="fas fa-eye-slash"></i> Hide Pathways Table`;
+    } else {
+        resultsSection.style.display = "none";
+        toggleButton.innerHTML = `<i class="fas fa-chart-bar"></i> Group Learners by Pathways`;
+    }
+}
+function printPathwayReport() {
+    const resultsSection = document.getElementById("resultsSection");
+    if (!resultsSection || resultsSection.style.display === "none") {
+        alert("Please generate the pathway report first before printing.");
+        return;
+    }
+
+    const reportContent = `
+        <div style="text-align: center; font-family: Arial, sans-serif;">
+            <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 100px; display: block; margin: 0 auto;">
+            <h2 style="margin: 5px 0;">Nachu Junior School Pathway Report</h2>
+            <p>P.O BOX 561-00902, KIKUYU, KENYA </p>
+            <p>Phone: +254-700-123456</p>
+            <p style="font-style: italic; font-weight: bold;">School Motto: "Excellence Through Knowledge"</p>
+            <p><strong>Year: 2025</strong></p>
+        </div>
+        <hr>
+
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; text-align: center; font-family: Arial, sans-serif;">
+            <thead>
+                <tr>
+                    <th rowspan="2">Learner</th>
+                    <th rowspan="2">Grade</th>
+                    <th colspan="6">STEM Subjects</th>
+                    <th colspan="4">Social Sciences Subjects</th>
+                    <th colspan="3">Sports, Arts & Science Subjects</th>
+                    <th rowspan="2">STEM Average</th>
+                    <th rowspan="2">Social Sciences Average</th>
+                    <th rowspan="2">Sports, Arts & Science Average</th>
+                    <th rowspan="2">Best Pathway</th>
+                </tr>
+                <tr>
+                    <th>ENG</th><th>MATH</th><th>PRE-TECH</th><th>KISWA</th><th>I SCIE</th><th>AGRIC</th>
+                    <th>KISWA</th><th>ENG</th><th>SST</th><th>CRE</th>
+                    <th>KISWA</th><th>ENG</th><th>C/A</th>
+                </tr>
+            </thead>
+            <tbody>${document.querySelector("#pathwaysResultsTable tbody").innerHTML}</tbody>
+        </table>
+    `;
+
+    // Open print window
+    const printWindow = window.open("", "", "width=900,height=600");
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Career Pathway Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th, td { border: 1px solid black; padding: 5px; }
+                th { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+            ${reportContent}
+            <br><button onclick="window.print()">Print Report</button>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
 
 </script>
 </body>
