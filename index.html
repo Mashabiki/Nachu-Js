@@ -5755,6 +5755,15 @@ function generateGenderPerformance() {
         return { learner: learnerName, totalMarks };
     });
 
+    // Function to determine performance level based on total marks
+    function getPerformanceLevel(totalMarks) {
+        if (totalMarks >= 1 && totalMarks <= 200) return "Below Expectations (1)";
+        if (totalMarks >= 201 && totalMarks <= 400) return "Approaching Expectations (2)";
+        if (totalMarks >= 401 && totalMarks <= 600) return "Meeting Expectations (3)";
+        if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding Expectations (4)";
+        return "Invalid Score";
+    }
+
     // Group marks by gender
     const genderPerformance = {
         Male: [],
@@ -5796,25 +5805,25 @@ function generateGenderPerformance() {
                         <th>No.</th>
                         <th>Name</th>
                         <th>Total Marks</th>
+                        <th>Performance Level</th>
                     </tr>
                 </thead>
                 <tbody>
         `;
 
         data.forEach((entry, index) => {
+            let level = getPerformanceLevel(entry.totalMarks);
             tableHtml += `
                 <tr>
                     <td>${index + 1}</td>
                     <td>${entry.learner}</td>
                     <td>${entry.totalMarks}</td>
+                    <td>${level}</td>
                 </tr>
             `;
         });
 
-        tableHtml += `
-                </tbody>
-            </table>
-        `;
+        tableHtml += `</tbody></table>`;
 
         return tableHtml;
     };
@@ -5834,6 +5843,7 @@ function generateGenderPerformance() {
         <button onclick="printReport()" class="btn-print">Print Report</button>
     `;
 }
+
 
 // Function to print the report
 function printReport() {
