@@ -4176,7 +4176,7 @@ function printAssessmentReport() {
                         </tbody>
                     </table>
                     <!-- Append the stamp after printing the table -->
-                    <div class="stamp">Nachu Junior High School<br>P.O BOX 561-00902 Kikuyu</div>
+                    <div class="stamp">Nachu Junior  School<br>P.O BOX 561-00902 Kikuyu</div>
                 </body>
             </html>
         `);
@@ -4226,11 +4226,13 @@ function printGroupedTable(grade) {
 function showSubjectChampions() {
     const champions = marks.reduce((acc, mark) => {
         mark.scores.forEach((score, index) => {
-            const subject = [
+            const subjects = [
                 'English', 'Mathematics', 'Pre-Technical Studies', 
                 'Kiswahili', 'Integrated Science', 'Social Studies', 
                 'Agriculture', 'Religious Education', 'Creative Art'
-            ][index];
+            ];
+            const subject = subjects[index];
+
             if (!acc[subject] || score > acc[subject].score) {
                 acc[subject] = { name: mark.learner, score };
             }
@@ -4238,62 +4240,114 @@ function showSubjectChampions() {
         return acc;
     }, {});
 
-    let championsHtml = '<h3>Subject Champions</h3><table class="learners-table"><thead><tr><th>No.</th><th>Subject</th><th>Champion</th><th>Score</th></tr></thead><tbody>';
+    // Function to determine performance level
+    function getPerformanceLevel(score) {
+        if (score >= 0 && score <= 25) return "Level 1 (BE)";
+        if (score >= 26 && score <= 49) return "Level 2 (AE)";
+        if (score >= 50 && score <= 75) return "Level 3 (ME)";
+        if (score >= 76 && score <= 100) return "Level 4 (EE)";
+        return "Invalid Score";
+    }
+
+    let championsHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Champions</h3>`;
+    championsHtml += `<table class="learners-table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Subject</th>
+                                <th>Champion</th>
+                                <th>Score</th>
+                                <th>Performance Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
     let number = 1; // Add numbering
     for (const subject in champions) {
-        championsHtml += `
-            <tr>
-                <td>${number++}</td>
-                <td>${subject}</td>
-                <td>${champions[subject].name}</td>
-                <td>${champions[subject].score}</td>
-            </tr>
-        `;
+        let champion = champions[subject];
+        let level = getPerformanceLevel(champion.score);
+        
+        championsHtml += `<tr>
+                            <td>${number++}</td>
+                            <td>${subject}</td>
+                            <td>${champion.name}</td>
+                            <td>${champion.score}</td>
+                            <td>${level}</td>
+                          </tr>`;
     }
-    championsHtml += '</tbody></table>';
+
+    championsHtml += `</tbody></table>`;
 
     const reportDiv = document.getElementById("report");
     reportDiv.innerHTML = championsHtml;
 
-    // Start fireworks
+    // Start fireworks effect for champions
     startFireworks();
+}
+
+  function showSubjectRanking() {
+    const rankings = marks.reduce((acc, mark) => {
+        mark.scores.forEach((score, index) => {
+            const subjects = [
+                'English', 'Mathematics', 'Pre-Technical Studies', 
+                'Kiswahili', 'Integrated Science', 'Social Studies', 
+                'Agriculture', 'Religious Education', 'Creative Art'
+            ];
+            const subject = subjects[index];
+
+            if (!acc[subject]) {
+                acc[subject] = [];
+            }
+            acc[subject].push({ name: mark.learner, score });
+        });
+        return acc;
+    }, {});
+
+    for (const subject in rankings) {
+        rankings[subject].sort((a, b) => b.score - a.score);
+    }
+
+    // Function to determine performance level
+    function getPerformanceLevel(score) {
+        if (score >= 0 && score <= 25) return "Level 1 (BE)";
+        if (score >= 26 && score <= 49) return "Level 2 (AE)";
+        if (score >= 50 && score <= 75) return "Level 3 (ME)";
+        if (score >= 76 && score <= 100) return "Level 4 (EE)";
+        return "Invalid Score";
+    }
+
+    let rankingsHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Rankings</h3>`;
+    
+    for (const subject in rankings) {
+        rankingsHtml += `<h4 style="color: #2E86C1;">${subject}</h4>`;
+        rankingsHtml += `<table class="learners-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Name</th>
+                                    <th>Score</th>
+                                    <th>Performance Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+        rankings[subject].forEach((entry, index) => {
+            let level = getPerformanceLevel(entry.score);
+            rankingsHtml += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${entry.name}</td>
+                                <td>${entry.score}</td>
+                                <td>${level}</td>
+                            </tr>`;
+        });
+
+        rankingsHtml += `</tbody></table>`;
+    }
+
+    const reportDiv = document.getElementById("report");
+    reportDiv.innerHTML = rankingsHtml;
+}
      
-        }
-
-        function showSubjectRanking() {
-            const rankings = marks.reduce((acc, mark) => {
-                mark.scores.forEach((score, index) => {
-                    const subject = ['English', 'Mathematics', 'Pre-Technical Studies', 'Kiswahili', 'Integrated Science', 'Social Studies', 'Agriculture', 'Religious Education', 'Creative Art'][index];
-                    if (!acc[subject]) {
-                        acc[subject] = [];
-                    }
-                    acc[subject].push({ name: mark.learner, score });
-                });
-                return acc;
-            }, {});
-
-            for (const subject in rankings) {
-                rankings[subject].sort((a, b) => b.score - a.score);
-            }
-
-            let rankingsHtml = '<h3>Subject Rankings</h3>';
-            for (const subject in rankings) {
-                rankingsHtml += `<h4>${subject}</h4><table class="learners-table"><thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead><tbody>`;
-                rankings[subject].forEach((entry, index) => {
-                    rankingsHtml += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${entry.name}</td>
-                            <td>${entry.score}</td>
-                        </tr>
-                    `;
-                });
-                rankingsHtml += '</tbody></table>';
-            }
-
-            const reportDiv = document.getElementById("report");
-            reportDiv.innerHTML = rankingsHtml;
-        }
 
  function printSubjectChampions() {
     // Retrieve input values
@@ -4349,7 +4403,7 @@ function showSubjectChampions() {
                     <p>Term: ${term}</p>
                 </div>
                 ${championsHtml}
-                <div class="stamp">Nachu Junior Highschool<br>P.O BOX 561-00902 Kikuyu</div>
+                <div class="stamp">Nachu Junior School<br>P.O BOX 561-00902 Kikuyu</div>
             </body>
         </html>
     `);
@@ -4415,7 +4469,7 @@ function printSubjectRanking() {
                     <p>Term: ${term}</p>
                 </div>
                 ${rankingsHtml}
-                <div class="stamp">Nachu Junior Highschool<br>P.O BOX 561-00902 Kikuyu</div>
+                <div class="stamp">Nachu Junior school<br>P.O BOX 561-00902 Kikuyu</div>
             </body>
         </html>
     `);
