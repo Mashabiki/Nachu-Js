@@ -1407,6 +1407,9 @@ button {
 <button onclick="generateMeritList()" class="neon-button btn-ranking">
     <i class="fas fa-chart-line"></i> Get Merit List
 </button>
+<button onclick="toggleMeritList()" class="neon-button btn-toggle" id="toggleBtn">
+    <i class="fas fa-eye-slash"></i> Hide Merit List
+</button>
 
 <!-- Styled Print Button -->
 <button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
@@ -7376,6 +7379,18 @@ function printMeritList() {
     newWin.document.write("</body></html>");
     newWin.document.close();
     newWin.print();
+}
+function toggleMeritList() {
+    let meritList = document.getElementById("meritListContainer");
+    let toggleBtn = document.getElementById("toggleBtn");
+
+    if (meritList.style.display === "none") {
+        meritList.style.display = "block";
+        toggleBtn.innerHTML = `<i class="fas fa-eye-slash"></i> Hide Merit List`;
+    } else {
+        meritList.style.display = "none";
+        toggleBtn.innerHTML = `<i class="fas fa-eye"></i> Show Merit List`;
+    }
 }
 
 
