@@ -1374,19 +1374,19 @@ button {
   <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
     <i class="fas fa-arrow-left"></i> Back
   </button>
-<!-- Styled Merit List Selection -->
-<label for="gradeSelect" style="font-size: 18px; font-weight: bold; color: #4CAF50;">
+<!-- Merit List Selection -->
+<label for="gradeSelect" style="font-size: 14px; font-weight: bold; color: #4CAF50;">
     <i class="fas fa-list-ol"></i> <strong>Merit List Here:</strong>
 </label>
 
 <select id="gradeSelect" style="
-    padding: 10px;
-    font-size: 16px;
+    padding: 5px;
+    font-size: 12px;
     border: 2px solid #4CAF50;
     border-radius: 5px;
     background-color: #e8f5e9;
     color: #333;
-    margin-right: 10px;">
+    margin-right: 2px;">
     <option value="">--Select Grade--</option>
     <option value="7">Grade 7</option>
     <option value="7A">Grade 7A</option>
@@ -1402,29 +1402,23 @@ button {
     <option value="9C">Grade 9C</option>
 </select>
 
-
-<!-- Styled Get Merit List Button -->
+<!-- Merit List Control Buttons -->
 <button onclick="generateMeritList()" class="neon-button btn-ranking">
     <i class="fas fa-chart-line"></i> Get Merit List
 </button>
+
 <button onclick="toggleMeritList()" class="neon-button btn-toggle" id="toggleBtn">
     <i class="fas fa-eye-slash"></i> Hide Merit List
 </button>
 
-<!-- Styled Print Button -->
 <button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
     <i class="fas fa-print"></i> Print
 </button>
 
-<!-- Merit List Container -->
-<div id="meritListContainer" style="
-    display:none;
-    margin-top: 20px;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    overflow-x: auto;">
+
+
+<div id="meritListContainer" style="display:none; margin-top:20px;"></div>
+
 </div>
 
   </div>
