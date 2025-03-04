@@ -3420,13 +3420,16 @@ function removeLearner(index) {
 }
 function showSubjectPerformance() {
     const subjectScores = {};
+
     marks.forEach(mark => {
         mark.scores.forEach((score, index) => {
-            const subject = [
+            const subjects = [
                 'English', 'Mathematics', 'Pre-Technical Studies', 
                 'Kiswahili', 'Integrated Science', 'Social Studies', 
                 'Agriculture', 'Religious Education', 'Creative Art'
-            ][index];
+            ];
+            const subject = subjects[index];
+
             if (!subjectScores[subject]) {
                 subjectScores[subject] = { total: 0, count: 0 };
             }
@@ -3435,22 +3438,50 @@ function showSubjectPerformance() {
         });
     });
 
+    // Function to determine performance level
+    function getPerformanceLevel(score) {
+        if (score >= 0 && score <= 25) return "Level 1 (BE)";
+        if (score >= 26 && score <= 49) return "Level 2 (AE)";
+        if (score >= 50 && score <= 75) return "Level 3 (ME)";
+        if (score >= 76 && score <= 100) return "Level 4 (EE)";
+        return "Invalid Score";
+    }
+
     const meanScores = Object.keys(subjectScores).map(subject => {
         const mean = (subjectScores[subject].total / subjectScores[subject].count).toFixed(2);
-        return { subject, mean };
+        const level = getPerformanceLevel(mean); // Get performance level
+        return { subject, mean, level };
     }).sort((a, b) => b.mean - a.mean);
 
-    let performanceHtml = '<h3>Subject Performance</h3><table class="report-table"><thead><tr><th>No.</th><th>Subject</th><th>Mean Score</th></tr></thead><tbody>';
-    let number = 1; // Add numbering
-    meanScores.forEach(({ subject, mean }) => {
-        performanceHtml += `<tr><td>${number++}</td><td>${subject}</td><td>${mean}</td></tr>`;
-    });
-    performanceHtml += '</tbody></table>';
+    // Generate performance table
+    let performanceHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Performance</h3>`;
+    performanceHtml += `<table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Subject</th>
+                                    <th>Mean Score</th>
+                                    <th>Performance Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
 
-    const reportDiv = document.getElementById("report");
-    reportDiv.innerHTML = performanceHtml;
-     
-        }
+    let number = 1; // Add numbering
+    meanScores.forEach(({ subject, mean, level }) => {
+        performanceHtml += `<tr>
+                                <td>${number++}</td>
+                                <td>${subject}</td>
+                                <td>${mean}</td>
+                                <td>${level}</td>
+                            </tr>`;
+    });
+
+    performanceHtml += `</tbody></table>`;
+
+    // Display the subject performance report
+    document.getElementById("report").innerHTML = performanceHtml;
+}
+
 // Toggle visibility of the Registered Learners box
 function toggleRegisteredLearners() {
     const section = document.getElementById('registeredLearnersBox');
