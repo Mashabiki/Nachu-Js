@@ -1374,6 +1374,48 @@ button {
   <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
     <i class="fas fa-arrow-left"></i> Back
   </button>
+<!-- Styled Merit List Selection -->
+<label for="gradeSelect" style="font-size: 18px; font-weight: bold; color: #4CAF50;">
+    <i class="fas fa-list-ol"></i> <strong>Merit List Here:</strong>
+</label>
+
+<select id="gradeSelect" style="
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #4CAF50;
+    border-radius: 5px;
+    background-color: #e8f5e9;
+    color: #333;
+    margin-right: 10px;">
+    <option value="">--Select Grade--</option>
+    <option value="7A">Grade 7A</option>
+    <option value="7B">Grade 7B</option>
+    <option value="8A">Grade 8A</option>
+    <option value="8B">Grade 8B</option>
+    <option value="9A">Grade 9A</option>
+    <option value="9B">Grade 9B</option>
+</select>
+
+<!-- Styled Get Merit List Button -->
+<button onclick="generateMeritList()" class="neon-button btn-ranking">
+    <i class="fas fa-chart-line"></i> Get Merit List
+</button>
+
+<!-- Styled Print Button -->
+<button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
+    <i class="fas fa-print"></i> Print
+</button>
+
+<!-- Merit List Container -->
+<div id="meritListContainer" style="
+    display:none;
+    margin-top: 20px;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    overflow-x: auto;">
+</div>
 
   </div>
 </div>
@@ -7190,6 +7232,143 @@ function showCustomConfirm(message, onConfirm) {
         onConfirm();  // Call the actual delete function
         confirmBox.remove();  // Remove confirmation box
     });
+}
+function generateMeritList() {
+    let selectedGrade = document.getElementById("gradeSelect").value;
+
+    if (!selectedGrade) {
+        alert("Please select a grade.");
+        return;
+    }
+
+    let learnersTable = document.getElementById("learnersList");
+    if (!learnersTable) {
+        alert("Registered learners table not found.");
+        return;
+    }
+
+    let learners = [];
+    let rows = learnersTable.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+        if (cells.length > 0) {
+            let grade = cells[4].innerText.trim();
+            let name = cells[2].innerText.trim();
+            
+            if (grade === selectedGrade) {
+                learners.push(name);
+            }
+        }
+    }
+
+    if (learners.length === 0) {
+        alert("No learners found in the selected grade.");
+        return;
+    }
+
+    let meritListHTML = `
+        <div id="meritList" style="text-align: center; font-family: Arial, sans-serif;">
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="width: 80px; margin-right: 10px;">
+            </div>
+            <h2 style="margin: 5px 0; font-size: 20px; font-weight: bold;">Nachu Junior School Merit List</h2>
+            <p style="margin: 2px 0; font-size: 14px;"><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+            <p style="margin: 2px 0; font-size: 14px;"><strong>Phone: +254-700-123456</strong></p>
+            <p style="margin: 2px 0; font-size: 14px;"><strong>School Motto: "Excellence Through Knowledge"</strong></p>
+            <p style="margin: 5px 0; font-size: 16px;"><strong>Year: 2025</strong></p>
+            <p style="font-size: 16px; font-weight: bold; text-decoration: underline;">Grade: ${selectedGrade}</p>
+
+            <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; text-align: center; border: 2px solid black;">
+                <thead style="background-color: #f0f0f0; font-weight: bold;">
+                    <tr>
+                        <th>No.</th>
+                        <th>Learner</th>
+                        <th>Grade</th>
+                        <th>Eng</th><th>Lev</th>
+                        <th>Math</th><th>Lev</th>
+                        <th>Pre-Tech</th><th>Lev</th>
+                        <th>Kisw</th><th>Lev</th>
+                        <th>Scie</th><th>Lev</th>
+                        <th>Sst</th><th>Lev</th>
+                        <th>Agric</th><th>Lev</th>
+                        <th>Cre</th><th>Lev</th>
+                        <th>C/A</th><th>Lev</th>
+                        <th>Total Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    learners.forEach((learner, index) => {
+        meritListHTML += `
+            <tr>
+                <td style="border: 2px solid black;">${index + 1}</td>
+                <td style="border: 2px solid black;">${learner}</td>
+                <td style="border: 2px solid black;">${selectedGrade}</td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+       <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+                
+<td style="border: 2px solid black;"></td>
+            </tr>
+        `;
+    });
+
+    meritListHTML += `
+        <tr style="font-weight: bold;">
+            <td colspan="3" style="border: 2px solid black;">Totals</td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+       <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+              <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+        <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+       
+     <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            
+<td style="border: 2px solid black;"></td>
+        </tr>
+        <tr style="font-weight: bold;">
+            <td colspan="3" style="border: 2px solid black;">Averages</td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+       <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
+               
+<td style="border: 2px solid black;"></td>
+        </tr>
+        </tbody>
+        </table>
+        </div>
+        <button onclick="printMeritList()" id="printBtn" style="display:block; margin-top:10px;">Print</button>
+    `;
+
+    document.getElementById("meritListContainer").innerHTML = meritListHTML;
+    document.getElementById("meritListContainer").style.display = "block";
+}
+
+function printMeritList() {
+    let printContent = document.getElementById("meritList").innerHTML;
+    let newWin = window.open("", "", "width=900,height=650");
+    newWin.document.write("<html><head><title>Print Merit List</title></head><body>");
+    newWin.document.write(printContent);
+    newWin.document.write("</body></html>");
+    newWin.document.close();
+    newWin.print();
 }
 
 
