@@ -7146,14 +7146,26 @@ function printSubjectLevels() {
     newWindow.document.write(printContents);
     newWindow.document.close();
 }
-
 function groupLearnersByPathways() {
     const learnersTable = document.querySelector("#marksTableSection .report-table tbody");
     const learnersRows = Array.from(learnersTable.querySelectorAll("tr"));
     const resultsTable = document.querySelector("#pathwaysResultsTable tbody");
 
-    // Clear previous results
+    // Clear previous results from the main table
     resultsTable.innerHTML = "";
+
+    // Remove existing summary table if it exists
+    let existingSummary = document.getElementById("summaryTable");
+    if (existingSummary) {
+        existingSummary.parentNode.removeChild(existingSummary);
+    }
+
+    // Initialize summary counts for each pathway
+    const pathwayCounts = {
+        STEM: 0,
+        "Social Sciences": 0,
+        "Sports, Arts & Science": 0,
+    };
 
     learnersRows.forEach((row) => {
         const cells = row.querySelectorAll("td");
@@ -7175,7 +7187,7 @@ function groupLearnersByPathways() {
             "Creative Art": parseInt(cells[19].textContent.trim()) || 0,
         };
 
-        // Pathways and their subject associations
+        // Define pathways and their subject associations
         const pathways = {
             STEM: ["English", "Math", "Pre-technical Studies", "Kiswahili", "Integrated Science", "Agriculture"],
             "Social Sciences": ["Kiswahili", "English", "Social Studies", "Religious Education"],
@@ -7193,9 +7205,14 @@ function groupLearnersByPathways() {
         });
 
         // Determine the best pathway
-        const bestPathway = Object.keys(pathwayResults).reduce((a, b) => (pathwayResults[a] > pathwayResults[b] ? a : b));
+        const bestPathway = Object.keys(pathwayResults).reduce((a, b) =>
+            pathwayResults[a] > pathwayResults[b] ? a : b
+        );
 
-        // Append results to the results table
+        // Increase count for the selected best pathway
+        pathwayCounts[bestPathway]++;
+
+        // Append learner's result to the main results table
         const resultRow = document.createElement("tr");
         resultRow.innerHTML = `
             <td>${learnerName}</td>
@@ -7210,6 +7227,27 @@ function groupLearnersByPathways() {
         `;
         resultsTable.appendChild(resultRow);
     });
+
+    // Build the summary table HTML
+    const summaryHTML = `
+       <table id="summaryTable" border="1" cellspacing="0" cellpadding="5" style="width: 50%; margin: 10px auto; text-align: center; font-family: Arial, sans-serif;">
+           <thead>
+              <tr>
+                 <th>Pathway</th>
+                 <th>Number of Learners</th>
+              </tr>
+           </thead>
+           <tbody>
+              <tr><td>STEM</td><td>${pathwayCounts["STEM"]}</td></tr>
+              <tr><td>Social Sciences</td><td>${pathwayCounts["Social Sciences"]}</td></tr>
+              <tr><td>Sports, Arts & Science</td><td>${pathwayCounts["Sports, Arts & Science"]}</td></tr>
+           </tbody>
+       </table>
+    `;
+
+    // Insert the summary table after the main results table
+    const resultsSection = document.getElementById("resultsSection");
+    resultsSection.insertAdjacentHTML("beforeend", summaryHTML);
 }
 
 function togglePathwaysTable() {
@@ -7225,6 +7263,7 @@ function togglePathwaysTable() {
         toggleButton.innerHTML = `<i class="fas fa-chart-bar"></i> Group Learners by Pathways`;
     }
 }
+
 function printPathwayReport() {
     const resultsSection = document.getElementById("resultsSection");
     if (!resultsSection || resultsSection.style.display === "none") {
@@ -7232,17 +7271,8 @@ function printPathwayReport() {
         return;
     }
 
-    const reportContent = `
-        <div style="text-align: center; font-family: Arial, sans-serif;">
-            <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 100px; display: block; margin: 0 auto;">
-            <h2 style="margin: 5px 0;">Nachu Junior School Pathway Report</h2>
-            <p>P.O BOX 561-00902, KIKUYU, KENYA </p>
-            <p>Phone: +254-700-123456</p>
-            <p style="font-style: italic; font-weight: bold;">School Motto: "Excellence Through Knowledge"</p>
-            <p><strong>Year: 2025</strong></p>
-        </div>
-        <hr>
-
+    // Build the main results table HTML for printing
+    const mainTableHTML = `
         <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; text-align: center; font-family: Arial, sans-serif;">
             <thead>
                 <tr>
@@ -7266,7 +7296,27 @@ function printPathwayReport() {
         </table>
     `;
 
-    // Open print window
+    // Get the summary table HTML
+    const summaryTableHTML = document.getElementById("summaryTable").outerHTML;
+
+    // Combine header, main table, and summary table into the final report content
+    const reportContent = `
+        <div style="text-align: center; font-family: Arial, sans-serif;">
+            <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 100px; display: block; margin: 0 auto;">
+            <h2 style="margin: 5px 0;">Nachu Junior School Pathway Report</h2>
+            <p>P.O BOX 561-00902, KIKUYU, KENYA </p>
+            <p>Phone: +254-700-123456</p>
+            <p style="font-style: italic; font-weight: bold;">School Motto: "Excellence Through Knowledge"</p>
+            <p><strong>Year: 2025</strong></p>
+        </div>
+        <hr>
+        ${mainTableHTML}
+        <br>
+        <h3 style="text-align: center;">Pathway Summary</h3>
+        ${summaryTableHTML}
+    `;
+
+    // Open print window and include the complete report content
     const printWindow = window.open("", "", "width=900,height=600");
     printWindow.document.write(`
         <html>
@@ -7287,6 +7337,8 @@ function printPathwayReport() {
     `);
     printWindow.document.close();
 }
+
+
 function deleteMarksTable() {
     var tableElement = document.querySelector(".report-table"); // Find the table
     var marksHeader = document.getElementById("marksHeader"); // Find the header
