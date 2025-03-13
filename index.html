@@ -2025,14 +2025,39 @@ button {
 <!-- Table Section -->
 <div id="resultsSection" style="display: none; margin: 20px;">
     <h3>Career Pathways Results</h3>
+
+    <!-- Print Report Button -->
+    <button onclick="printPathwayReport()" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <i class="fas fa-print"></i> Print Career Pathway Report
+    </button>
+
+    <!-- Save Report Button -->
+    <button onclick="saveReport()" style="padding: 8px 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <i class="fas fa-save"></i> Save Report
+    </button>
+
+    <!-- View Saved Reports Button -->
+    <button onclick="viewSavedReports()" style="padding: 8px 12px; background: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <i class="fas fa-folder-open"></i> View Saved Reports
+    </button>
+
+    <!-- Select Grade for Full Report -->
+    <select id="selectFullReportGrade">
+        <option value="">Select Grade</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+        <option value="9">Grade 9</option>
+    </select>
+
+    <!-- View Full Career Report Button -->
+    <button onclick="viewFullYearReport()" style="padding: 8px 12px; background: #673AB7; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <i class="fas fa-chart-line"></i> View Full Report (Exam 1 - 6)
+    </button>
+
     <table id="pathwaysResultsTable" class="report-table">
         <thead>
             <tr>
-
-  <button onclick="printPathwayReport()" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
-    <i class="fas fa-print"></i> Print Career Pathway Report
-</button>
-              <th rowspan="2">Learner</th>
+                <th rowspan="2">Learner</th>
                 <th rowspan="2">Grade</th>
                 <th colspan="6">STEM Subjects</th>
                 <th colspan="4">Social Sciences Subjects</th>
@@ -2063,7 +2088,52 @@ button {
         </thead>
         <tbody></tbody>
     </table>
+
+    <!-- Saved Reports Section -->
+    <div id="savedReportsSection" style="display: none; margin-top: 20px;">
+        <h3>Saved Reports</h3>
+        <table id="savedReportsTable" class="report-table">
+            <thead></thead>
+            <tbody></tbody>
+<button id="printButton" onclick="printReport()" style="display:none;">Print Report</button>
+<select id="selectGrade">
+    <option value="">-- Select Grade --</option>
+    <option value="7">Grade 7</option>
+    <option value="8">Grade 8</option>
+    <option value="9">Grade 9</option>
+</select>
+<button onclick="viewSavedReports()">View Report</button>
+<button id="printButton" onclick="printReport()" style="display:none;">Print Report</button>
+
+        </table>
+    </div>
+
+    <!-- Full Career Pathway Report -->
+    <div id="fullReportSection" style="display: none; margin-top: 20px;">
+        <h3>Full Career Pathway Report (Exam 1 - 6)</h3>
+        <table id="fullReportTable" class="report-table">
+            <thead>
+                <tr>
+<button id="printButton" onclick="printReport()" style="display:none;">Print Report</button>
+
+                    <th>No.</th>
+                    <th>Learner Name</th>
+                    <th>Grade</th>
+                    <th>Exam 1</th>
+                    <th>Exam 2</th>
+                    <th>Exam 3</th>
+                    <th>Exam 4</th>
+                    <th>Exam 5</th>
+                    <th>Exam 6</th>
+                    <th>Best Career Pathway</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
+
+    
     <!-- Footer Section -->
     <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 5px 0; text-align: center;">
         <p>&copy; 2025 Nachu Junior School | All Rights Reserved</p>
@@ -9142,7 +9212,217 @@ function updateFilteredFeeRecords() {
     }
 }
 
+// Function to create a custom modal
+function showModal(message, type = "info", callback = null) {
+    let modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+    modal.style.padding = "20px";
+    modal.style.backgroundColor = "#fff";
+    modal.style.border = "2px solid #333";
+    modal.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
+    modal.style.textAlign = "center";
+    modal.style.zIndex = "10000";
+    modal.style.borderRadius = "10px";
 
-  </script>
-</body>
-</html>
+    let color = type === "error" ? "red" : type === "success" ? "green" : "#333";
+    let textColor = type === "error" ? "white" : "black";
+
+    modal.innerHTML = `
+        <p style="color: ${textColor}; font-weight: bold;">${message}</p>
+        <button id="closeModal" style="padding: 8px 15px; margin-top: 10px; background: ${color}; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById("closeModal").onclick = () => {
+        document.body.removeChild(modal);
+        if (callback) callback();
+    };
+}
+
+// Function to create a custom prompt
+function showPrompt(message, callback) {
+    let modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+    modal.style.padding = "20px";
+    modal.style.backgroundColor = "#fff";
+    modal.style.border = "2px solid #333";
+    modal.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
+    modal.style.textAlign = "center";
+    modal.style.zIndex = "10000";
+    modal.style.borderRadius = "10px";
+
+    modal.innerHTML = `
+        <p style="font-weight: bold;">${message}</p>
+        <input type="text" id="modalInput" style="padding: 8px; margin-bottom: 10px; width: 80%;"><br>
+        <button id="confirmPrompt" style="padding: 8px 15px; background: green; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+        <button id="cancelPrompt" style="padding: 8px 15px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Cancel</button>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById("confirmPrompt").onclick = () => {
+        let value = document.getElementById("modalInput").value.trim();
+        document.body.removeChild(modal);
+        callback(value);
+    };
+
+    document.getElementById("cancelPrompt").onclick = () => {
+        document.body.removeChild(modal);
+        callback(null);
+    };
+}
+
+// Function to save the report
+function saveReport() {
+    showPrompt("Enter Grade to Save Report:", (grade) => {
+        if (!grade) {
+            showModal("Grade is required.", "error");
+            return;
+        }
+
+        showPrompt("Enter Exam Number (1-6):", (examNumber) => {
+            if (!examNumber || examNumber < 1 || examNumber > 6) {
+                showModal("Invalid exam number.", "error");
+                return;
+            }
+
+            let table = document.getElementById("pathwaysResultsTable");
+            let rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            let savedData = JSON.parse(localStorage.getItem(`Career_Report_Grade${grade}`)) || {};
+
+            for (let i = 0; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName("td");
+                let learnerName = cells[0].innerText;
+                let bestPathway = cells[cells.length - 1].innerText; 
+
+                if (!savedData[learnerName]) {
+                    savedData[learnerName] = { grade: grade, exams: {}, pathwayCount: {} };
+                }
+
+                savedData[learnerName].exams[`Exam${examNumber}`] = bestPathway;
+
+                savedData[learnerName].pathwayCount[bestPathway] = 
+                    (savedData[learnerName].pathwayCount[bestPathway] || 0) + 1;
+            }
+
+            localStorage.setItem(`Career_Report_Grade${grade}`, JSON.stringify(savedData));
+            showModal(`Report saved successfully for Grade ${grade}, Exam ${examNumber}.`, "success");
+        });
+    });
+}
+
+// Function to view saved reports
+function viewSavedReports() {
+    showPrompt("Enter Grade to View Report:", (selectedGrade) => {
+        if (!selectedGrade) {
+            showModal("Please enter a valid grade.", "error");
+            return;
+        }
+
+        let allKeys = Object.keys(localStorage).filter(key => key.startsWith("Career_Report_Grade"));
+        let savedData = {};
+
+        // Loop through all saved reports and check if they belong to the selected grade
+        allKeys.forEach(key => {
+            let gradeFromKey = key.replace("Career_Report_Grade", ""); // Extract the stored grade (e.g., "7A")
+
+            if (gradeFromKey.startsWith(selectedGrade)) { // Include "7A", "7B", etc.
+                let reportData = JSON.parse(localStorage.getItem(key));
+                Object.assign(savedData, reportData); // Merge data from matching grades
+            }
+        });
+
+        if (Object.keys(savedData).length === 0) {
+            showModal(`No saved reports found for Grade ${selectedGrade}.`, "error");
+            return;
+        }
+
+        let savedReportsTable = document.getElementById("savedReportsTable");
+        let savedReportsSection = document.getElementById("savedReportsSection");
+        savedReportsSection.style.display = "block";
+
+        savedReportsTable.getElementsByTagName("thead")[0].innerHTML = "";
+        savedReportsTable.getElementsByTagName("tbody")[0].innerHTML = "";
+
+        let theadContent = `<tr>
+            <th>No.</th>
+            <th>Learner Name</th>
+            <th>Grade</th>
+            <th>Exam 1</th>
+            <th>Exam 2</th>
+            <th>Exam 3</th>
+            <th>Exam 4</th>
+            <th>Exam 5</th>
+            <th>Exam 6</th>
+            <th>Best Career Pathway</th>
+        </tr>`;
+        savedReportsTable.getElementsByTagName("thead")[0].innerHTML = theadContent;
+
+        let tbodyContent = "";
+        let counter = 1;
+
+        for (let learner in savedData) {
+            let exams = savedData[learner].exams;
+            let pathwayCount = savedData[learner].pathwayCount;
+
+            let bestPathway = Object.keys(pathwayCount).reduce((a, b) => pathwayCount[a] > pathwayCount[b] ? a : b, "");
+
+            tbodyContent += `<tr>
+                <td>${counter++}</td>
+                <td>${learner}</td>
+                <td>${savedData[learner].grade}</td>
+                <td>${exams.Exam1 || "-"}</td>
+                <td>${exams.Exam2 || "-"}</td>
+                <td>${exams.Exam3 || "-"}</td>
+                <td>${exams.Exam4 || "-"}</td>
+                <td>${exams.Exam5 || "-"}</td>
+                <td>${exams.Exam6 || "-"}</td>
+                <td><strong>${bestPathway}</strong></td>
+            </tr>`;
+        }
+
+        savedReportsTable.getElementsByTagName("tbody")[0].innerHTML = tbodyContent;
+        document.getElementById("printButton").style.display = "block";
+    });
+}
+
+
+function printReport() {
+    let reportContent = document.getElementById("savedReportsSection").innerHTML;
+
+    let originalContent = document.body.innerHTML; // Store original page content
+
+    document.body.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="school_logo_url_here" alt="School Logo" style="width: 100px; height: auto;"><br>
+            <h2>Nachu Junior School Compiled Pathway Report</h2>
+            <p>P.O BOX 561-00902, KIKUYU, KENYA</p>
+            <p>Phone: +254-700-123456</p>
+            <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
+            <p><strong>Year:</strong> 2025</p>
+        </div>
+
+        ${reportContent}
+    `;
+
+    window.print(); // Print the page
+
+    document.body.innerHTML = originalContent; // Restore original content after printing
+    location.reload(); // Reload page to prevent display issues
+}
+
+            
+                
+                </script>
+            </body>
+            </html>
+     
+
