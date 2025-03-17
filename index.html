@@ -968,7 +968,7 @@ button {
         <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" class="logo-img">
     </div>
    <h1>RASM School Management System</h1>
-<p style="color: red; font-weight: bold;">Nachu Junior  School </p>
+<p style="color: red; font-weight: bold;">NACHU COMPREHENSIVE SCHOOL </p>
     <form id="loginForm">
         <input type="text" id="username" placeholder="Username" required><br><br>
         <input type="password" id="password" placeholder="Password" required><br><br>
@@ -1004,7 +1004,7 @@ button {
         <h1>Welcome To Rasm School Automation Management System</h1>
 <p style="color: red; font-weight: bold;">Your Gateway To Smooth And Efficient School Management </p>
     </div>
-<p style="color: red; font-weight: bold;">Nachu Junior  School </p>
+<p style="color: red; font-weight: bold;">NACHU COMPREHENSIVE SCHOOL</p>
 </header>
 <button class="btn-yellow" onclick="toggleSection('registerLearnerSection')">
         <span class="material-icons">person_add</span> Register Learner
@@ -1153,45 +1153,50 @@ button {
   </div>
 
   <!-- Fee Summary Table Container (Wrapped with Grade Filter) -->
-  <div id="feeSummaryTableContainer" style="display: none; text-align: center; padding: 20px; width: 100%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
-    <h2 style="margin-bottom: 10px; color: #333;">Fee Summary</h2>
+<div id="feeSummaryTableContainer" style="display: none; text-align: center; padding: 20px; width: 100%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
+    <h2 style="margin-bottom: 10px; color: #333;">Fee Records</h2>
+
+    <!-- Search Learner -->
+    <input type="text" id="searchLearnerFee" onkeyup="searchLearnerFee()" placeholder="Search for learner..." 
+    style="margin-bottom: 10px; padding: 8px; width: 250px; border: 1px solid #ccc; border-radius: 5px; text-align: center;">
+
     <!-- Grade Filter -->
     <label for="gradeFilter"><strong>Filter by Grade:</strong></label>
     <select id="gradeFilter" onchange="filterFeeRecords()">
-      <option value="">All Grades</option>
-      <option value="1">Grade 1</option>
-      <option value="2">Grade 2</option>
-      <option value="3">Grade 3</option>
-      <option value="4">Grade 4</option>
-      <option value="5">Grade 5</option>
-      <option value="6">Grade 6</option>
-      <option value="7">Grade 7</option>
-      <option value="8">Grade 8</option>
-      <option value="9">Grade 9</option>
+        <option value="">All Grades</option>
+        <option value="1">Grade 1</option>
+        <option value="2">Grade 2</option>
+        <option value="3">Grade 3</option>
+        <option value="4">Grade 4</option>
+        <option value="5">Grade 5</option>
+        <option value="6">Grade 6</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+        <option value="9">Grade 9</option>
     </select>
-    <table class="learners-table" id="feeSummaryTable" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-      <thead>
-        <tr style="background: #4CAF50; color: white;">
 
-         <th>No</th>
-          <th>Learner Name</th>
-          <th>Grade</th>
-          <th>Security Fee</th>
-          <th>BOM Fee</th>
-          <th>Tuition Fee</th>
-          <th>Exam 1 Fee</th>
-          <th>Exam 2 Fee</th>
-          <th>Exam 3 Fee</th>
-          <th>Activity Fee</th>
-          <th>Constant Fee</th>
-          <th>Total Paid</th>
-          <th>Total Balance</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="feeSummaryTableBody"></tbody>
+    <table class="learners-table" id="feeSummaryTable" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="background: #4CAF50; color: white;">
+                <th>No</th>
+                <th>Learner Name</th>
+                <th>Grade</th>
+                <th>Security Fee</th>
+                <th>BOM Fee</th>
+                <th>Tuition Fee</th>
+                <th>Exam 1 Fee</th>
+                <th>Exam 2 Fee</th>
+                <th>Exam 3 Fee</th>
+                <th>Activity Fee</th>
+                <th>Constant Fee</th>
+                <th>Total Paid</th>
+                <th>Total Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="feeSummaryTableBody"></tbody>
     </table>
-  </div>
+</div>
 
   <!-- Receipt Container -->
   <div id="receiptContainer" style="display: none; text-align: center; border-radius: 10px; padding: 20px; width: 60%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); font-family: 'Arial', sans-serif;">
@@ -1199,8 +1204,8 @@ button {
     <div style="display: flex; align-items: center; justify-content: center;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 80px; margin-right: 10px;">
       <div style="text-align: left;">
-        <h2 style="margin: 0;">Nachu Comprehensive  School</h2>
-        <p style="margin: 2px; font-size: 14px; color: #555;">P.O BOX 561-00902, Kikuyu, Kenya</p>
+        <h2 style="margin: 0;">NACHU COMPREHENSIVE SCHOOL</h2>
+        <p style="margin: 2px; font-size: 14px; color: #555;">561-00902 Kikuyu, Kenya</p>
         <p style="margin: 2px; font-size: 14px; color: #555;">Phone: +254-700-123456</p>
       </div>
     </div>
@@ -1232,8 +1237,8 @@ button {
     <p style="font-weight: bold; color: green;">Amount Paid: KSH <span id="receiptPaid"></span></p>
     <p style="font-weight: bold; color: red;">Balance: KSH <span id="receiptBalance"></span></p>
     <!-- Official Stamp -->
-    <div style="border: 2px solid blue; color: blue; width: 150px; height: 50px; margin: 15px auto; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center;">
-      Nachu Comprehensive School 
+    <div style="border: 2px solid blue; color: blue; width: 150px; height: 80px; margin: 15px auto; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+      NACHU COMPREHENSIVE SCHOOL 
     </div>
     <!-- Authorized Signature -->
     <div style="text-align: left; margin-top: 30px; font-size: 14px;">
@@ -1256,8 +1261,8 @@ button {
     <div style="display: flex; align-items: center; justify-content: center;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 80px; margin-right: 10px;">
       <div style="text-align: left;">
-        <h2 style="margin: 0;">Nachu Junior School</h2>
-        <p style="margin: 2px; font-size: 14px; color: #555;">P.O BOX 123, Nairobi, Kenya</p>
+        <h2 style="margin: 0;">NACHU COMPREHENSIVE SCHOOL </h2>
+        <p style="margin: 2px; font-size: 14px; color: #555;">561-00902 Kikuyu, Kenya</p>
         <p style="margin: 2px; font-size: 14px; color: #555;">Phone: +254-700-123456</p>
         <p style="margin: 2px; font-size: 14px; color: #555;"><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
         <p style="margin: 2px; font-size: 14px; color: #555;"><strong>Year:</strong> <span id="currentYear"></span></p>
@@ -1297,8 +1302,8 @@ button {
     <!-- School Header -->
     <div style="text-align: center; margin-bottom: 10px;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 80px; margin-bottom: 5px;">
-      <h2 style="margin: 0; color: #4CAF50;">Nachu Junior School</h2>
-      <p style="margin: 2px; font-size: 14px;">P.O BOX 123, Nairobi, Kenya</p>
+      <h2 style="margin: 0; color: #4CAF50;">NACHU COMPREHENSIVE SCHOOL </h2>
+      <p style="margin: 2px; font-size: 14px;">P.O BOX 886-01000, THIKA, Kenya</p>
       <p style="margin: 2px; font-size: 14px;">Phone: +254-700-123456</p>
       <p style="margin: 2px; font-size: 14px; font-weight: bold;">School Motto: "Excellence Through Knowledge"</p>
       <h3 style="margin-top: 10px; color: #333;">Year: 2025</h3>
@@ -1331,7 +1336,7 @@ button {
   </div>
 </div>
 <div id="customAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 300px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
-  Fee details deleted  successfully!
+  Fee details submitted  successfully!
 </div>
 <div id="archiveAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #0288d1; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 300px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
   Archived successfully!
@@ -1349,27 +1354,29 @@ button {
   Fees table for <span id="successYear"></span> archived successfully!
 </div>
 
-
-
 <!-- Summary Table Container (Initially Hidden) -->
 <div id="feeSummaryContainer" style="display: none; margin-top: 20px;"></div>
 <!-- Defaulters List Container -->
 <div id="defaultersTableContainer" style="display: none; text-align: center; padding: 20px; width: 80%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
     <h2 style="background: red; color: white; padding: 10px;">Defaulters List</h2>
-    
+
+    <!-- Search Learner -->
+    <input type="text" id="searchDefaulter" onkeyup="searchDefaulter()" placeholder="Search for learner..." 
+    style="margin-bottom: 10px; padding: 8px; width: 250px; border: 1px solid #ccc; border-radius: 5px; text-align: center;">
+
     <!-- Grade Filter -->
     <label for="gradeFilter"><strong>Filter by Grade:</strong></label>
     <select id="gradeFilter" onchange="generateDefaultersList()">
-      <option value="">All Grades</option>
-      <option value="1">Grade 1</option>
-      <option value="2">Grade 2</option>
-      <option value="3">Grade 3</option>
-      <option value="4">Grade 4</option>
-      <option value="5">Grade 5</option>
-      <option value="6">Grade 6</option>
-      <option value="7">Grade 7</option>
-      <option value="8">Grade 8</option>
-      <option value="9">Grade 9</option>
+        <option value="">All Grades</option>
+        <option value="1">Grade 1</option>
+        <option value="2">Grade 2</option>
+        <option value="3">Grade 3</option>
+        <option value="4">Grade 4</option>
+        <option value="5">Grade 5</option>
+        <option value="6">Grade 6</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+        <option value="9">Grade 9</option>
     </select>
 
     <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
@@ -1389,6 +1396,7 @@ button {
         <i class="fas fa-print"></i> Print Defaulters List
     </button>
 </div>
+
 
 
    
@@ -1468,6 +1476,10 @@ button {
   <button onclick="promoteLearners()" class="neon-button">
     <i class="fas fa-arrow-up"></i> Promote Learners to Next Grade
   </button>
+<!-- Undo Promotion Button -->
+<button onclick="undoPromotion()" class="neon-button neon-red">
+    <i class="fas fa-undo"></i> Undo Promotion
+</button>
   <button onclick="groupLearnersByGender()" class="neon-button">
     <i class="fas fa-transgender-alt"></i> Group by Gender
   </button>
@@ -2136,7 +2148,7 @@ button {
     
     <!-- Footer Section -->
     <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 5px 0; text-align: center;">
-        <p>&copy; 2025 Nachu Junior School | All Rights Reserved</p>
+        <p>&copy; 2025 NACHU COMPREHENSIVE SCHOOL | All Rights Reserved</p>
     </footer>
 </body>
    
@@ -4023,7 +4035,7 @@ function printSubjectPerformance() {
                     <p>Term: ${term}</p>
                 </div>
                 ${performanceHtml}
-                <div class="stamp">Nachu Junior Highschool<br>P.O BOX 561-00902 Kikuyu</div>
+                <div class="stamp">NACHU JUNIOR SCHOOL JUNIOR  SCHOOL<br>561-00902 Kikuyu</div>
             </body>
         </html>
     `);
@@ -4090,8 +4102,8 @@ function generateBulkReports() {
                     <div style="clear:both; padding-bottom:10px;">
                         ${schoolLogo}
                         <div style="margin-left:110px;">
-                            <h2 style="margin:0; font-size:20px;"> NACHU JUNIOR SCHOOL ASSESMENT REPORT</h2>
-                            <h3 style="margin:0; font-size:16px;">P.O BOX 561-00902 Kikuyu</h3>
+                            <h2 style="margin:0; font-size:20px;"> NACHU JUNIOR SCHOOL  ASSESMENT REPORT</h2>
+                            <h3 style="margin:0; font-size:16px;">561-00902 Kikuyu</h3>
                             <h4 style="margin:0; font-size:14px;">Ministry Of Education Science And Technology</h4>
                         </div>
                     </div>
@@ -4145,8 +4157,8 @@ function generateBulkReports() {
                         Class Teacher Signature: ${details.classTeacherSignature || '_____________'}<br>
                         Principal Signature: ${details.principalSignature || '_____________'}<br>
                         Official Stamp: <div class="stamp">
-                             Nachu Junior  School <br>
-                            P.O BOX 561-00902 Kikuyu<br>
+                             Nacho Junior  School <br>
+                            561-00902 Kikuyu<br>
                             Date: ${formattedDate}<br>
                         </div>
                     </div>
@@ -4329,7 +4341,6 @@ function getPerformanceLevel(totalMarks) {
             if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding expectations";
             return "";
 }
-
 function printAssessmentReport() {
     const selectedLearnerName = document.getElementById("learnerSelect").value;
     const learner = learners.find(l => l.name === selectedLearnerName);
@@ -4364,14 +4375,19 @@ function printAssessmentReport() {
                     .stamp {
                         border: 2px solid blue;
                         color: blue;
-                        width: 150px;
-                        height: 62px;
+                        width: 160px;
+                        height: 60px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        margin: 20px auto;
+                        margin: 10px auto;
                         text-align: center;
                         font-weight: bold;
+                        page-break-inside: avoid;
+                        page-break-before: avoid;
+                        page-break-after: avoid;
+                        position: relative;
+                        display: inline-block;
                     }
                     @media print {
                         body {
@@ -4379,28 +4395,25 @@ function printAssessmentReport() {
                             line-height: 1.5;
                         }
                         .stamp {
-                            page-break-inside: avoid;
+                            position: relative;
+                            bottom: 0;
                         }
                     }
                 </style>
             </head>
             <body>
-                <!-- Only include the photo if it exists -->
-                ${
-                  learner && learner.photo
-                    ? `<div class="learner-photo-container">
-                        <img src="${learner.photo}" alt="Learner Photo" class="learner-photo" style="width:70px; height:70px; object-fit:cover; border-radius:50%; border:1px solid #ccc;">
-                      </div>`
-                    : ''
+                ${learner && learner.photo ? `
+                    <div class="learner-photo-container" style="text-align: center; margin-bottom: 10px;">
+                        <img src="${learner.photo}" alt="Learner Photo" class="learner-photo" 
+                            style="width:70px; height:70px; object-fit:cover; border-radius:50%; border:1px solid #ccc;">
+                    </div>` : ''
                 }
 
-                <!-- Main Assessment Report Content -->
-                ${assessmentReportHtml}
+                <div>${assessmentReportHtml}</div>
 
-                <!-- Stamp Section -->
                 <div class="stamp">
-                    Nachu Junior High School <br>
-                    P.O BOX 561-00902 Kikuyu
+                   NACHU COMPREHENSIVE SCHOOL <br>
+                   561-00902 Kikuyu
                 </div>
             </body>
         </html>
@@ -4602,7 +4615,7 @@ function printAssessmentReport() {
                         </tbody>
                     </table>
                     <!-- Append the stamp after printing the table -->
-                    <div class="stamp">Nachu Junior  School<br>P.O BOX 561-00902 Kikuyu</div>
+                    <div class="stamp">NACHU COMPREHENSIVE SCHOOL<br>561-00902 Kikuyu</div>
                 </body>
             </html>
         `);
@@ -4829,7 +4842,7 @@ function showSubjectChampions() {
                     <p>Term: ${term}</p>
                 </div>
                 ${championsHtml}
-                <div class="stamp">Nachu Junior School<br>P.O BOX 561-00902 Kikuyu</div>
+                <div class="stamp">NACHU COMPREHENSIVE SCHOOL<br>561-00902 Kikuyu</div>
             </body>
         </html>
     `);
@@ -4895,7 +4908,7 @@ function printSubjectRanking() {
                     <p>Term: ${term}</p>
                 </div>
                 ${rankingsHtml}
-                <div class="stamp">Nachu Junior school<br>P.O BOX 561-00902 Kikuyu</div>
+                <div class="stamp">NACHU COMPREHENSIVE SCHOOL<br>561-00902 Kikuyu</div>
             </body>
         </html>
     `);
@@ -5338,7 +5351,7 @@ const footer = document.getElementById("footer");
 // Ensure reportDiv is before footer
 footer.parentNode.insertBefore(reportDiv, footer);
 
- const schoolEmail = "info@nachujunior.com"; // School email address
+ const schoolEmail = "info@QUEENOFROSARYCOMPREHENSIVESCHOOL.com"; // School email address
 function registerSupportStaff() {
     const fields = {
         staffId: document.getElementById("supportStaffId").value,
@@ -5460,7 +5473,7 @@ function showFeedbackMessage(message, type = "success") {
         const idCardHtml = `
             <div class="id-card">
                 <div class="header">
-                    <h1>Nachu Junior School</h1>
+                    <h1> Nachu Junior School </h1>
                     <p class="school-tagline">"Excellence and Integrity"</p>
                 </div>
                 <div class="id-card-content">
@@ -5528,7 +5541,7 @@ function showFeedbackMessage(message, type = "success") {
                 <body>
                     <div class="id-card">
                         <div class="header">
-                            <h1>Nachu Junior School</h1>
+                            <h1>NACHU COMPREHENSIVE SCHOOL</h1>
                             <p class="school-tagline">"Excellence and Integrity"</p>
                         </div>
                         <div class="id-card-content">
@@ -5698,9 +5711,13 @@ document.getElementById("marksForm").addEventListener("submit", function (e) {
     // Reset the form
     this.reset();
 });
+// Object to store original grades before promotion
+let previousGrades = {};
+
+// Function to promote learners
 function promoteLearners() {
     console.log("Starting promotion process...");
-    
+
     // Check if learners data exists
     if (!learners || learners.length === 0) {
         console.error("Learners data is not available.");
@@ -5711,12 +5728,18 @@ function promoteLearners() {
     // Iterate through learners and promote eligible ones
     learners.forEach((learner, index) => {
         console.log(`Processing learner: ${learner.name}, Grade: ${learner.grade}`);
+
         const gradeMatch = learner.grade.match(/^(\d+)([A-Z]*)$/);
         if (gradeMatch) {
             const currentGrade = parseInt(gradeMatch[1]);
             const stream = gradeMatch[2];
             console.log(`Current Grade: ${currentGrade}, Stream: ${stream}`);
-            
+
+            // Store the original grade before promotion
+            if (!previousGrades[learner.name]) {
+                previousGrades[learner.name] = learner.grade;
+            }
+
             // Promote learners in grades 7, 8, and 9
             if (currentGrade >= 7 && currentGrade <= 9) {
                 const newGrade = (currentGrade + 1) + stream;
@@ -5742,12 +5765,42 @@ function promoteLearners() {
         promotionMessage.style.display = 'block';
         setTimeout(() => {
             promotionMessage.style.display = 'none';
-        }, 3000); // Hide after 3 seconds
+        }, 3000);
     } else {
         alert("Eligible learners have been promoted to the next grade!");
     }
 }
 
+// Function to undo promotion
+function undoPromotion() {
+    console.log("Undoing promotion...");
+
+    if (Object.keys(previousGrades).length === 0) {
+        alert("No previous promotion records found!");
+        return;
+    }
+
+    // Iterate and revert grades
+    learners.forEach(learner => {
+        if (previousGrades[learner.name]) {
+            learner.grade = previousGrades[learner.name]; // Restore original grade
+            console.log(`Reverted ${learner.name} to ${learner.grade}`);
+        }
+    });
+
+    // Update storage and UI
+    if (useIndexedDB) {
+        saveLearnersToIndexedDB();
+    } else {
+        saveLearnersToLocalStorage();
+    }
+    updateLearnersTable();
+
+    // Clear the stored previous grades
+    previousGrades = {};
+
+    alert("Promotion undone successfully!");
+}
 // Helper to detect storage type
 const useIndexedDB = window.indexedDB ? true : false;
 
@@ -5985,7 +6038,7 @@ function displayMessage() {
                     </style>
                 </head>
                 <body>
-                    <h1>Support Staff List - Nachu Junior School</h1>
+                    <h1>Support Staff List -Nachu Junior School  </h1>
                     <table>
                         <thead>
                             <tr>
@@ -6149,6 +6202,7 @@ document.addEventListener("DOMContentLoaded", function() {
     initializeStorage(); // Ensure storage is initialized
     loadMarks(); // Load marks from storage
 });
+
 function generateGenderPerformance() {
     const marksTableBody = document.getElementById("marksList");
     const learnersTableBody = document.getElementById("learnersList");
@@ -6158,47 +6212,50 @@ function generateGenderPerformance() {
         return;
     }
 
-    // Fetch values from the Champions Form
-    const schoolName = document.getElementById("schoolName")?.value || "N/A";
-    const gradeLevel = document.getElementById("gradeLevel")?.value || "N/A";
-    const year = document.getElementById("year")?.value || "N/A";
-    const term = document.getElementById("term")?.value || "N/A";
-
-    // Extract learners and their genders
+    // Extract learners' details (Name, Gender)
     const learners = Array.from(learnersTableBody.querySelectorAll("tr")).map(row => {
         const cells = row.querySelectorAll("td");
         return {
-            name: cells[2]?.textContent.trim(), // Assuming Name is the 3rd column
-            gender: cells[3]?.textContent.trim().toLowerCase(), // Assuming Gender is the 4th column
+            name: cells[2]?.textContent.trim(),
+            gender: cells[3]?.textContent.trim().toLowerCase(),
         };
     });
 
-    // Extract marks data
+    // Extract marks data exactly as recorded
     const marks = Array.from(marksTableBody.querySelectorAll("tr")).map(row => {
         const cells = row.querySelectorAll("td");
-        const learnerName = cells[1]?.textContent.trim(); // Assuming Learner Name is the 2nd column
-        const totalMarks = parseInt(cells[cells.length - 2]?.textContent.trim()) || 0; // Assuming Total Marks is second-last column
-        return { learner: learnerName, totalMarks };
+        return {
+            learner: cells[1]?.textContent.trim(),
+            grade: cells[2]?.textContent.trim(),
+            english: parseInt(cells[3]?.textContent.trim()) || 0,
+            englishLevel: cells[4]?.textContent.trim() || "-",
+            math: parseInt(cells[5]?.textContent.trim()) || 0,
+            mathLevel: cells[6]?.textContent.trim() || "-",
+            preTech: parseInt(cells[7]?.textContent.trim()) || 0,
+            preTechLevel: cells[8]?.textContent.trim() || "-",
+            kiswahili: parseInt(cells[9]?.textContent.trim()) || 0,
+            kiswahiliLevel: cells[10]?.textContent.trim() || "-",
+            science: parseInt(cells[11]?.textContent.trim()) || 0,
+            scienceLevel: cells[12]?.textContent.trim() || "-",
+            social: parseInt(cells[13]?.textContent.trim()) || 0,
+            socialLevel: cells[14]?.textContent.trim() || "-",
+            agriculture: parseInt(cells[15]?.textContent.trim()) || 0,
+            agricultureLevel: cells[16]?.textContent.trim() || "-",
+            religion: parseInt(cells[17]?.textContent.trim()) || 0,
+            religionLevel: cells[18]?.textContent.trim() || "-",
+            art: parseInt(cells[19]?.textContent.trim()) || 0,
+            artLevel: cells[20]?.textContent.trim() || "-",
+            totalMarks: parseInt(cells[cells.length - 2]?.textContent.trim()) || 0
+        };
     });
 
-    // Function to determine performance level based on total marks
-    function getPerformanceLevel(totalMarks) {
-        if (totalMarks >= 1 && totalMarks <= 225) return "Below Expectations (1)";
-        if (totalMarks >= 226 && totalMarks <= 449) return "Approaching Expectations (2)";
-        if (totalMarks >= 450 && totalMarks <= 675) return "Meeting Expectations (3)";
-        if (totalMarks >= 676 && totalMarks <= 900) return "Exceeding Expectations (4)";
-        return "Invalid Score";
-    }
-
     // Group marks by gender
-    const genderPerformance = {
-        Male: [],
-        Female: [],
-    };
+    const genderPerformance = { Male: [], Female: [] };
 
     marks.forEach(markEntry => {
-        const learner = learners.find(learner => learner.name === markEntry.learner);
+        const learner = learners.find(l => l.name === markEntry.learner);
         if (learner) {
+            markEntry.gender = learner.gender;
             if (learner.gender === "male") {
                 genderPerformance.Male.push(markEntry);
             } else if (learner.gender === "female") {
@@ -6207,168 +6264,135 @@ function generateGenderPerformance() {
         }
     });
 
-    // Sort each group by total marks (descending)
-    const sortPerformance = (data) => data.sort((a, b) => b.totalMarks - a.totalMarks);
+    // Sort learners within each gender by total marks (Descending order)
+    genderPerformance.Male.sort((a, b) => b.totalMarks - a.totalMarks);
+    genderPerformance.Female.sort((a, b) => b.totalMarks - a.totalMarks);
 
-    sortPerformance(genderPerformance.Male);
-    sortPerformance(genderPerformance.Female);
+    // Function to calculate correct totals and averages
+    function calculateSubjectStats(data) {
+        let totals = {
+            english: 0, math: 0, preTech: 0, kiswahili: 0, science: 0,
+            social: 0, agriculture: 0, religion: 0, art: 0, totalMarks: 0
+        };
 
-    // Ensure data exists
-    if (genderPerformance.Male.length === 0 && genderPerformance.Female.length === 0) {
-        alert("No learners with recorded marks found in the system.");
-        return;
+        data.forEach(entry => {
+            totals.english += entry.english;
+            totals.math += entry.math;
+            totals.preTech += entry.preTech;
+            totals.kiswahili += entry.kiswahili;
+            totals.science += entry.science;
+            totals.social += entry.social;
+            totals.agriculture += entry.agriculture;
+            totals.religion += entry.religion;
+            totals.art += entry.art;
+            totals.totalMarks += entry.totalMarks;
+        });
+
+        let count = data.length;
+        let averages = count > 0 ? {
+            english: (totals.english / count).toFixed(1),
+            math: (totals.math / count).toFixed(1),
+            preTech: (totals.preTech / count).toFixed(1),
+            kiswahili: (totals.kiswahili / count).toFixed(1),
+            science: (totals.science / count).toFixed(1),
+            social: (totals.social / count).toFixed(1),
+            agriculture: (totals.agriculture / count).toFixed(1),
+            religion: (totals.religion / count).toFixed(1),
+            art: (totals.art / count).toFixed(1),
+            totalMarks: (totals.totalMarks / count).toFixed(1)
+        } : totals;
+
+        return { totals, averages };
     }
 
-    // Create HTML for each gender group
-    const createPerformanceTable = (data, gender) => {
+    // Function to generate performance tables
+    function createPerformanceTable(data, gender) {
         if (data.length === 0) return `<h3>No ${gender} learners with recorded marks.</h3>`;
 
+        let { totals, averages } = calculateSubjectStats(data);
+
         let tableHtml = `
-            <h3>${gender} Performance</h3>
-            <table class="report-table">
+            <h2 style="color: ${gender === "Male" ? "blue" : "purple"}; text-align: center;">
+                ${gender} Performance Report
+            </h2>
+            <table border="1" style="width:100%; border-collapse: collapse;">
                 <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Total Marks</th>
-                        <th>Performance Level</th>
+                    <tr style="background: #4CAF50; color: white;">
+                        <th>Name</th><th>Grade</th>
+                        <th>English</th><th>Level</th><th>Math</th><th>Level</th>
+                        <th>Pre-Tech</th><th>Level</th><th>Kiswahili</th><th>Level</th>
+                        <th>Science</th><th>Level</th><th>Social</th><th>Level</th>
+                        <th>Agriculture</th><th>Level</th><th>Religion</th><th>Level</th>
+                        <th>Creative Art</th><th>Level</th><th>Total Marks</th>
                     </tr>
                 </thead>
                 <tbody>
         `;
 
-        data.forEach((entry, index) => {
-            let level = getPerformanceLevel(entry.totalMarks);
+        data.forEach(entry => {
             tableHtml += `
                 <tr>
-                    <td>${index + 1}</td>
-                    <td>${entry.learner}</td>
-                    <td>${entry.totalMarks}</td>
-                    <td>${level}</td>
+                    <td>${entry.learner}</td><td>${entry.grade}</td>
+                    <td>${entry.english}</td><td>${entry.englishLevel}</td>
+                    <td>${entry.math}</td><td>${entry.mathLevel}</td>
+                    <td>${entry.preTech}</td><td>${entry.preTechLevel}</td>
+                    <td>${entry.kiswahili}</td><td>${entry.kiswahiliLevel}</td>
+                    <td>${entry.science}</td><td>${entry.scienceLevel}</td>
+                    <td>${entry.social}</td><td>${entry.socialLevel}</td>
+                    <td>${entry.agriculture}</td><td>${entry.agricultureLevel}</td>
+                    <td>${entry.religion}</td><td>${entry.religionLevel}</td>
+                    <td>${entry.art}</td><td>${entry.artLevel}</td>
+                    <td><strong>${entry.totalMarks}</strong></td>
                 </tr>
             `;
         });
 
-        tableHtml += `</tbody></table>`;
+       // Add totals row
+tableHtml += `
+    <tr style="background: yellow; font-weight: bold;">
+        <td colspan="2">Totals</td>
+        <td>${totals.english}</td><td>-</td>
+        <td>${totals.math}</td><td>-</td>
+        <td>${totals.preTech}</td><td>-</td>
+        <td>${totals.kiswahili}</td><td>-</td>
+        <td>${totals.science}</td><td>-</td>
+        <td>${totals.social}</td><td>-</td>
+        <td>${totals.agriculture}</td><td>-</td>
+        <td>${totals.religion}</td><td>-</td>
+        <td>${totals.art}</td><td>-</td>
+        <td><strong>${totals.totalMarks}</strong></td>
+    </tr>
+`;
 
-        return tableHtml;
-    };
+// Add averages row
+tableHtml += `
+    <tr style="background: lightblue; font-weight: bold;">
+        <td colspan="2">Averages</td>
+        <td>${averages.english}</td><td>-</td>
+        <td>${averages.math}</td><td>-</td>
+        <td>${averages.preTech}</td><td>-</td>
+        <td>${averages.kiswahili}</td><td>-</td>
+        <td>${averages.science}</td><td>-</td>
+        <td>${averages.social}</td><td>-</td>
+        <td>${averages.agriculture}</td><td>-</td>
+        <td>${averages.religion}</td><td>-</td>
+        <td>${averages.art}</td><td>-</td>
+        <td><strong>${averages.totalMarks}</strong></td>
+    </tr>
+`;
 
-    // Display results
-    const reportDiv = document.getElementById("report");
-    reportDiv.innerHTML = `
-        <div>
-            <h2>Gender Performance Report</h2>
-            <p><strong>School:</strong> ${schoolName}</p>
-            <p><strong>Grade:</strong> ${gradeLevel}</p>
-            <p><strong>Year:</strong> ${year}</p>
-            <p><strong>Term:</strong> ${term}</p>
-        </div>
+tableHtml += `</tbody></table><br><br>`;
+return tableHtml;
+
+    }
+
+    document.getElementById("report").innerHTML = `
         ${createPerformanceTable(genderPerformance.Male, "Male")}
         ${createPerformanceTable(genderPerformance.Female, "Female")}
-        <button onclick="printReport()" class="btn-print">Print Report</button>
     `;
 }
 
 
-// Function to print the report
-function printReport() {
-    const reportDiv = document.getElementById("report");
-    const printContent = reportDiv.innerHTML;
-
-    // URL or base64 string of your logo
-    const logoUrl = " https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
-
-    const printWindow = window.open("", "_blank", "width=800,height=600");
-    printWindow.document.open();
-    printWindow.document.write(`
-        <html>
-        <head>
-            <title>Gender Performance Report</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 20px;
-                }
-                h2, h3 {
-                    text-align: center;
-                }
-                .report-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 20px;
-                }
-                .report-table th, .report-table td {
-                    border: 1px solid #000;
-                    padding: 8px;
-                    text-align: center;
-                }
-                .report-table th {
-                    background-color: #f2f2f2;
-                    font-weight: bold;
-                }
-                p {
-                    margin: 5px 0;
-                    text-align: center;
-                }
-                .logo {
-                    display: block;
-                    margin: 0 auto;
-                    width: 100px; /* Adjust this size */
-                    height: auto;
-                }
-            </style>
-        </head>
-        <body>
-            <img src="${logoUrl}" class="logo" alt="School Logo">
-            ${printContent}
-        </body>
-        </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-}
-function printGenderPerformance() {
-    // Assuming you have a gender performance table or data to print
-    const genderPerformanceTable = document.getElementById("genderPerformanceTable").outerHTML; 
-
-    const printWindow = window.open("", "_blank");
-
-    // Retrieve gender performance data (adjust based on your implementation)
-    const schoolName = document.getElementById("schoolName").value || "School Name Not Provided";
-    const year = document.getElementById("year").value || "Year Not Provided";
-    const date = document.getElementById("date").value || "Date Not Provided";
-
-    // Open a new print window and write the content for printing
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>Gender Performance Report</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { border: 1px solid black; padding: 8px; text-align: center; }
-                    th { background-color: #f2f2f2; font-size: 16px; }
-                    td { font-size: 14px; }
-                    .header-info { font-weight: bold; margin-bottom: 20px; font-size: 16px; }
-                </style>
-            </head>
-            <body>
-                <div class="header-info">
-                    <p><strong>School:</strong> ${schoolName}</p>
-                    <p><strong>Year:</strong> ${year}</p>
-                    <p><strong>Date:</strong> ${date}</p>
-                </div>
-                <h1>Gender Performance Report</h1>
-                ${genderPerformanceTable}
-            </body>
-        </html>
-    `);
-
-    // Close the document and trigger the print dialog
-    printWindow.document.close();
-    printWindow.print();
-}
 document.getElementById('photoInput').addEventListener('change', function (event) {
     const files = event.target.files;
     const gallery = document.getElementById('photoGallery');
@@ -7540,8 +7564,8 @@ function printSubjectLevels() {
         <body>
             <div>
                 <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" class="school-logo">
-                <h2>Nachu Junior School Subject Level Summary Report</h2>
-                <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+                <h2>Nachu Junior School  Subject Level Summary Report</h2>
+                <p><strong>561-00902 Kikuyu KENYA</strong></p>
                 <p><strong>Phone: +254-700-123456</strong></p>
                 <p><em>School Motto: "Excellence Through Knowledge"</em></p>
                 <p><strong>Year: 2025</strong></p>
@@ -7729,8 +7753,8 @@ function printPathwayReport() {
     const reportContent = `
         <div style="text-align: center; font-family: Arial, sans-serif;">
             <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 100px; display: block; margin: 0 auto;">
-            <h2 style="margin: 5px 0;">Nachu Junior School Pathway Report</h2>
-            <p>P.O BOX 561-00902, KIKUYU, KENYA </p>
+            <h2 style="margin: 5px 0;">NACHU COMPREHENSIVE SCHOOL Pathway Report</h2>
+            <p>561-00902 Kikuyu KENYA </p>
             <p>Phone: +254-700-123456</p>
             <p style="font-style: italic; font-weight: bold;">School Motto: "Excellence Through Knowledge"</p>
             <p><strong>Year: 2025</strong></p>
@@ -7874,8 +7898,8 @@ function generateMeritList() {
             <div style="display: flex; align-items: center; justify-content: center;">
                 <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="width: 80px; margin-right: 10px;">
             </div>
-            <h2 style="margin: 5px 0; font-size: 20px; font-weight: bold;">Nachu Junior School Merit List</h2>
-            <p style="margin: 2px 0; font-size: 14px;"><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+            <h2 style="margin: 5px 0; font-size: 20px; font-weight: bold;"> NACHU COMPREHENSIVE SCHOOL MERIT  LIST</h2>
+            <p style="margin: 2px 0; font-size: 14px;"><strong>561-00902 Kikuyu KENYA</strong></p>
             <p style="margin: 2px 0; font-size: 14px;"><strong>Phone: +254-700-123456</strong></p>
             <p style="margin: 2px 0; font-size: 14px;"><strong>School Motto: "Excellence Through Knowledge"</strong></p>
             <p style="margin: 5px 0; font-size: 16px;"><strong>Year: 2025</strong></p>
@@ -8285,8 +8309,8 @@ function toggleMeritList() {
       newWindow.document.write("th, td { border: 2px solid black; padding: 10px; text-align: center; }");
       newWindow.document.write("h2, h3, p { text-align: center; margin: 5px 0; }");
       newWindow.document.write("</style></head><body>");
-      newWindow.document.write("<h2>Nachu Junior School</h2>");
-      newWindow.document.write("<p>P.O BOX 123, Nairobi, Kenya</p>");
+      newWindow.document.write("<h2>NACHU COMPREHENSIVE SCHOOL</h2>");
+      newWindow.document.write("<p>561-00902 Kikuyu Kenya</p>");
       newWindow.document.write("<p>Phone: +254-700-123456</p>");
       newWindow.document.write("<p><strong>School Motto:</strong> Excellence Through Knowledge</p>");
       newWindow.document.write("<h3>Year: 2025</h3>");
@@ -8623,9 +8647,9 @@ function printArchivedFees(year) {
     <body>
       <div class="header-container">
         <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
-        <h2>Nachu Junior School</h2>
+        <h2>NACHU COMPREHENSIVE SCHOOL</h2>
         <h3>Archived Fee Records for ${year}</h3>
-        <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+        <p><strong>561-00902 Kikuyu KENYA</strong></p>
         <p><strong>Phone: +254-700-123456</strong></p>
         <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
         <p><strong>Year:</strong> ${year}</p>
@@ -8891,9 +8915,9 @@ function printCategoryCollectionSummary() {
     <body>
       <div class="header-container">
         <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
-        <h2>Nachu Junior School</h2>
+        <h2>NACHU COMPREHENSIVE SCHOOL</h2>
         <h3>Category Collection Summary</h3>
-        <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+        <p><strong>561-00902 Kikuyu KENYA</strong></p>
         <p><strong>Phone: +254-700-123456</strong></p>
         <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
         <p><strong>Year:</strong> ${currentYear}</p>
@@ -9091,9 +9115,9 @@ function printDefaultersList() {
         <body>
             <div class="header-container">
                 <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
-                <h2>Nachu Junior School</h2>
+                <h2>NACHU COMPREHENSIVE SCHOOL </h2>
                 <h3>Defaulters List</h3>
-                <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+                <p><strong>Po Box 886-01000 Thika, KENYA</strong></p>
                 <p><strong>Phone: +254-700-123456</strong></p>
                 <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
                 <p><strong>Year:</strong> ${currentYear}</p>
@@ -9403,8 +9427,8 @@ function printReport() {
     document.body.innerHTML = `
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="school_logo_url_here" alt="School Logo" style="width: 100px; height: auto;"><br>
-            <h2>Nachu Junior School Compiled Pathway Report</h2>
-            <p>P.O BOX 561-00902, KIKUYU, KENYA</p>
+            <h2>Nachu Junior School  Compiled Pathway Report</h2>
+            <p>561-00902 Kikuyu KENYA</p>
             <p>Phone: +254-700-123456</p>
             <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
             <p><strong>Year:</strong> 2025</p>
@@ -9418,11 +9442,37 @@ function printReport() {
     document.body.innerHTML = originalContent; // Restore original content after printing
     location.reload(); // Reload page to prevent display issues
 }
+function searchLearnerFee() {
+    var input = document.getElementById("searchLearnerFee");
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("feeSummaryTable");
+    var tr = table.getElementsByTagName("tr");
 
-            
+    for (var i = 1; i < tr.length; i++) { // Skip the header row
+        var td = tr[i].getElementsByTagName("td")[1]; // Learner Name Column
+        if (td) {
+            var txtValue = td.textContent || td.innerText;
+            tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        }
+    }
+}
+
+function searchDefaulter() {
+    var input = document.getElementById("searchDefaulter");
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("defaultersTableContainer").getElementsByTagName("table")[0];
+    var tr = table.getElementsByTagName("tr");
+
+    for (var i = 1; i < tr.length; i++) { // Skip the header row
+        var td = tr[i].getElementsByTagName("td")[1]; // Learner Name Column
+        if (td) {
+            var txtValue = td.textContent || td.innerText;
+            tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        }
+    }
+}
+</script>         
                 
-                </script>
+                
             </body>
             </html>
-     
-
