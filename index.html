@@ -1437,25 +1437,42 @@ button {
   </div>
 </div>
 
-
-
 <div id="registerLearnerSection" style="max-width: 400px; margin: auto; display: none;">
     <h2>Register Learner</h2>
     <form id="learnerForm">
-        Name: <input type="text" id="learnerName" required><br>
-        Gender: <input type="text" id="learnerGender" required><br>
-        Grade: <input type="text" id="learnerGrade" required><br>
-        Age: <input type="number" id="learnerAge" required><br>
-        Parent Name: <input type="text" id="parentName" required><br>
-        Parent Phone No: <input type="text" id="learnerPhone" required><br>
-        Birth Certificate No: <input type="number" id="birthCertificate" required><br>
-        Admission Number: <input type="text" id="admissionNumber" required><br>
- Photo: <input type="file" id="learnerPhoto" accept="image/*"><br>
-        <button type="submit">Add Learner</button>
+        <label>Name:</label> <input type="text" id="learnerName" required><br>
+        <label>Gender:</label> <input type="text" id="learnerGender" required><br>
+        <label>Grade:</label> <input type="text" id="learnerGrade" required><br>
+        <label>Age:</label> <input type="number" id="learnerAge" required><br>
+        <label>Parent Name:</label> <input type="text" id="parentName" required><br>
+        <label>Parent Phone No:</label> <input type="text" id="learnerPhone" required><br>
+        <label>Birth Certificate No:</label> <input type="number" id="birthCertificate" required><br>
+        <label>Admission Number:</label> <input type="text" id="admissionNumber" required><br>
+
+        <!-- Photo Upload -->
+        <label>Photo:</label> <input type="file" id="learnerPhoto" accept="image/*" onchange="previewPhoto(event)"><br>
+
+        <!-- Image Preview -->
+        <img id="photoPreview" style="display:none; width:100px; height:100px; border-radius:10px; margin-top:10px;">
+
+       <!-- Voice Input Button -->
+<button type="button" onclick="startVoiceInput()" style="margin-top: 15px; padding: 10px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    <i class="fas fa-microphone"></i> Start Voice Input
+</button>
+
+<!-- Add Learner Button -->
+<button type="submit" style="margin-top: 15px; padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    <i class="fas fa-user-plus"></i> Add Learner
+</button>
     </form>
 </div>
 
-    </div>
+<!-- Custom Styled Prompt Box -->
+<div id="voicePrompt" style="display: none; position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    background: #4CAF50; color: white; padding: 20px; font-size: 18px; border-radius: 10px; text-align: center;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);">
+    <p id="promptText"></p>
+</div
 <div id="fireworks-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000;"></div>
    </div>
 <div id="registeredLearnersBox" style="display: none;">
@@ -9471,8 +9488,99 @@ function searchDefaulter() {
         }
     }
 }
-</script>         
+const fields = [
+    { id: "learnerName", prompt: "Name", delay: 1500 },
+    { id: "learnerGender", prompt: "Gender", delay: 1500 },
+    { id: "learnerGrade", prompt: "Grade", delay: 1500 },
+    { id: "learnerAge", prompt: "Age", delay: 1500 },
+    { id: "parentName", prompt: "Parent Name", delay: 2000 },
+    { id: "learnerPhone", prompt: "Parent Phone Number", delay: 3000 },
+    { id: "birthCertificate", prompt: "Birth Certificate Number", delay: 3500, isNumber: true }, // Added Fix
+    { id: "admissionNumber", prompt: "Admission Number", delay: 3000, isNumber: true } // Ensured number input
+];
+
+let currentFieldIndex = 0;
+let recognition;
+
+// Function to start voice input for each field one by one
+function startVoiceInput() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert("Your browser does not support speech recognition. Please use Chrome.");
+        return;
+    }
+
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    recognition.onresult = function(event) {
+        let transcript = event.results[0][0].transcript.trim();
+        console.log("Captured Speech:", transcript);
+
+        // Handle number inputs (convert to proper format)
+        if (fields[currentFieldIndex].isNumber) {
+            transcript = transcript.replace(/\D/g, ""); // Remove non-numeric characters
+            transcript = parseInt(transcript, 10) || ""; // Convert to number safely
+        }
+
+        // Fill the current field
+        document.getElementById(fields[currentFieldIndex].id).value = transcript;
+
+        // Move to the next field
+        currentFieldIndex++;
+
+        // If more fields remain, prompt the user for the next one with appropriate delay
+        if (currentFieldIndex < fields.length) {
+            showVoicePrompt(fields[currentFieldIndex].prompt);
+            setTimeout(() => recognition.start(), fields[currentFieldIndex].delay);
+        } else {
+            hideVoicePrompt();
+            alert("All details recorded successfully!");
+        }
+    };
+
+    recognition.onerror = function(event) {
+        console.error("Speech recognition error:", event.error);
+    };
+
+    recognition.onend = function() {
+        console.log("Speech recognition ended.");
+    };
+
+    // Start with the first prompt
+    currentFieldIndex = 0;
+    showVoicePrompt(fields[currentFieldIndex].prompt);
+    setTimeout(() => recognition.start(), fields[currentFieldIndex].delay);
+}
+
+// Function to show custom voice input prompt
+function showVoicePrompt(text) {
+    const promptBox = document.getElementById("voicePrompt");
+    document.getElementById("promptText").innerText = `Say: ${text}`;
+    promptBox.style.display = "block";
+}
+
+// Function to hide custom prompt
+function hideVoicePrompt() {
+    document.getElementById("voicePrompt").style.display = "none";
+}
+
+// Function to preview uploaded photo
+function previewPhoto(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("photoPreview").src = e.target.result;
+            document.getElementById("photoPreview").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+}    
+ </script>         
                 
                 
             </body>
-            </html>
+            </html>               
+           
