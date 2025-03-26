@@ -3938,11 +3938,14 @@ function showSubjectPerformance() {
         return { subject, mean, level };
     }).sort((a, b) => b.mean - a.mean);
 
+    // Extract the top three subjects
+    const topSubjects = meanScores.slice(0, 3);
+
     // Generate performance table
     let performanceHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Performance</h3>`;
-    performanceHtml += `<table class="report-table">
+    performanceHtml += `<table class="report-table" style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr>
+                                <tr style="background: #4CAF50; color: white;">
                                     <th>No.</th>
                                     <th>Subject</th>
                                     <th>Mean Score</th>
@@ -3953,7 +3956,8 @@ function showSubjectPerformance() {
 
     let number = 1; // Add numbering
     meanScores.forEach(({ subject, mean, level }) => {
-        performanceHtml += `<tr>
+        const isTopSubject = topSubjects.find(top => top.subject === subject); // Check if subject is a top subject
+        performanceHtml += `<tr style="${isTopSubject ? 'background: #FFD700; font-weight: bold;' : ''}">
                                 <td>${number++}</td>
                                 <td>${subject}</td>
                                 <td>${mean}</td>
@@ -3965,7 +3969,65 @@ function showSubjectPerformance() {
 
     // Display the subject performance report
     document.getElementById("report").innerHTML = performanceHtml;
+
+    // Celebrate the top three subjects
+    celebrateTopSubjects(topSubjects);
 }
+
+// Celebration for top three subjects
+function celebrateTopSubjects(topSubjects) {
+    const celebrationHtml = topSubjects.map(({ subject, mean }) => {
+        return `<p style="font-size: 18px; font-weight: bold; color: #4CAF50; margin: 5px;">
+                     ${subject}: Mean Score ${mean}
+                </p>`;
+    }).join("");
+
+    const celebrationContainer = document.createElement("div");
+    celebrationContainer.style.position = "fixed";
+    celebrationContainer.style.top = "0";
+    celebrationContainer.style.left = "0";
+    celebrationContainer.style.width = "100%";
+    celebrationContainer.style.height = "100%";
+    celebrationContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    celebrationContainer.style.zIndex = "1000";
+    celebrationContainer.style.display = "flex";
+    celebrationContainer.style.flexDirection = "column";
+    celebrationContainer.style.justifyContent = "center";
+    celebrationContainer.style.alignItems = "center";
+    celebrationContainer.style.color = "white";
+    celebrationContainer.style.textAlign = "center";
+
+    const message = document.createElement("h1");
+    message.textContent = "Congratulations to the Top Subjects!";
+    celebrationContainer.appendChild(message);
+
+    const subjectsHtml = document.createElement("div");
+    subjectsHtml.innerHTML = celebrationHtml;
+    celebrationContainer.appendChild(subjectsHtml);
+
+    const confettiCanvas = document.createElement("canvas");
+    confettiCanvas.style.position = "absolute";
+    confettiCanvas.style.top = "0";
+    confettiCanvas.style.left = "0";
+    confettiCanvas.style.width = "100%";
+    confettiCanvas.style.height = "100%";
+    confettiCanvas.id = "confettiCanvas";
+    celebrationContainer.appendChild(confettiCanvas);
+
+    document.body.appendChild(celebrationContainer);
+
+    // Play confetti animation
+    const confettiSettings = { target: "confettiCanvas", max: 200, size: 1.5, clock: 30 };
+    const confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
+
+    // Remove celebration after 5 seconds
+    setTimeout(() => {
+        celebrationContainer.remove();
+        confetti.clear(); // Stop confetti animation
+    }, 5000);
+}
+
 
 // Toggle visibility of the Registered Learners box
 function toggleRegisteredLearners() {
@@ -6253,7 +6315,6 @@ document.addEventListener("DOMContentLoaded", function() {
     initializeStorage(); // Ensure storage is initialized
     loadMarks(); // Load marks from storage
 });
-
 function generateGenderPerformance() {
     const marksTableBody = document.getElementById("marksList");
     const learnersTableBody = document.getElementById("learnersList");
@@ -6272,7 +6333,7 @@ function generateGenderPerformance() {
         };
     });
 
-    // Extract marks data exactly as recorded
+    // Extract marks data
     const marks = Array.from(marksTableBody.querySelectorAll("tr")).map(row => {
         const cells = row.querySelectorAll("td");
         return {
@@ -6296,7 +6357,7 @@ function generateGenderPerformance() {
             religionLevel: cells[18]?.textContent.trim() || "-",
             art: parseInt(cells[19]?.textContent.trim()) || 0,
             artLevel: cells[20]?.textContent.trim() || "-",
-            totalMarks: parseInt(cells[cells.length - 2]?.textContent.trim()) || 0
+            totalMarks: parseInt(cells[cells.length - 2]?.textContent.trim()) || 0,
         };
     });
 
@@ -6318,6 +6379,15 @@ function generateGenderPerformance() {
     // Sort learners within each gender by total marks (Descending order)
     genderPerformance.Male.sort((a, b) => b.totalMarks - a.totalMarks);
     genderPerformance.Female.sort((a, b) => b.totalMarks - a.totalMarks);
+
+    // Determine performance level based on total marks
+    function getPerformanceLevel(totalMarks) {
+        if (totalMarks >= 1 && totalMarks <= 200) return "BE";
+        if (totalMarks >= 201 && totalMarks <= 400) return "AE";
+        if (totalMarks >= 401 && totalMarks <= 600) return "ME";
+        if (totalMarks >= 601 && totalMarks <= 800) return "EE";
+        return "";
+    }
 
     // Function to calculate correct totals and averages
     function calculateSubjectStats(data) {
@@ -6356,34 +6426,46 @@ function generateGenderPerformance() {
         return { totals, averages };
     }
 
-    // Function to generate performance tables
+    // Function to generate performance tables with numbering, print buttons, and performance level
     function createPerformanceTable(data, gender) {
         if (data.length === 0) return `<h3>No ${gender} learners with recorded marks.</h3>`;
 
         let { totals, averages } = calculateSubjectStats(data);
 
+        let tableId = `${gender.toLowerCase()}PerformanceTable`;
+
         let tableHtml = `
             <h2 style="color: ${gender === "Male" ? "blue" : "purple"}; text-align: center;">
                 ${gender} Performance Report
             </h2>
-            <table border="1" style="width:100%; border-collapse: collapse;">
+            <table id="${tableId}" border="1" style="width:100%; border-collapse: collapse; margin-bottom: 10px;">
                 <thead>
                     <tr style="background: #4CAF50; color: white;">
-                        <th>Name</th><th>Grade</th>
-                        <th>English</th><th>Level</th><th>Math</th><th>Level</th>
-                        <th>Pre-Tech</th><th>Level</th><th>Kiswahili</th><th>Level</th>
-                        <th>Science</th><th>Level</th><th>Social</th><th>Level</th>
-                        <th>Agriculture</th><th>Level</th><th>Religion</th><th>Level</th>
-                        <th>Creative Art</th><th>Level</th><th>Total Marks</th>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Grade</th>
+                        <th>Eng</th><th>Lev</th>
+                        <th>Math</th><th>Lev</th>
+                        <th>Pre-Tech</th><th>Lev</th>
+                        <th>Kisw</th><th>Lev</th>
+                        <th>Scie</th><th>Lev</th>
+                        <th>Sst</th><th>Lev</th>
+                        <th>Agric</th><th>Lev</th>
+                        <th>Cre</th><th>Lev</th>
+                        <th>C/A</th><th>Lev</th>
+                        <th>Total Marks</th>
+                        <th>Perf Lev</th>
                     </tr>
                 </thead>
-                <tbody>
-        `;
+                <tbody>`;
 
-        data.forEach(entry => {
+        // Add learners' data with numbering and performance level
+        data.forEach((entry, index) => {
             tableHtml += `
                 <tr>
-                    <td>${entry.learner}</td><td>${entry.grade}</td>
+                    <td>${index + 1}</td>
+                    <td>${entry.learner}</td>
+                    <td>${entry.grade}</td>
                     <td>${entry.english}</td><td>${entry.englishLevel}</td>
                     <td>${entry.math}</td><td>${entry.mathLevel}</td>
                     <td>${entry.preTech}</td><td>${entry.preTechLevel}</td>
@@ -6394,49 +6476,127 @@ function generateGenderPerformance() {
                     <td>${entry.religion}</td><td>${entry.religionLevel}</td>
                     <td>${entry.art}</td><td>${entry.artLevel}</td>
                     <td><strong>${entry.totalMarks}</strong></td>
-                </tr>
-            `;
+                    <td><strong>${getPerformanceLevel(entry.totalMarks)}</strong></td>
+                </tr>`;
         });
 
-       // Add totals row
-tableHtml += `
-    <tr style="background: yellow; font-weight: bold;">
-        <td colspan="2">Totals</td>
-        <td>${totals.english}</td><td>-</td>
-        <td>${totals.math}</td><td>-</td>
-        <td>${totals.preTech}</td><td>-</td>
-        <td>${totals.kiswahili}</td><td>-</td>
-        <td>${totals.science}</td><td>-</td>
-        <td>${totals.social}</td><td>-</td>
-        <td>${totals.agriculture}</td><td>-</td>
-        <td>${totals.religion}</td><td>-</td>
-        <td>${totals.art}</td><td>-</td>
-        <td><strong>${totals.totalMarks}</strong></td>
-    </tr>
-`;
+        // Add totals and averages rows
+        tableHtml += `
+            <tr style="background: yellow; font-weight: bold;">
+                <td colspan="3">Totals</td>
+                <td>${totals.english}</td><td>-</td>
+                <td>${totals.math}</td><td>-</td>
+                <td>${totals.preTech}</td><td>-</td>
+                <td>${totals.kiswahili}</td><td>-</td>
+                <td>${totals.science}</td><td>-</td>
+                <td>${totals.social}</td><td>-</td>
+                <td>${totals.agriculture}</td><td>-</td>
+                <td>${totals.religion}</td><td>-</td>
+                <td>${totals.art}</td><td>-</td>
+                <td><strong>${totals.totalMarks}</strong></td>
+                <td>-</td>
+            </tr>
+            <tr style="background: lightblue; font-weight: bold;">
+                <td colspan="3">Averages</td>
+                <td>${averages.english}</td><td>-</td>
+                <td>${averages.math}</td><td>-</td>
+                <td>${averages.preTech}</td><td>-</td>
+                <td>${averages.kiswahili}</td><td>-</td>
+                <td>${averages.science}</td><td>-</td>
+                <td>${averages.social}</td><td>-</td>
+                <td>${averages.agriculture}</td><td>-</td>
+                <td>${averages.religion}</td><td>-</td>
+                <td>${averages.art}</td><td>-</td>
+                <td><strong>${averages.totalMarks}</strong></td>
+                <td>-</td>
+            </tr>
+        </tbody>
+        </table>
+        <button onclick="printTable('${tableId}')" style="margin: 10px; padding: 10px; background-color: #FF9800; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Print ${gender} Performance
+        </button>`;
 
-// Add averages row
-tableHtml += `
-    <tr style="background: lightblue; font-weight: bold;">
-        <td colspan="2">Averages</td>
-        <td>${averages.english}</td><td>-</td>
-        <td>${averages.math}</td><td>-</td>
-        <td>${averages.preTech}</td><td>-</td>
-        <td>${averages.kiswahili}</td><td>-</td>
-        <td>${averages.science}</td><td>-</td>
-        <td>${averages.social}</td><td>-</td>
-        <td>${averages.agriculture}</td><td>-</td>
-        <td>${averages.religion}</td><td>-</td>
-        <td>${averages.art}</td><td>-</td>
-        <td><strong>${averages.totalMarks}</strong></td>
-    </tr>
-`;
-
-tableHtml += `</tbody></table><br><br>`;
-return tableHtml;
-
+        return tableHtml;
     }
 
+    // Updated printTable function with headers
+    window.printTable = function (tableId) {
+        const table = document.getElementById(tableId);
+        if (!table) {
+            alert("Table not found for printing.");
+            return;
+        }
+
+        const currentYear = new Date().getFullYear(); // Dynamically fetch the year
+        const grade = table.querySelector("tbody tr td:nth-child(3)")?.textContent.trim() || "N/A"; // Fetch the grade dynamically
+
+        const printWindow = window.open("", "_blank");
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print Performance Report</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 20px;
+                            text-align: center;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .header img {
+                            width: 80px;
+                            margin-bottom: 10px;
+                        }
+                        .header h1 {
+                            font-size: 22px;
+                            font-weight: bold;
+                            color: black;
+                            margin: 5px 0;
+                        }
+                        .header p {
+                            font-size: 16px;
+                            margin: 3px 0;
+                            font-weight: bold;
+                            color: black;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                        }
+                        th, td {
+                            border: 1px solid black;
+                            padding: 8px;
+                            text-align: center;
+                        }
+                        th {
+                            background: #4CAF50;
+                            color: white;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
+                        <h1>NACHU COMPREHENSIVE SCHOOL GENDER PERFORMANCE REPORT</h1>
+                        <p>PO BOX 561-00902 KIKUYU, KENYA</p>
+                        <p>Phone: +254-700-123456</p>
+                        <p>School Motto: "HARD WORK PAYS"</p>
+                        <p>Year: ${currentYear}</p>
+                        <p>Grade: ${grade}</p>
+                    </div>
+                    ${table.outerHTML}
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    };
+
+    // Display the reports
     document.getElementById("report").innerHTML = `
         ${createPerformanceTable(genderPerformance.Male, "Male")}
         ${createPerformanceTable(genderPerformance.Female, "Female")}
@@ -7913,14 +8073,36 @@ function showCustomConfirm(message, onConfirm) {
 function generateMeritList() {
     let selectedGrade = document.getElementById("gradeSelect").value;
 
+    // Helper function to show a styled alert
+    function showAlert(message, color) {
+        const alertDiv = document.createElement("div");
+        alertDiv.textContent = message;
+        alertDiv.style.position = "fixed";
+        alertDiv.style.top = "20px";
+        alertDiv.style.left = "50%";
+        alertDiv.style.transform = "translateX(-50%)";
+        alertDiv.style.padding = "10px 20px";
+        alertDiv.style.backgroundColor = color;
+        alertDiv.style.color = "white";
+        alertDiv.style.borderRadius = "5px";
+        alertDiv.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+        alertDiv.style.fontFamily = "Arial, sans-serif";
+        alertDiv.style.zIndex = "1000";
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+
     if (!selectedGrade) {
-        alert("Please select a grade.");
+        showAlert("Please select a grade.", "#FF9800"); // Orange for warning
         return;
     }
 
     let learnersTable = document.getElementById("learnersList");
     if (!learnersTable) {
-        alert("Registered learners table not found.");
+        showAlert("Registered learners table not found.", "#F44336"); // Red for error
         return;
     }
 
@@ -7932,7 +8114,7 @@ function generateMeritList() {
         if (cells.length > 0) {
             let grade = cells[4].innerText.trim();
             let name = cells[2].innerText.trim();
-            
+
             if (grade === selectedGrade) {
                 learners.push(name);
             }
@@ -7940,7 +8122,7 @@ function generateMeritList() {
     }
 
     if (learners.length === 0) {
-        alert("No learners found in the selected grade.");
+        showAlert("No learners found in the selected grade.", "#FF9800"); // Orange for warning
         return;
     }
 
@@ -7949,7 +8131,7 @@ function generateMeritList() {
             <div style="display: flex; align-items: center; justify-content: center;">
                 <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="width: 80px; margin-right: 10px;">
             </div>
-            <h2 style="margin: 5px 0; font-size: 20px; font-weight: bold;"> NACHU COMPREHENSIVE SCHOOL MERIT  LIST</h2>
+            <h2 style="margin: 5px 0; font-size: 20px; font-weight: bold;">NACHU COMPREHENSIVE SCHOOL MERIT LIST</h2>
             <p style="margin: 2px 0; font-size: 14px;"><strong>561-00902 Kikuyu KENYA</strong></p>
             <p style="margin: 2px 0; font-size: 14px;"><strong>Phone: +254-700-123456</strong></p>
             <p style="margin: 2px 0; font-size: 14px;"><strong>School Motto: "Excellence Through Knowledge"</strong></p>
@@ -7974,8 +8156,7 @@ function generateMeritList() {
                         <th>Total Marks</th>
                     </tr>
                 </thead>
-                <tbody>
-    `;
+                <tbody>`;
 
     learners.forEach((learner, index) => {
         meritListHTML += `
@@ -7990,53 +8171,23 @@ function generateMeritList() {
                 <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
                 <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
                 <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-       <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
                 <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-                
-<td style="border: 2px solid black;"></td>
-            </tr>
-        `;
+                <td style="border: 2px solid black;"></td>
+            </tr>`;
     });
 
     meritListHTML += `
-        <tr style="font-weight: bold;">
-            <td colspan="3" style="border: 2px solid black;">Totals</td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-       <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-              <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-        <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-       
-     <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            
-<td style="border: 2px solid black;"></td>
-        </tr>
-        <tr style="font-weight: bold;">
-            <td colspan="3" style="border: 2px solid black;">Averages</td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-       <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-            <td style="border: 2px solid black;"></td><td style="border: 2px solid black;"></td>
-               
-<td style="border: 2px solid black;"></td>
-        </tr>
         </tbody>
         </table>
         </div>
-        <button onclick="printMeritList()" id="printBtn" style="display:block; margin-top:10px;">Print</button>
-    `;
+        <button onclick="printMeritList()" id="printBtn" style="display:block; margin-top:10px;">Print</button>`;
 
     document.getElementById("meritListContainer").innerHTML = meritListHTML;
     document.getElementById("meritListContainer").style.display = "block";
+
+    showAlert("Merit list generated successfully!", "#4CAF50"); // Green for success
 }
+
 
 function printMeritList() {
     let printContent = document.getElementById("meritList").innerHTML;
