@@ -1044,6 +1044,197 @@ button {
   <button onclick="toggleFeeActionsMenu()" style="background-color: #d32f2f; color: purple; border: none; padding: 10px 10px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-bottom: 10px;">
     <i class="fas fa-cogs"></i> Manage Fees
   </button>
+<section id="library-records"> 
+  <h2>Manage Library</h2>
+  <!-- Toggle Button -->
+  <button
+    type="button"
+    onclick="toggleLibraryManagement()"
+    style="display: flex; align-items: center; gap: 5px;"
+  >
+    <i class="fas fa-book" style="font-size: 16px;"></i> Library
+  </button>
+
+  <!-- Library Management Section -->
+  <div id="library-management" style="display: none; margin-top: 20px;">
+
+    <!-- Toggle Form Visibility Button -->
+    <button
+      type="button"
+      id="manage-library-btn"
+      onclick="toggleFormVisibility()"
+      style="margin-bottom: 20px;"
+    >
+      Library
+    </button>
+
+    <!-- Add Record Form -->
+    <form id="record-form" onsubmit="addRecord(event)" style="display: none;">
+      <label>
+        Name:
+        <input type="text" id="name" required />
+      </label>
+
+      <label>
+        Grade:
+        <input type="text" id="grade" required />
+      </label>
+
+      <label>
+        Book No:
+        <input type="text" id="bookNo" required />
+      </label>
+
+      <label>
+        <label for="date">Date:</label>
+        <input type="date" id="date" readonly />
+      </label>
+
+      <!-- Issued Books -->
+      <fieldset>
+        <legend>Issued Books</legend>
+        <label>
+          <input
+            type="checkbox"
+            id="selectAllIssued"
+            onclick="toggleCheckboxes('issuedBooks', this)"
+          />
+          Select All
+        </label>
+        <div id="issuedBooks">
+          <!-- Issued Book Options -->
+          <label><input type="checkbox" value="English" /> English</label>
+          <label><input type="checkbox" value="Maths" /> Maths</label>
+          <label><input type="checkbox" value="Pre-technical" /> Pre-technical</label>
+          <label><input type="checkbox" value="Kiswahili" /> Kiswahili</label>
+          <label><input type="checkbox" value="Science" /> Science</label>
+          <label><input type="checkbox" value="Social Studies" /> Social Studies</label>
+          <label><input type="checkbox" value="Business" /> Business</label>
+          <label><input type="checkbox" value="Agriculture" /> Agriculture</label>
+          <label><input type="checkbox" value="Health Education" /> Health Education</label>
+          <label><input type="checkbox" value="Sports" /> Sports</label>
+          <label><input type="checkbox" value="Performing Art" /> Performing Art</label>
+          <label><input type="checkbox" value="Life Skills" /> Life Skills</label>
+          <label><input type="checkbox" value="Computer" /> Computer</label>
+          <label><input type="checkbox" value="Visual Art" /> Visual Art</label>
+          <label><input type="checkbox" value="Chemistry" /> Chemistry</label>
+          <label><input type="checkbox" value="Biology" /> Biology</label>
+          <label><input type="checkbox" value="Physics" /> Physics</label>
+          <label><input type="checkbox" value="Geography" /> Geography</label>
+          <label><input type="checkbox" value="History" /> History</label>
+          <label><input type="checkbox" value="Physical Education" /> Physical Education</label>
+        </div>
+      </fieldset>
+
+      <!-- Lost Books -->
+      <fieldset>
+        <legend>Lost Books</legend>
+        <label>
+          <input
+            type="checkbox"
+            id="selectAllLost"
+            onclick="toggleCheckboxes('lostBooks', this)"
+          />
+          Select All
+        </label>
+        <div id="lostBooks">
+          <!-- Lost Book Options -->
+          <label><input type="checkbox" value="English" /> English</label>
+          <label><input type="checkbox" value="Maths" /> Maths</label>
+          <label><input type="checkbox" value="Pre-technical" /> Pre-technical</label>
+          <label><input type="checkbox" value="Kiswahili" /> Kiswahili</label>
+          <label><input type="checkbox" value="Science" /> Science</label>
+          <label><input type="checkbox" value="Social Studies" /> Social Studies</label>
+          <label><input type="checkbox" value="Business" /> Business</label>
+          <label><input type="checkbox" value="Agriculture" /> Agriculture</label>
+          <label><input type="checkbox" value="Health Education" /> Health Education</label>
+          <label><input type="checkbox" value="Sports" /> Sports</label>
+          <label><input type="checkbox" value="Performing Art" /> Performing Art</label>
+          <label><input type="checkbox" value="Life Skills" /> Life Skills</label>
+          <label><input type="checkbox" value="Computer" /> Computer</label>
+          <label><input type="checkbox" value="Visual Art" /> Visual Art</label>
+          <label><input type="checkbox" value="Chemistry" /> Chemistry</label>
+          <label><input type="checkbox" value="Biology" /> Biology</label>
+          <label><input type="checkbox" value="Physics" /> Physics</label>
+          <label><input type="checkbox" value="Geography" /> Geography</label>
+          <label><input type="checkbox" value="History" /> History</label>
+          <label><input type="checkbox" value="Physical Education" /> Physical Education</label>
+        </div>
+      </fieldset>
+
+      <label for="status">Status:</label>
+      <input type="text" id="status" readonly />
+
+      <button type="submit">
+  <i class="fas fa-plus-circle"></i> Add Record
+</button>
+    </form>
+
+    <!-- Search and Filter Section -->
+    <section id="filters" style="margin-top: 20px;">
+      <input
+        type="text"
+        id="search-bar"
+        placeholder="Search by name..."
+        oninput="searchTable()"
+        style="margin-right: 10px;"
+      />
+      <select id="grade-filter" onchange="searchTable()">
+        <!-- Options dynamically populated -->
+      </select>
+    </section>
+
+    <!-- Records Table -->
+    <table
+      border="1"
+      style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left;"
+    >
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Name</th>
+          <th>Grade</th>
+          <th>Book No</th>
+          <th>Date</th>
+          <th>Issued Books</th>
+          <th>Lost Books</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamically generated rows -->
+      </tbody>
+    </table>
+
+  <!-- Button with an icon -->
+<button onclick="printFilteredTable()" style="margin-top: 20px;">
+  <i class="fas fa-print"></i> Print Table
+</button>
+    <!-- Library Cards Section -->
+    <div id="library-cards-section" style="margin-top: 20px;">
+      <select id="grade-filter">
+        <option value="All">All Grades</option>
+      </select>
+     <!-- Button with an icon -->
+ <button
+        onclick="generateLibraryCards()"
+        style="
+          margin-left: 10px;
+          padding: 10px 20px;
+          background-color: #007BFF;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        "
+      >
+        Generate Library Cards
+      </button>
+    </div>
+  </div>
+
+
+
 
   <!-- Fee Management Actions Box (Initially Hidden) -->
   <div id="feeActionsBox" style="display: none; text-align: center; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); margin-top: 10px; width: 45%; margin-left: auto; margin-right: auto;">
@@ -9974,6 +10165,470 @@ function showCelebration(message = "Congratulations!", duration = 5000) {
         celebrationContainer.remove();
         confetti.clear(); // Stop the confetti animation
     }, duration);
+}
+let libraryRecords = JSON.parse(localStorage.getItem("libraryRecords")) || [];
+let bookNumbers = [];
+
+function saveRecords() {
+  localStorage.setItem("libraryRecords", JSON.stringify(libraryRecords));
+}
+
+function fetchBookNumbers() {
+  const bookNoInput = document.getElementById("bookNo").value.trim();
+  bookNumbers = bookNoInput.split(",").map((num) => num.trim());
+}
+
+function populateTable(records = libraryRecords) {
+  const tableBody = document.querySelector("#library-records table tbody");
+  tableBody.innerHTML = "";
+
+  if (records.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center;">No records found.</td></tr>`;
+    return;
+  }
+
+  records.forEach((record, index) => {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td contenteditable="true" onblur="updateRecord(${index}, 'name', this.textContent.trim())">${record.name}</td>
+      <td contenteditable="true" onblur="updateRecord(${index}, 'grade', this.textContent.trim())">${record.grade}</td>
+      <td contenteditable="true" onblur="updateRecord(${index}, 'bookNumbers', this.textContent.trim().split(','))">${record.bookNumbers.join(", ")}</td>
+      <td contenteditable="true" onblur="updateRecord(${index}, 'date', this.textContent.trim())">${record.date}</td>
+      <td contenteditable="true" onblur="updateRecord(${index}, 'issuedBooks', this.textContent.trim().split(','))">${record.issuedBooks.join(", ")}</td>
+      <td contenteditable="true" onblur="updateRecord(${index}, 'lostBooks', this.textContent.trim().split(','))">${record.lostBooks.join(", ")}</td>
+      <td>${record.status}</td>
+      <td><button onclick="deleteRecord(${index})">Delete</button></td>
+    `;
+
+    tableBody.appendChild(row);
+  });
+}
+
+function updateRecord(index, field, value) {
+  // Update the specific field of the record
+  libraryRecords[index][field] = Array.isArray(value) ? value.map((v) => v.trim()) : value;
+
+  // Update the status dynamically based on lostBooks
+  if (field === "lostBooks") {
+    libraryRecords[index].status = value.some((book) => book.trim() !== "") ? "Pending" : "Cleared";
+  }
+
+  // Save updated records and refresh the table
+  saveRecords();
+  populateTable();
+}
+
+function deleteRecord(index) {
+  if (confirm("Are you sure you want to delete this record?")) {
+    libraryRecords.splice(index, 1);
+    saveRecords();
+    populateTable();
+    updateGradeFilter();
+  }
+}
+
+function addRecord(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const grade = document.getElementById("grade").value;
+  const date = new Date().toISOString().split("T")[0];
+
+  fetchBookNumbers();
+
+  const issuedBooksCheckboxes = Array.from(document.querySelectorAll("#issuedBooks input:checked"));
+  const lostBooksCheckboxes = Array.from(document.querySelectorAll("#lostBooks input:checked"));
+
+  const issuedBooks = issuedBooksCheckboxes.map((checkbox, index) => {
+    return `${checkbox.value} (${bookNumbers[index] || "N/A"})`;
+  });
+
+  const lostBooks = lostBooksCheckboxes.map((checkbox) => checkbox.value);
+  const status = lostBooks.length > 0 ? "Pending Clearance" : "Active";
+
+  const newRecord = { name, grade, bookNumbers, date, issuedBooks, lostBooks, status };
+
+  libraryRecords.push(newRecord);
+  saveRecords();
+  populateTable();
+  updateGradeFilter();
+  document.getElementById("record-form").reset();
+}
+
+// Toggle form & table visibility
+function toggleLibraryManager() {
+  const formSection = document.getElementById("record-form");
+  const tableSection = document.getElementById("library-records");
+
+  if (formSection.style.display === "none") {
+    formSection.style.display = "block";
+    tableSection.style.display = "block";
+  } else {
+    formSection.style.display = "none";
+    tableSection.style.display = "none";
+  }
+}
+
+function updateGradeFilter() {
+  const gradeFilter = document.getElementById("grade-filter");
+  gradeFilter.innerHTML = '<option value="All">All Grades</option>';
+
+  const grades = [...new Set(libraryRecords.map((record) => record.grade))];
+  grades.forEach((grade) => {
+    const option = document.createElement("option");
+    option.value = grade;
+    option.textContent = `Grade ${grade}`;
+    gradeFilter.appendChild(option);
+  });
+}
+
+function searchTable() {
+  const searchTerm = document.getElementById("search-bar").value.toLowerCase();
+  const selectedGrade = document.getElementById("grade-filter").value;
+
+  const filteredRecords = libraryRecords.filter((record) => {
+    const matchesName = record.name.toLowerCase().includes(searchTerm);
+    const matchesGrade = selectedGrade === "All" || record.grade === selectedGrade;
+    return matchesName && matchesGrade;
+  });
+
+  populateTable(filteredRecords);
+}
+
+window.onload = function () {
+  populateTable();
+  updateGradeFilter();
+};
+
+
+function printFilteredTable() {
+  const table = document.querySelector("#library-records table");
+  const gradeFilter = document.getElementById("grade-filter").value;
+
+  const filteredRecords = libraryRecords.filter(
+    (record) => gradeFilter === "All" || record.grade === gradeFilter
+  );
+
+  if (filteredRecords.length === 0) {
+    alert("No records to print for the selected grade.");
+    return;
+  }
+
+  // Create a new window for printing
+  const printWindow = window.open("", "_blank");
+
+  // Prepare the content for the printable version
+  let printContent = `
+    <html>
+    <head>
+      <title>Filtered Table</title>
+      <style>
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          border: 1px solid #000;
+          padding: 8px;
+          text-align: left;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .header img {
+          max-width: 100px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo"> <!-- Replace with your logo URL -->
+        <h1>RASM LIBRARY MANAGEMENT DATA SYSTEM</h1>
+        <h2>Nachu Junior School</h2>
+        <p>P.O BOX 561-00902, KIKUYU, KENYA</p>
+        <p>Phone: +254-700-123456</p>
+        <p><em>School Motto: "Excellence Through Knowledge"</em></p>
+      </div>
+      <h3>Library Records for Grade: ${gradeFilter === "All" ? "All Grades" : gradeFilter}</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>NO</th>
+            <th>Name</th>
+            <th>Grade</th>
+            <th>Book Numbers</th>
+            <th>Date</th>
+            <th>Issued Books</th>
+            <th>Lost Books</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  filteredRecords.forEach((record, index) => {
+    printContent += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${record.name}</td>
+        <td>${record.grade}</td>
+        <td>${record.bookNumbers.join(", ")}</td>
+        <td>${record.date}</td>
+        <td>${record.issuedBooks.join(", ")}</td>
+        <td>${record.lostBooks.join(", ")}</td>
+        <td>${record.status}</td>
+      </tr>
+    `;
+  });
+
+  printContent += `
+        </tbody>
+      </table>
+    </body>
+    </html>
+  `;
+
+  // Write the content to the new window
+  printWindow.document.open();
+  printWindow.document.write(printContent);
+  printWindow.document.close();
+
+  // Trigger the print dialog
+  printWindow.print();
+}
+
+function generateLibraryCards() {
+  const gradeFilter = document.getElementById("grade-filter").value;
+
+  // Filter records based on the selected grade
+  const filteredRecords = libraryRecords.filter(
+    (record) => gradeFilter === "All" || record.grade === gradeFilter
+  );
+
+  if (filteredRecords.length === 0) {
+    alert("No library cards to generate for the selected grade.");
+    return;
+  }
+
+  // Create a new window for printing
+  const printWindow = window.open("", "_blank");
+
+  // Prepare printable content
+  let printContent = `
+    <html>
+    <head>
+      <title>Library Cards</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+        .card-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr; /* Two cards per row */
+          gap: 20px;
+          padding: 20px;
+        }
+        .library-card {
+          border: 2px solid #000;
+          padding: 15px;
+          height: 500px; /* Adjusted height */
+          width: 100%;
+          box-sizing: border-box;
+          text-align: left;
+          box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+          border-radius: 8px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .card-header {
+          font-weight: bold;
+          text-align: center;
+          font-size: 20px;
+          margin-bottom: 10px;
+        }
+        .school-logo {
+          text-align: center;
+          margin-bottom: 10px;
+        }
+        .school-logo img {
+          max-width: 60px;
+          max-height: 60px;
+        }
+        .school-name {
+          text-align: center;
+          font-size: 20px;
+          font-weight: bold;
+          margin-bottom: 15px;
+        }
+        .card-content {
+          flex-grow: 1; /* Ensures content adjusts to fit the space */
+        }
+        .stamp {
+          border: 2px solid blue;
+          color: blue;
+          text-align: center;
+          width: 160px;
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 10px auto;
+          font-weight: bold;
+        }
+        .card-footer {
+          font-style: italic;
+          font-size: 12px;
+          text-align: center;
+          margin-top: 10px;
+        }
+        @page {
+          margin: 1cm;
+        }
+        @media print {
+          .card-container {
+            page-break-inside: avoid;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="card-container">
+  `;
+
+  // Generate individual library cards
+  filteredRecords.forEach((record) => {
+    printContent += `
+      <div class="library-card">
+        <div class="school-logo">
+          <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo"> <!-- Replace with your logo URL -->
+        </div>
+        <div class="card-header">Rasm Library Card</div>
+        <div class="school-name">Nachu Junior School</div>
+        <div class="card-content">
+          <p><strong>Name:</strong> ${record.name}</p>
+          <p><strong>Grade:</strong> ${record.grade}</p>
+          <p><strong>Issued Books:</strong> ${record.issuedBooks.join(", ") || "None"}</p>
+             <p><strong>Books Lost:</strong> ${record.lostBooks.join(", ") || "None"}</p>
+        </div>
+        <div class="stamp">
+          NACHU JS SCHOOL<br>
+          Po.Box 561-00902 Kikuyu
+        </div>
+        <div class="card-footer">Valid for the academic year 2025</div>
+      </div>
+    `;
+  });
+
+  printContent += `
+      </div>
+    </body>
+    </html>
+  `;
+
+  // Write the content to the new window
+  printWindow.document.open();
+  printWindow.document.write(printContent);
+  printWindow.document.close();
+
+  // Trigger the print dialog
+  printWindow.print();
+}
+function populateGradeDropdown() {
+  const gradeDropdown = document.getElementById("grade-filter");
+  gradeDropdown.innerHTML = `<option value="All">All Grades</option>`; // Reset options
+
+  const uniqueGrades = [...new Set(libraryRecords.map((record) => record.grade))];
+  uniqueGrades.forEach((grade) => {
+    const option = document.createElement("option");
+    option.value = grade;
+    option.textContent = grade;
+    gradeDropdown.appendChild(option);
+  });
+}
+
+// Call this whenever records are updated
+populateGradeDropdown();
+// Function to set today's date dynamically
+  function setCurrentDate() {
+    const today = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+    document.getElementById("date").value = today;
+  }
+
+  // Call the function when the page loads
+  window.onload = setCurrentDate;
+function updateStatus() {
+  const lostBooksCheckboxes = document.querySelectorAll("#lostBooks input[type='checkbox']");
+  const lostBooks = Array.from(lostBooksCheckboxes).filter((checkbox) => checkbox.checked);
+
+  const statusField = document.getElementById("status");
+  if (lostBooks.length > 0) {
+    statusField.value = "Pending Clearance";
+  } else {
+    statusField.value = "Active";
+  }
+}
+
+// Add an event listener to update the status dynamically when checkboxes are changed
+document.querySelectorAll("#lostBooks input[type='checkbox']").forEach((checkbox) => {
+  checkbox.addEventListener("change", updateStatus);
+});
+
+// Ensure status is updated when the form loads or if lost books are pre-filled
+window.onload = () => {
+  updateStatus();
+  setCurrentDate(); // Call to set the current date
+};
+function toggleFormVisibility() {
+  const form = document.getElementById("record-form");
+  const toggleButton = document.getElementById("manage-library-btn");
+
+  if (form.style.display === "none" || form.style.display === "") {
+    form.style.display = "block";
+    toggleButton.textContent = "Hide Form";
+  } else {
+    form.style.display = "none";
+    toggleButton.textContent = "Show Form";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("record-form");
+  form.style.display = "none"; // Ensure the form is hidden initially
+});
+
+function toggleLibraryManagement() {
+    var libraryManagement = document.getElementById("library-management");
+    if (libraryManagement.style.display === "none") {
+        libraryManagement.style.display = "block";
+    } else {
+        libraryManagement.style.display = "none";
+    }
+}
+  function toggleFormVisibility() {
+    const form = document.getElementById("record-form");
+    const button = document.getElementById("manage-library-btn");
+
+    if (form.style.display === "none") {
+      form.style.display = "block";
+      button.textContent = "Hide Form";
+    } else {
+      form.style.display = "none";
+      button.textContent = "Register Learner";
+    }
+  }
+
+// Function to toggle all checkboxes in a group based on the "Select All" checkbox state
+function toggleCheckboxes(groupName, masterCheckbox) {
+    // Get all checkboxes within the specified group
+    const checkboxes = document.querySelectorAll(`#${groupName} input[type='checkbox']`);
+    // Set each checkbox's checked property to match the master checkbox's state
+    checkboxes.forEach(checkbox => checkbox.checked = masterCheckbox.checked);
 }
 
      
