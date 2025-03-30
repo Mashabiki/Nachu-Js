@@ -1008,12 +1008,9 @@ button {
     </div>
 <p style="color: red; font-weight: bold;">NACHU COMPREHENSIVE SCHOOL</p>
 </header>
-<button class="btn-yellow" onclick="toggleSection('registerLearnerSection')">
-        <span class="material-icons">person_add</span> Register Learner
-    </button>
 
 <button class="btn-bright green" onclick="toggleSection('registeredLearnersBox')">
-    <span class="material-icons">groups</span> Registered Learners
+    <span class="material-icons">groups</span>  Learners Database 
 </button>
 
 <button class="btn-actions" onclick="toggleSection('juniorSchoolActions')">
@@ -1023,14 +1020,6 @@ button {
 <button class="btn-purple" onclick="toggleSection('championsForm')">
     <span class="material-icons">admin_panel_settings</span> Admin Details
 </button>
-
-<button class="btn-red" onclick="viewArchives()">
-    <span class="material-icons">archive</span> View Archives
-</button>
- <button class="btn-red" onclick="toggleArchives()">
-    <span class="material-icons">visibility</span> View Archived
-</button>
-
 
 <!-- Menu Button -->
 <button id="menuToggle" class="btn-toggle" onclick="toggleSection('menuActions')">
@@ -1052,7 +1041,7 @@ button {
     onclick="toggleLibraryManagement()"
     style="display: flex; align-items: center; gap: 5px;"
   >
-    <i class="fas fa-book" style="font-size: 16px;"></i> Library
+    <i class="fas fa-book" style="font-size: 16px;"></i> Library Records 
   </button>
 
   <!-- Library Management Section -->
@@ -1593,13 +1582,6 @@ button {
     </button>
 </div>
 
-
-
-   
-
-
-
-
 <!-- Collapsible Menu Actions --> 
 <div id="menuActions" style="display: none;">
   <div class="menu-container">
@@ -1680,6 +1662,11 @@ button {
 </button>
 
 <div class="dropdown" id="learnersMenu">
+<button class="neon-button btn-yellow" onclick="toggleSection('registerLearnerSection')">
+    <span class="material-icons">person_add</span> Register Learner
+</button>
+
+
   <button onclick="printRegisteredLearners()" class="neon-button">
     <i class="fas fa-print"></i> Print Registered Learners
   </button>
@@ -1699,17 +1686,22 @@ button {
   <button onclick="printGroupedByGender()" class="neon-button">
     <i class="fas fa-print"></i> Print Grouped by Gender
   </button>
-<!-- Button to Toggle Learners Count -->
-<button id="toggleLearnersCountButton" onclick="toggleLearnersCount()" 
-        style="margin: 10px; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+<!-- Button to Toggle Learners Count --> 
+<button id="toggleLearnersCountButton" onclick="toggleLearnersCount()" class="neon-button">
     <i class="fas fa-eye"></i> Show Learners Count
 </button>
 
 <!-- Button to Print Learners Count -->
-<button onclick="printLearnersCount()" 
-        style="margin: 10px; padding: 10px; background-color: #FF9800; color: white; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+<button onclick="printLearnersCount()" class="neon-button orange-neon">
     <i class="fas fa-print"></i> Print Learners Count
 </button>
+<button class="neon-button btn-red" onclick="viewArchives()">
+    <span class="material-icons">archive</span> View Archives Exams
+</button>
+<button class="neon-button btn-red" onclick="toggleArchives()">
+    <span class="material-icons">visibility</span> View Archived
+</button>
+
 </div>
 </div>
 
@@ -1960,9 +1952,10 @@ button {
   <button onclick="generateGenderPerformance()" class="neon-button">
     <i class="fas fa-genderless"></i> Generate Gender Performance
   </button>
-<button onclick="togglePathwaysTable()" class="button toggle-button">
-        <i class="fas fa-chart-bar"></i> Group Learners by Pathways
-    </button>
+<button onclick="togglePathwaysTable()" class="neon-button btn-blue">
+    <i class="fas fa-chart-bar"></i> Group Learners by Pathways
+</button>
+
   <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
     <i class="fas fa-arrow-left"></i> Back
   </button>
@@ -4612,25 +4605,58 @@ if (totalMarks >= 71 && totalMarks <= 85)
     return "Demonstrates good understanding but should aim for consistent excellence.";
 if (totalMarks >= 86 && totalMarks <= 140) 
     return "Shows dedication and effort but can aim for even higher performance.";
-if (totalMarks >= 141 && totalMarks <= 200) 
+if (totalMarks >= 141 && totalMarks <= 199) 
     return "Displays self-discipline; however, should put extra effort to achieve higher scores.";
-if (totalMarks >= 201 && totalMarks <= 300) 
-    return "Willing to help peers; however, should focus on improving overall performance.";
-if (totalMarks >= 301 && totalMarks <= 400) 
-    return "Actively participates in class discussions and takes on various roles in work groups.";
-if (totalMarks >= 401 && totalMarks <= 449) 
-    return "Demonstrates strong skills and consistently performs above expectations.";
-if (totalMarks >= 450 && totalMarks <= 500) 
-    return "Excels in assignments and shows leadership in group work.";
-if (totalMarks >= 501 && totalMarks <= 599) 
-    return "An exemplary performer who inspires peers through excellent work.";
-if (totalMarks >= 600 && totalMarks <= 630) 
-    return "A highly motivated learner who consistently achieves outstanding results.";
-if (totalMarks >= 631 && totalMarks <= 700) 
-    return "Shows exceptional skills and a deep understanding of the material.";
-if (totalMarks >= 701 && totalMarks <= 900) 
-    return "An outstanding achiever who excels beyond expectations.";
+if (totalMarks >= 200 && totalMarks <= 205)  
+    return "Shows enthusiasm for learning but needs to focus on grasping foundational concepts. Encouraged to seek clarification when in doubt.";  
+if (totalMarks >= 206 && totalMarks <= 215)  
+    return "Demonstrates interest in academics but requires more consistency in applying knowledge. Should practice regularly to build confidence.";  
+if (totalMarks >= 216 && totalMarks <= 225)  
+    return "Has potential to improve but needs to work on time management and study habits. Encouraged to engage more in revision and discussions.";  
+if (totalMarks >= 226 && totalMarks <= 235)  
+    return "Engages with class activities but should refine problem-solving techniques. Needs to develop a structured approach to answering questions.";  
+if (totalMarks >= 236 && totalMarks <= 245)  
+    return "Displays curiosity and willingness to learn but struggles with applying concepts. Should focus on understanding rather than memorization.";  
+if (totalMarks >= 246 && totalMarks <= 255)  
+    return "Puts in effort but must aim for greater accuracy in assignments and tests. Reviewing mistakes carefully will enhance performance.";  
+if (totalMarks >= 256 && totalMarks <= 265)  
+    return "Shows eagerness to learn but needs to work on building confidence when answering questions. Should participate more in class discussions.";  
+if (totalMarks >= 266 && totalMarks <= 275)  
+    return "Participates in class activities but requires a stronger grasp of core subjects. Encouraged to ask more questions and seek additional resources.";  
+if (totalMarks >= 276 && totalMarks <= 285)  
+    return "Makes steady progress and shows improvement in understanding concepts. Should challenge themselves further by attempting advanced problems.";  
+if (totalMarks >= 286 && totalMarks <= 295)  
+    return "Displays motivation and a desire to improve. Needs to focus on critical thinking and applying knowledge to real-world scenarios.";  
+if (totalMarks >= 296 && totalMarks <= 300)  
+    return "Committed to learning and shows perseverance. Should refine study techniques for better retention and comprehension.";  
+if (totalMarks >= 301 && totalMarks <= 350)  
+    return "Actively participates in class discussions and collaborates well with peers. Demonstrates growing confidence in expressing ideas.";  
+if (totalMarks >= 351 && totalMarks <= 400)  
+    return "Shows steady academic progress and a willingness to learn. Encouraged to maintain a consistent study schedule to reinforce learning.";  
+if (totalMarks >= 401 && totalMarks <= 449)  
+    return "Consistently performs above expectations, demonstrating strong analytical and problem-solving skills. A well-rounded student.";  
+if (totalMarks >= 450 && totalMarks <= 500)  
+    return "Exhibits leadership qualities and a solid grasp of concepts. Should continue exploring challenging material to push beyond comfort zones.";  
+if (totalMarks >= 501 && totalMarks <= 550)  
+    return "A high-achieving student who takes initiative in group discussions. Sets a great example for peers through disciplined study habits.";  
+if (totalMarks >= 551 && totalMarks <= 599)  
+    return "Excels academically and demonstrates a strong ability to grasp new concepts. Should continue nurturing curiosity and exploring deeper learning.";  
+if (totalMarks >= 600 && totalMarks <= 630)  
+    return "A highly motivated learner who consistently delivers outstanding results. Shows great potential for further academic excellence.";  
+if (totalMarks >= 631 && totalMarks <= 670)  
+    return "Displays deep subject mastery and strong analytical skills. Should take on advanced challenges to further enhance learning.";  
+if (totalMarks >= 671 && totalMarks <= 700)  
+    return "Demonstrates critical thinking and a keen ability to apply knowledge. Shows promise in problem-solving and independent learning.";  
+if (totalMarks >= 701 && totalMarks <= 750)  
+    return "Achieves remarkable academic performance with a strong work ethic. Should continue to challenge themselves with complex concepts.";  
+if (totalMarks >= 751 && totalMarks <= 800)  
+    return "Displays outstanding problem-solving skills and an in-depth understanding of subjects. A top performer with great potential.";  
+if (totalMarks >= 801 && totalMarks <= 850)  
+    return "Excels in all areas and consistently exceeds expectations. Should consider mentoring peers to reinforce knowledge.";  
+if (totalMarks >= 851 && totalMarks <= 900)  
+    return "An exceptional learner who sets a high standard for academic excellence. Demonstrates leadership, discipline, and an advanced understanding of concepts.";  
 return "";
+
 
 }
 
