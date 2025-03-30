@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -3335,20 +3335,18 @@ function printGroupedTable(grade) {
 }
 
 function printCombinedMeritList() {  
-    // Retrieve details from the Subject Champions form
     const schoolName = document.getElementById('schoolName').value || "School Name Not Provided";
     const grade = document.getElementById('gradeLevel').value || "Grade Not Provided";
     const term = document.getElementById('term').value || "Term Not Provided";
     const year = document.getElementById('year').value || "Year Not Provided";
 
-    // Custom prompt for grade input with style
     const customPrompt = document.createElement('div');
     customPrompt.style.position = 'fixed';
     customPrompt.style.top = '50%';
     customPrompt.style.left = '50%';
     customPrompt.style.transform = 'translate(-50%, -50%)';
-    customPrompt.style.backgroundColor = '#f8d7da'; // Red background
-    customPrompt.style.color = '#721c24'; // Dark red text
+    customPrompt.style.backgroundColor = '#f8d7da';
+    customPrompt.style.color = '#721c24';
     customPrompt.style.padding = '20px';
     customPrompt.style.borderRadius = '10px';
     customPrompt.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
@@ -3361,7 +3359,6 @@ function printCombinedMeritList() {
     `;
     document.body.appendChild(customPrompt);
 
-    // Handle grade input submission
     window.submitGradeInput = function() {
         const gradesInput = document.getElementById('gradeInput').value.trim();
         if (!gradesInput) {
@@ -3370,40 +3367,38 @@ function printCombinedMeritList() {
         }
         const selectedGrades = gradesInput.split(',').map(grade => grade.trim());
 
-        // Get the combined merit list content
         const combinedContentElement = document.getElementById("combinedMeritLists");
         if (!combinedContentElement || combinedContentElement.innerHTML.trim() === "") {
             alert("No combined merit list to print.");
             return;
         }
 
-        // Filter the combined content by selected grades
-        const combinedHtml = Array.from(combinedContentElement.querySelectorAll("h3, table"))
-            .filter(element => {
-                if (element.tagName === "H3") {
-                    return selectedGrades.some(grade => element.textContent.includes(`Grade ${grade}`));
+        const filteredElements = [];
+        const allElements = combinedContentElement.children;
+        for (let i = 0; i < allElements.length; i++) {
+            const element = allElements[i];
+            if (element.tagName === "H3" && selectedGrades.some(grade => element.textContent.includes(`Grade ${grade}`))) {
+                filteredElements.push(element.outerHTML);
+                if (allElements[i + 1] && allElements[i + 1].tagName === "TABLE") {
+                    filteredElements.push(allElements[i + 1].outerHTML);
                 }
-                return true;
-            })
-            .map(element => element.outerHTML)
-            .join("");
+            }
+        }
 
+        const combinedHtml = filteredElements.join("");
         if (!combinedHtml) {
             alert("No merit lists found for the selected grades.");
             return;
         }
 
-        // URL or base64 string of your logo
-        const logoUrl = "https://i.imgur.com/UW65hfv.png "; // Replace with your logo's URL or base64 string
-
-        // Create and show the spinner
+        const logoUrl = "https://i.imgur.com/UW65hfv.png ";
         const spinner = document.createElement('div');
         spinner.style.position = 'fixed';
         spinner.style.top = '50%';
         spinner.style.left = '50%';
         spinner.style.transform = 'translate(-50%, -50%)';
-        spinner.style.border = '16px solid #f3f3f3'; // Light grey
-        spinner.style.borderTop = '16px solid #3498db'; // Blue color for the spinning part
+        spinner.style.border = '16px solid #f3f3f3';
+        spinner.style.borderTop = '16px solid #3498db';
         spinner.style.borderRadius = '50%';
         spinner.style.width = '80px';
         spinner.style.height = '80px';
@@ -3411,7 +3406,6 @@ function printCombinedMeritList() {
         spinner.style.zIndex = '9999';
         document.body.appendChild(spinner);
 
-        // Add CSS for spinner animation
         const style = document.createElement('style');
         style.innerHTML = `
             @keyframes spin {
@@ -3421,7 +3415,6 @@ function printCombinedMeritList() {
         `;
         document.head.appendChild(style);
 
-        // Open a hidden iframe for printing (no pop-up window)
         const iframe = document.createElement('iframe');
         iframe.style.position = 'absolute';
         iframe.style.width = '0';
@@ -3429,7 +3422,6 @@ function printCombinedMeritList() {
         iframe.style.border = 'none';
         document.body.appendChild(iframe);
 
-        // Write the HTML content into the iframe
         iframe.contentWindow.document.open();
         iframe.contentWindow.document.write(`
             <html>
@@ -3461,7 +3453,7 @@ function printCombinedMeritList() {
                         .logo {
                             display: block;
                             margin: 0 auto;
-                            width: 100px; /* Adjust logo size */
+                            width: 100px;
                             height: auto;
                         }
                     </style>
@@ -3480,23 +3472,20 @@ function printCombinedMeritList() {
         `);
         iframe.contentWindow.document.close();
 
-        // Print the content from the iframe
         iframe.onload = function () {
             iframe.contentWindow.print();
-
-            // Remove the spinner and iframe after printing
             document.body.removeChild(spinner);
             document.body.removeChild(iframe);
-            document.body.removeChild(customPrompt); // Remove the custom prompt box
+            document.body.removeChild(customPrompt);
         };
     };
 
-    // Handle cancel action
     window.cancelGradeInput = function() {
-        document.body.removeChild(customPrompt); // Remove the custom prompt box
+        document.body.removeChild(customPrompt);
         alert("Grade selection canceled.");
     };
 }
+
 
 
 function saveGroupedChanges(grade) { 
