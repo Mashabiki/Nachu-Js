@@ -1010,31 +1010,32 @@ button {
 </header>
 
 <button class="btn-bright green" onclick="toggleSection('registeredLearnersBox')">
-    <span class="material-icons">groups</span>  Learners Database 
+    <span class="material-icons" style="color: #2ecc71;">groups</span> Learners Database
 </button>
 
 <button class="btn-actions" onclick="toggleSection('juniorSchoolActions')">
     <span class="material-icons">school</span> Assessment Actions
 </button>
-
 <button class="btn-purple" onclick="toggleSection('championsForm')">
-    <span class="material-icons">admin_panel_settings</span> Admin Details
+    <span class="material-icons" style="color: #9b59b6;">admin_panel_settings</span> Admin Details
 </button>
 
 <!-- Menu Button -->
 <button id="menuToggle" class="btn-toggle" onclick="toggleSection('menuActions')">
-    <span class="material-icons">group</span> Manage Staff
+    <span class="material-icons" style="color: #3498db;">group</span> Manage Staff
 </button>
-<button id="logoutButton" onclick="logout()">
-    <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i> Logout
+
+<button id="logoutButton" onclick="logout()" style="background-color: #e74c3c; color: white; border: none; padding: 10px 15px; font-size: 16px; cursor: pointer; border-radius: 5px;">
+    <i class="fas fa-sign-out-alt" style="color: #fff; margin-right: 5px;"></i> Logout
 </button>
- 
-  <!-- Button to Show/Hide Fee Management Menu -->
-  <button onclick="toggleFeeActionsMenu()" style="background-color: #d32f2f; color: purple; border: none; padding: 10px 10px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-bottom: 10px;">
-    <i class="fas fa-cogs"></i> Manage Fees
-  </button>
+
+<!-- Button to Show/Hide Fee Management Menu -->
+<button onclick="toggleFeeActionsMenu()" style="background-color: #d32f2f; color: white; border: none; padding: 10px 15px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-bottom: 10px;">
+    <i class="fas fa-cogs" style="color: #ffeb3b;"></i> Manage Fees
+</button>
+
 <section id="library-records"> 
-  <h2>Manage Library</h2>
+ 
   <!-- Toggle Button -->
   <button
     type="button"
@@ -1663,44 +1664,54 @@ button {
 
 <div class="dropdown" id="learnersMenu">
 <button class="neon-button btn-yellow" onclick="toggleSection('registerLearnerSection')">
-    <span class="material-icons">person_add</span> Register Learner
+    <span class="material-icons" style="color: #fbc02d;">person_add</span> Register Learner
 </button>
 
+<button onclick="printRegisteredLearners()" class="neon-button">
+    <i class="fas fa-print" style="color: #2ecc71;"></i> Print Registered Learners
+</button>
 
-  <button onclick="printRegisteredLearners()" class="neon-button">
-    <i class="fas fa-print"></i> Print Registered Learners
-  </button>
-  <button onclick="groupLearnersByGrade()" class="neon-button">
-    <i class="fas fa-users"></i> Group by Grade
-  </button>
-  <button onclick="promoteLearners()" class="neon-button">
-    <i class="fas fa-arrow-up"></i> Promote Learners to Next Grade
-  </button>
+<button onclick="groupLearnersByGrade()" class="neon-button">
+    <i class="fas fa-users" style="color: #3498db;"></i> Group by Grade
+</button>
+
+<button onclick="promoteLearners()" class="neon-button">
+    <i class="fas fa-arrow-up" style="color: #e67e22;"></i> Promote Learners to Next Grade
+</button>
+
 <!-- Undo Promotion Button -->
 <button onclick="undoPromotion()" class="neon-button neon-red">
-    <i class="fas fa-undo"></i> Undo Promotion
+    <i class="fas fa-undo" style="color: #c0392b;"></i> Undo Promotion
 </button>
-  <button onclick="groupLearnersByGender()" class="neon-button">
-    <i class="fas fa-transgender-alt"></i> Group by Gender
-  </button>
-  <button onclick="printGroupedByGender()" class="neon-button">
-    <i class="fas fa-print"></i> Print Grouped by Gender
-  </button>
+
+<button onclick="groupLearnersByGender()" class="neon-button">
+    <i class="fas fa-transgender-alt" style="color: #9b59b6;"></i> Group by Gender
+</button>
+
+<button onclick="printGroupedByGender()" class="neon-button">
+    <i class="fas fa-print" style="color: #2ecc71;"></i> Print Grouped by Gender
+</button>
+
 <!-- Button to Toggle Learners Count --> 
 <button id="toggleLearnersCountButton" onclick="toggleLearnersCount()" class="neon-button">
-    <i class="fas fa-eye"></i> Show Learners Count
+    <i class="fas fa-eye" style="color: #f1c40f;"></i> Show Learners Count
 </button>
 
 <!-- Button to Print Learners Count -->
 <button onclick="printLearnersCount()" class="neon-button orange-neon">
-    <i class="fas fa-print"></i> Print Learners Count
+    <i class="fas fa-print" style="color: #e74c3c;"></i> Print Learners Count
 </button>
-<button class="neon-button btn-red" onclick="viewArchives()">
-    <span class="material-icons">archive</span> View Archives Exams
-</button>
-<button class="neon-button btn-red" onclick="toggleArchives()">
-    <span class="material-icons">visibility</span> View Archived
-</button>
+
+  
+    <button class="neon-button btn-red" onclick="viewArchives()">
+        <span class="material-icons" style="color: #d32f2f;">archive</span> View Archived Exams
+    </button>
+    
+    <a href="https://drive.google.com/file/d/14qlKVZ_0nsgHqthYDAdks4qpHkZV6iN3/view?usp=drivesdk" download>Download Admission Form</a>
+    
+    <button class="neon-button btn-red" onclick="toggleArchives()">
+        <span class="material-icons" style="color: #0288d1;">visibility</span> View Archived
+    </button>
 
 </div>
 </div>
@@ -1843,11 +1854,12 @@ button {
 
 
 <button onclick="saveCurrentMarksTable()" class="neon-button">
-  <i class="fas fa-table"></i> Save Current Marks Table
+  <i class="fas fa-table"></i> Backup Merit
 </button>
-
-    <span class="material-icons">save</span> Save Merit List
-</button>
+<div style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; font-weight: bold; display: flex; align-items: center;">
+    <i class="fas fa-bullhorn" style="color: #d32f2f; font-size: 24px; margin-right: 8px;"></i> 
+   RASM reminds you to backup,and send to archives your marks for further analysis.
+</div>
 
    <div id="marksHeader"></div>
     <table class="report-table">
@@ -1855,6 +1867,14 @@ button {
 <button onclick="deleteMarksTable()" style="background: red; color: white; padding: 10px; border-radius: 5px; font-weight: bold;">
     <i class="fas fa-trash"></i> Delete Marks Table
 </button>
+
+<button onclick="printMarksTable()" style="background: green; color: white; padding: 10px; border-radius: 5px; font-weight: bold; margin-left: 10px;">
+    <i class="fas fa-print"></i> Print Merit 
+</button>
+ <div style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; font-weight: bold; display: flex; align-items: center;">
+    <i class="fas fa-bullhorn" style="color: #d32f2f; font-size: 24px; margin-right: 8px;"></i> 
+    Kindly generate all reports before deleting this merit list.
+</div>
             <th>No.</th> <!-- Serial Number -->
             <th>Learner</th> <!-- Learner Name -->
             <th>Grade</th> <!-- Grade -->
@@ -1873,8 +1893,11 @@ button {
     </thead>
     <tbody id="marksList"></tbody>
 </table>
-    <!-- Section for Subject Levels -->
-<h2>Subject Level Summary</h2>
+      <!-- Section for Subject Levels -->
+<h2 style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; display: flex; align-items: center; gap: 10px; width: fit-content;">
+    <i class="fas fa-chart-bar" style="color: #d32f2f;"></i> Subject Level Summary
+</h2>
+
 <table class="report-table">
     <thead>
         <tr>
@@ -1905,60 +1928,83 @@ button {
     </div>
 <!-- Archived Marks Section -->
 <div id="archivesSection" class="hidden-section">
-    <h2>Archived Marks</h2>
+   <h2 style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; display: flex; align-items: center; gap: 10px; width: fit-content;">
+    <i class="fas fa-archive" style="color: #d32f2f;"></i> Archived Marks
+</h2>
+
     <div id="archivedMarksList"></div>
 <button onclick="combineMeritListsByGrade()" class="neon-button">
-  <i class="fas fa-sync-alt"></i> Combine Merit Lists for Same Grade
+  <i class="fas fa-sync-alt"></i> Get Overall Merit for Same Grade
 </button>
 
 <div id="combinedMeritLists"></div>
 
 <button onclick="printCombinedMeritList()" class="neon-button">
-  <i class="fas fa-print"></i> Print Combined Merit List
+  <i class="fas fa-print"></i> Print Overall  Merit
 </button>
-
 </div>
 <div id="loadingSpinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
     <div style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
 </div>
 <div id="juniorSchoolActions" class="hidden-section">
   <div class="menu-container">
-  <button class="menu-button" aria-label="Junior School Actions" onclick="toggleJuniorSchoolMenu()">
-  <i class="fas fa-school"></i> Nice To See You Here Click Me
+<button class="menu-button" aria-label="COMPREHENSIVE SCHOOL Actions" onclick="toggleJuniorSchoolMenu()">
+  <i class="fas fa-school" style="color: #3498db;"></i> HEY THERE! CLICK TO DIVE IN.
 </button>
 
 <div class="dropdown" id="juniorSchoolMenu">
   <button onclick="printAssessmentReport()" class="neon-button btn-print">
-    <i class="fas fa-print"></i> Print Report
+    <i class="fas fa-print" style="color: #2ecc71;"></i> Print Report
   </button>
-  <button onclick="showSubjectChampions()" class="neon-button btn-champions">
-    <i class="fas fa-trophy"></i> Subject Champions
+
+  <button onclick="showSubjectChampions()" class="neon-button btn-champions"> 
+    <i class="fas fa-trophy" style="color: orange;"></i> Learning Areas Star Achievers
   </button>
+
   <button onclick="showSubjectRanking()" class="neon-button btn-ranking">
-    <i class="fas fa-chart-line"></i> Subject Ranking
+    <i class="fas fa-chart-line" style="color: #f39c12;"></i> Learning Area Performance Index 
   </button>
+
   <button onclick="showSubjectPerformance()" class="neon-button btn-performance">
-    <i class="fas fa-chart-bar"></i> Subject Performance
+    <i class="fas fa-chart-bar" style="color: #9b59b6;"></i> Learning Area Performance Status
   </button>
+
   <button onclick="toggleSection('juniorMarksEntrySection')" class="neon-button btn-blue">
-    <i class="fas fa-pen"></i> Capture Outcomes
+    <i class="fas fa-pen" style="color: #e74c3c;"></i> Record Outcomes
   </button>
+
   <button onclick="toggleSection('marksTableSection')" class="neon-button btn-red">
-    <i class="fas fa-list"></i> Merit List
+    <i class="fas fa-list" style="color: #1abc9c;"></i> Merit List
   </button>
+
   <button onclick="toggleSection('bulkReportGeneration')" class="neon-button btn-blue">
-    <i class="fas fa-file-alt"></i> Bulk Report Generation
+    <i class="fas fa-file-alt" style="color: #2c3e50;"></i> Bulk Report Generation
   </button>
+
   <button onclick="generateGenderPerformance()" class="neon-button">
-    <i class="fas fa-genderless"></i> Generate Gender Performance
+    <i class="fas fa-venus-mars" style="color: #d35400;"></i> Generate Gender Merit List
   </button>
-<button onclick="togglePathwaysTable()" class="neon-button btn-blue">
-    <i class="fas fa-chart-bar"></i> Group Learners by Pathways
+
+  <button onclick="togglePathwaysTable()" class="button toggle-button">
+    <i class="fas fa-project-diagram" style="color: #16a085;"></i> Group Learners by Pathways
+  </button>
+<!-- Merit List Control Buttons -->
+<button onclick="generateMeritList()" class="neon-button btn-ranking">
+    <i class="fas fa-chart-line" style="color: #f39c12;"></i> Get Merit List
 </button>
 
-  <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
-    <i class="fas fa-arrow-left"></i> Back
+<button onclick="toggleMeritList()" class="neon-button btn-toggle" id="toggleBtn">
+    <i class="fas fa-eye-slash" style="color: #e74c3c;"></i> Hide Merit List
+</button>
+
+<button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
+    <i class="fas fa-print" style="color: #2ecc71;"></i> Print
+</button>
+
+ <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
+    <i class="fas fa-arrow-left" style="color: #c0392b;"></i> Back
   </button>
+
 <!-- Merit List Selection -->
 <label for="gradeSelect" style="font-size: 14px; font-weight: bold; color: #4CAF50;">
     <i class="fas fa-list-ol"></i> <strong>Merit List Here:</strong>
@@ -1986,22 +2032,6 @@ button {
     <option value="9B">Grade 9B</option>
     <option value="9C">Grade 9C</option>
 </select>
-
-<!-- Merit List Control Buttons -->
-<button onclick="generateMeritList()" class="neon-button btn-ranking">
-    <i class="fas fa-chart-line"></i> Get Merit List
-</button>
-
-<button onclick="toggleMeritList()" class="neon-button btn-toggle" id="toggleBtn">
-    <i class="fas fa-eye-slash"></i> Hide Merit List
-</button>
-
-<button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
-    <i class="fas fa-print"></i> Print
-</button>
-
-
-
 <div id="meritListContainer" style="display:none; margin-top:20px;"></div>
 
 </div>
@@ -4819,8 +4849,23 @@ function printAssessmentReport() {
     printWindow.print();
 }
 
+function getPerformanceLevel(totalMarks) {
+    if (totalMarks >= 1 && totalMarks <= 200) return "Below expectations";
+    if (totalMarks >= 201 && totalMarks <= 400) return "Approaching expectations";
+    if (totalMarks >= 401 && totalMarks <= 600) return "Meeting expectations";
+    if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding expectations";
+    return "";
+}
 
- function printMarksTable() { 
+function getPerformanceLevel(totalMarks) {
+    if (totalMarks >= 1 && totalMarks <= 200) return "Below expectations";
+    if (totalMarks >= 201 && totalMarks <= 400) return "Approaching expectations";
+    if (totalMarks >= 401 && totalMarks <= 600) return "Meeting expectations";
+    if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding expectations";
+    return "";
+}
+
+function printMarksTable() {  
     showLoadingSpinner(); // Show spinner while processing
 
     setTimeout(() => {
@@ -4833,18 +4878,12 @@ function printAssessmentReport() {
         const averages = subjectTotals.map(total => (total / marks.length).toFixed(2));
         const overallAverage = (totalMarksSum / marks.length).toFixed(2); // Overall average of total marks
 
-        // Retrieve dynamic information from input fields
-        const schoolName = document.getElementById("schoolName").value || "School Name";
+        const schoolName = "NACHU JUNIOR SCHOOL";
         const gradeLevel = document.getElementById("gradeLevel").value || "Grade";
         const year = document.getElementById("year").value || "Year";
         const term = document.getElementById("term").value || "Term";
 
-        // URL or base64 string of your logo
-        const logoUrl = " https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
-
-        // Retrieve the content for Marks Table 
-        const reportDiv = document.getElementById("report");
-        const rankingsHtml = reportDiv.innerHTML;
+        const logoUrl = "https://i.imgur.com/UW65hfv.png";
 
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
@@ -4852,13 +4891,8 @@ function printAssessmentReport() {
                 <head>
                     <title>Marks Table</title>
                     <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                        }
-                        .report-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
+                        body { font-family: Arial, sans-serif; text-align: center; }
+                        .report-table { width: 100%; border-collapse: collapse; }
                         .report-table th, .report-table td {
                             border: 3px solid black;
                             padding: 10px;
@@ -4878,18 +4912,33 @@ function printAssessmentReport() {
                         }
                         .logo {
                             display: block;
-                            margin: 0 auto;
-                            width: 100px; /* Adjust logo size */
+                            position: absolute;
+                            top: 10px;
+                            left: 10px;
+                            width: 100px;
                             height: auto;
+                        }
+                        .header-container {
+                            text-align: center;
+                            margin-top: 20px;
+                        }
+                        .header-text {
+                            font-size: 22px;
+                            font-weight: bold;
+                            margin: 5px 0;
                         }
                     </style>
                 </head>
                 <body>
                     <img src="${logoUrl}" class="logo" alt="School Logo">
-                    <p>School: ${schoolName}</p>
-                    <p>Grade: ${gradeLevel}</p>
-                    <p>Year: ${year}</p>
-                    <p>Term: ${term}</p>
+                    <div class="header-container">
+                        <p class="header-text">NACHU JUNIOR SCHOOL MERIT LIST</p>
+                        <p class="header-text">PO BOX 561-00902 KIKUYU KENYA</p>
+                        <p class="header-text">Phone: +254-700-123456</p>
+                        <p class="header-text">School Motto: "HARD WORK PAYS"</p>
+                        <p class="header-text">Year: ${year}</p>
+                        <p class="header-text">Grade: ${gradeLevel}</p>
+                    </div>
                     <table class="report-table">
                         <thead>
                             <tr>
@@ -4906,6 +4955,7 @@ function printAssessmentReport() {
                                 <th>Cre</th><th>Lev</th>
                                 <th>C/Art</th><th>Lev</th>
                                 <th>Total Marks</th>
+                                <th>Performance Level</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -4916,31 +4966,33 @@ function printAssessmentReport() {
                                     <td>${mark.grade}</td>
                                     ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
                                     <td style="font-weight:bold; border: 3px solid black;">${mark.totalMarks}</td>
+                                    <td style="font-weight:bold;">${getPerformanceLevel(mark.totalMarks)}</td>
                                 </tr>
                             `).join('')}
                             <tr>
                                 <td colspan="3" style="font-weight:bold;">Total</td>
                                 ${subjectTotals.map(total => `<td style="font-weight:bold;">${total}</td><td></td>`).join('')}
                                 <td style="font-weight:bold;">${totalMarksSum}</td>
+                                <td></td>
                             </tr>
                             <tr>
                                 <td colspan="3" style="font-weight:bold;">Average</td>
                                 ${averages.map(avg => `<td style="font-weight:bold;">${avg}</td><td></td>`).join('')}
                                 <td style="font-weight:bold;">${overallAverage}</td>
+                                <td></td>
                             </tr>
                         </tbody>
                     </table>
-                    <!-- Append the stamp after printing the table -->
-                    <div class="stamp">NACHU COMPREHENSIVE SCHOOL<br>561-00902 Kikuyu</div>
+                    <div class="stamp">NACHU JUNIOR  SCHOOL<br>PO BOX 561-00902 KIKUYU</div>
                 </body>
             </html>
         `);
         printWindow.document.close();
         printWindow.print();
 
-        hideLoadingSpinner(); // Hide spinner after printing is complete
-    }, 2000); // Simulated delay to show spinner
-}                  
+        hideLoadingSpinner();
+    }, 2000);
+}
 
 function printGroupedTable(grade) {
     const schoolName = document.getElementById("schoolName").value || "School Name";
