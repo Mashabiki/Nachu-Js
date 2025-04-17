@@ -568,31 +568,27 @@
         color: green;
         font-weight: bold;
     }
-footer {
-  position: fixed;
+.bottom-footer {
+  position: absolute;
   bottom: 0;
+  left: 0;
   width: 100%;
   background-color: #333;
-  color: white;
+  color: #fff;
   text-align: center;
-  padding: 10px 0;
-  font-size: 17px;
-  overflow: hidden;
+  padding: 10px;
+  height: 50px; /* Consistent height for footer */
 }
-
-.footer-text {
-  display: inline-block;
-  white-space: nowrap;
-  animation: marquee 35s linear infinite;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+.bottom-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  height: 50px; /* Consistent height for footer */
 }
 
 
@@ -2410,14 +2406,13 @@ button {
         <tbody id="learnerCountTableBody"></tbody>
     </table>
 </div>
-<footer>
-  <div class="footer-text">
- Streamline Your School With RASM Tech!
-Register learners, track performance, analyze subject trends, manage staff and parents, and generate full timetables per stream — all in seconds. Built on Ministry of Education guidelines with powerful tools like deviation reports, fireworks for achievements, and bulk report generation. RASM Technologies — Simplifying school management, the smart way.
- 2025 Nachu Junior School | All rights reserved. | Powered by RASM Technologies
-  </div>
-</footer>
+
+    <!-- Footer Section -->
+    <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 5px 0; text-align: center;">
+        <p>&copy; 2025 NACHU COMPREHENSIVE SCHOOL | All Rights Reserved</p>
+    </footer>
 </body>
+   
 <script>
     // ... (Other existing JavaScript code)
    // Function to update the grade field based on the selected learner
