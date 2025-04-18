@@ -10965,11 +10965,13 @@ function printLearnersTable() {
   win.close();
 }
 
-document.addEventListener("DOMContentLoaded", populateGradeDropdown);
-function populateGradeDropdown() {
+function populateMarksGradeDropdown() {
     const gradeSelect = document.getElementById("gradeSelect");
     const tableBody = document.getElementById("marksList");
+
     if (!gradeSelect || !tableBody) return;
+
+    gradeSelect.innerHTML = '<option value="">All Grades</option>';
 
     const rows = tableBody.querySelectorAll("tr");
     const grades = new Set();
@@ -10977,11 +10979,13 @@ function populateGradeDropdown() {
     rows.forEach(row => {
         const gradeCell = row.cells[2]; // 3rd column
         if (gradeCell) {
-            grades.add(gradeCell.textContent.trim());
+            const gradeText = gradeCell.textContent.trim();
+            if (gradeText) {
+                grades.add(gradeText);
+            }
         }
     });
 
-    gradeSelect.innerHTML = '<option value="">All Grades</option>';
     [...grades].sort().forEach(grade => {
         const option = document.createElement("option");
         option.value = grade;
@@ -10989,6 +10993,12 @@ function populateGradeDropdown() {
         gradeSelect.appendChild(option);
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    populateMarksGradeDropdown();
+});
+
+
 
 function filterMarksByGrade() {
     const selectedGrade = document.getElementById("gradeSelect").value;
