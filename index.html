@@ -962,6 +962,47 @@ button {
     .signature-section {
         margin-top: 30px; /* Adds extra space for the signatures */
     }
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  #marksStatusWrapper, #marksStatusWrapper * {
+    visibility: visible !important;
+  }
+
+  #marksStatusWrapper {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 20px;
+  }
+
+  #toggleMarksStatusBtn,
+  #printHeader {
+    display: block !important; /* Show header only during print */
+  }
+
+  #printHeader {
+    text-align: center !important;
+    margin-bottom: 20px !important;
+  }
+
+  #marksStatusWrapper button {
+    display: none !important; /* Hide all buttons */
+  }
+}
+/* Highlighted styling for total and average summary rows */
+#marksList .summary-row {
+    background-color: #e8f5e9; /* Light green background */
+    font-weight: bold;
+    color: #2e7d32; /* Deep green text */
+    border-top: 2px solid #4CAF50;
+}
+
+
     </style>
 </head>
 <body>
@@ -1701,6 +1742,35 @@ button {
 <button onclick="printLearnersCount()" class="neon-button orange-neon">
     <i class="fas fa-print" style="color: #e74c3c;"></i> Print Learners Count
 </button>
+<div style="margin-top: 20px;">
+  <label for="gradeDropdown"><strong>Select Grade:</strong></label>
+  <select id="gradeDropdown" onchange="showLearnerNamesOnly()" style="margin-left: 10px;">
+    <option value="">-- Select Grade --</option>
+  </select>
+
+  <button onclick="printLearnersTable()" style="margin-left: 15px; padding: 6px 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-print"></i> Print
+  </button>
+
+  <!-- Printable Section -->
+  <div id="printableLearnersTable" style="margin-top: 20px;">
+    <div id="printHeader" style="text-align: center; margin-bottom: 15px;">
+      <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-height: 80px;"><br>
+      <h2 style="margin: 5px 0; color: black;">NACHU PRIMARY SCHOOL</h2>
+      <h3 style="margin: 5px 0; color: black;">Learner List - <span id="selectedGradeHeader"></span></h3>
+    </div>
+
+    <table id="learnersNameTable" style="border-collapse: collapse; width: 100%; color: black;">
+      <thead>
+        <tr style="background-color: #4CAF50; color: white;">
+          <th style="border: 1px solid black; padding: 8px;">No</th>
+          <th style="border: 1px solid black; padding: 8px;">Name</th>
+        </tr>
+      </thead>
+      <tbody id="learnerNamesList"></tbody>
+    </table>
+  </div>
+</div>
 
   
     <button class="neon-button btn-red" onclick="viewArchives()">
@@ -1868,12 +1938,30 @@ button {
     <i class="fas fa-trash"></i> Delete Marks Table
 </button>
 
+
+<button id="toggleMarksStatusBtn" onclick="toggleMarksStatus()" style="background: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">
+  <i class="fas fa-chart-bar"></i>  Marks Recording Summary
+</button>
+<div id="marksStatusWrapper" style="margin-top: 20px;"></div>
 <button onclick="printMarksTable()" style="background: green; color: white; padding: 10px; border-radius: 5px; font-weight: bold; margin-left: 10px;">
     <i class="fas fa-print"></i> Print Merit 
 </button>
  <div style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; font-weight: bold; display: flex; align-items: center;">
     <i class="fas fa-bullhorn" style="color: #d32f2f; font-size: 24px; margin-right: 8px;"></i> 
     Kindly generate all reports before deleting this merit list.
+
+<div style="margin-bottom: 10px;">
+  <label for="gradeSelect"><strong>Filter by Grade:</strong></label>
+  <select id="gradeSelect" onchange="filterMarksByGrade()">
+    <option value="">All Grades</option>
+  </select>
+</div>
+<div style="margin-top: 15px;">
+  <button onclick="printFilteredGrades()" style="padding: 10px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    <i class="fas fa-print"></i> Print Filtered Grades
+  </button>
+</div>
+
 </div>
             <th>No.</th> <!-- Serial Number -->
             <th>Learner</th> <!-- Learner Name -->
@@ -2746,7 +2834,8 @@ function updateLearnersTable() {
         </tr>
     `).join("");
 
-    updateLearnerSelect(); // Update dropdown or related components
+    updateLearnerSelect();      // Existing dropdown or UI update
+    populateGradeDropdown();    // ? Dynamically fill the grade <select> based on learners
 }
 
 function toggleChampionsForm() {
@@ -3547,7 +3636,6 @@ function saveGroupedChanges(grade) {
     localStorage.setItem('learners', JSON.stringify(learners));
     alert(`Changes for Grade ${grade} have been saved successfully.`);
 }
-
 function updateMarksTable() {
     // Sort the marks by totalMarks in descending order
     marks.sort((a, b) => b.totalMarks - a.totalMarks);
@@ -3567,11 +3655,11 @@ function updateMarksTable() {
                 <td>${mark.grade}</td>
                 ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
                 <td style="font-weight:bold; border: 2px solid black;">${mark.totalMarks}</td>
-               <td>
- <button onclick="deleteMarks(${index})" class="circle-button"><i class="fas fa-trash-alt"></i> Del</button>
-
-</td>
-
+                <td>
+                    <button onclick="deleteMarks(${index})" class="circle-button">
+                        <i class="fas fa-trash-alt"></i> Del
+                    </button>
+                </td>
             </tr>
         `;
     }).join("");
@@ -3592,7 +3680,12 @@ function updateMarksTable() {
         </tr>`;
 
     marksList.innerHTML += totalRow + averageRow;
+
+    // ? Refresh the grade filter dropdown
+    populateGradeDropdown();
 }
+
+
         function deleteMarks(index) {
             marks.splice(index, 1);  // Remove the mark entry at the specified index
             updateMarksTable();  // Update the table to reflect changes
@@ -4864,136 +4957,6 @@ function getPerformanceLevel(totalMarks) {
     if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding expectations";
     return "";
 }
-
-function printMarksTable() {  
-    showLoadingSpinner(); // Show spinner while processing
-
-    setTimeout(() => {
-        const totalMarksSum = marks.reduce((acc, mark) => acc + mark.totalMarks, 0);
-        const subjectTotals = Array(9).fill(0); // Assuming 9 subjects
-        marks.forEach(mark => {
-            mark.scores.forEach((score, index) => subjectTotals[index] += score);
-        });
-
-        const averages = subjectTotals.map(total => (total / marks.length).toFixed(2));
-        const overallAverage = (totalMarksSum / marks.length).toFixed(2); // Overall average of total marks
-
-        const schoolName = "NACHU JUNIOR SCHOOL";
-        const gradeLevel = document.getElementById("gradeLevel").value || "Grade";
-        const year = document.getElementById("year").value || "Year";
-        const term = document.getElementById("term").value || "Term";
-
-        const logoUrl = "https://i.imgur.com/UW65hfv.png";
-
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Marks Table</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; text-align: center; }
-                        .report-table { width: 100%; border-collapse: collapse; }
-                        .report-table th, .report-table td {
-                            border: 3px solid black;
-                            padding: 10px;
-                            text-align: center;
-                        }
-                        .stamp {
-                            border: 2px solid blue;
-                            color: blue;
-                            width: 200px;
-                            height: 70px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            margin: 10px auto;
-                            text-align: center;
-                            font-weight: bold;
-                        }
-                        .logo {
-                            display: block;
-                            position: absolute;
-                            top: 10px;
-                            left: 10px;
-                            width: 100px;
-                            height: auto;
-                        }
-                        .header-container {
-                            text-align: center;
-                            margin-top: 20px;
-                        }
-                        .header-text {
-                            font-size: 22px;
-                            font-weight: bold;
-                            margin: 5px 0;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <img src="${logoUrl}" class="logo" alt="School Logo">
-                    <div class="header-container">
-                        <p class="header-text">NACHU JUNIOR SCHOOL MERIT LIST</p>
-                        <p class="header-text">PO BOX 561-00902 KIKUYU KENYA</p>
-                        <p class="header-text">Phone: +254-700-123456</p>
-                        <p class="header-text">School Motto: "HARD WORK PAYS"</p>
-                        <p class="header-text">Year: ${year}</p>
-                        <p class="header-text">Grade: ${gradeLevel}</p>
-                    </div>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Learner</th>
-                                <th>Grade</th>
-                                <th>Eng</th><th>Lev</th>
-                                <th>Math</th><th>Lev</th>
-                                <th>Pre-Tech</th><th>Lev</th>
-                                <th>Kiswa</th><th>Lev</th>
-                                <th>Scie</th><th>Lev</th>
-                                <th>Social</th><th>Lev</th>
-                                <th>Agric</th><th>Lev</th>
-                                <th>Cre</th><th>Lev</th>
-                                <th>C/Art</th><th>Lev</th>
-                                <th>Total Marks</th>
-                                <th>Performance Level</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${marks.map((mark, index) => `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${mark.learner}</td>
-                                    <td>${mark.grade}</td>
-                                    ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
-                                    <td style="font-weight:bold; border: 3px solid black;">${mark.totalMarks}</td>
-                                    <td style="font-weight:bold;">${getPerformanceLevel(mark.totalMarks)}</td>
-                                </tr>
-                            `).join('')}
-                            <tr>
-                                <td colspan="3" style="font-weight:bold;">Total</td>
-                                ${subjectTotals.map(total => `<td style="font-weight:bold;">${total}</td><td></td>`).join('')}
-                                <td style="font-weight:bold;">${totalMarksSum}</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" style="font-weight:bold;">Average</td>
-                                ${averages.map(avg => `<td style="font-weight:bold;">${avg}</td><td></td>`).join('')}
-                                <td style="font-weight:bold;">${overallAverage}</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="stamp">NACHU JUNIOR  SCHOOL<br>PO BOX 561-00902 KIKUYU</div>
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-
-        hideLoadingSpinner();
-    }, 2000);
-}
-
 function printGroupedTable(grade) {
     const schoolName = document.getElementById("schoolName").value || "School Name";
     const year = document.getElementById("year").value || "Year";
@@ -6509,8 +6472,6 @@ function saveMarksToStorage() {
     data.marks = marks;
     updateStorage(data);
 }
-
-// Function to update marks table
 function updateMarksTable() {
     // Sort the marks by totalMarks in descending order
     marks.sort((a, b) => b.totalMarks - a.totalMarks);
@@ -6520,7 +6481,7 @@ function updateMarksTable() {
 
     marksList.innerHTML = marks.map((mark, index) => {
         // Update totals for each subject
-        mark.scores.forEach((score, idx) => (subjectTotals[idx] += score));
+        mark.scores.forEach((score, idx) => subjectTotals[idx] += score);
         totalMarksSum += mark.totalMarks;
 
         return `
@@ -6530,7 +6491,11 @@ function updateMarksTable() {
                 <td>${mark.grade}</td>
                 ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
                 <td style="font-weight:bold; border: 2px solid black;">${mark.totalMarks}</td>
-                <td><button onclick="deleteMarks(${index})">Delete</button></td>
+                <td>
+                    <button onclick="deleteMarks(${index})" class="circle-button">
+                        <i class="fas fa-trash-alt"></i> Del
+                    </button>
+                </td>
             </tr>
         `;
     }).join("");
@@ -6551,7 +6516,11 @@ function updateMarksTable() {
         </tr>`;
 
     marksList.innerHTML += totalRow + averageRow;
+
+    // ? Refresh the grade filter dropdown
+    populateGradeDropdown();
 }
+
 
 // Delete a mark entry
 function deleteMarks(index) {
@@ -7800,9 +7769,10 @@ function updateLearnersTable() {
         </tr>
     `).join("");
 
-
-    updateLearnerSelect(); // Update dropdown or related components
+    updateLearnerSelect();       // (Your existing helper)
+    populateGradeDropdown();     // ?? Add this line to dynamically update grade list
 }
+
 // Function to show learner details in a modal
 function viewLearnerDetails(index) {
     // Get the learner from the array
@@ -10699,8 +10669,508 @@ function toggleCheckboxes(groupName, masterCheckbox) {
     checkboxes.forEach(checkbox => checkbox.checked = masterCheckbox.checked);
 }
 
-     
- </script>         
+function showMarksStatus() {
+  const container = document.getElementById("marksStatusWrapper");
+  container.innerHTML = "";
+
+  const wrapper = document.createElement("div");
+
+  // === School Header Section (Print only) ===
+  const headerDiv = document.createElement("div");
+  headerDiv.id = "printHeader";
+  headerDiv.style.textAlign = "center";
+  headerDiv.style.marginBottom = "20px";
+  headerDiv.style.display = "none"; // Hidden by default, shown in print
+
+  const logoImg = document.createElement("img");
+  logoImg.src = "https://i.imgur.com/uWrz8rt.png"; // Replace with your logo path
+  logoImg.alt = "School Logo";
+  logoImg.style.width = "100px";
+  logoImg.style.marginBottom = "10px";
+
+  const schoolName = document.createElement("h2");
+  schoolName.textContent = "Sunrise Secondary School"; // Replace with your school name
+  schoolName.style.margin = "0";
+
+  const title = document.createElement("h3");
+  title.textContent = "Marks Submission Status Per Grade";
+  title.style.margin = "5px 0 15px 0";
+  title.style.fontWeight = "normal";
+
+  headerDiv.appendChild(logoImg);
+  headerDiv.appendChild(schoolName);
+  headerDiv.appendChild(title);
+  wrapper.appendChild(headerDiv);
+
+  // === Print Button ===
+  const tableHeaderBar = document.createElement("div");
+  tableHeaderBar.style.display = "flex";
+  tableHeaderBar.style.justifyContent = "flex-end";
+  tableHeaderBar.style.marginBottom = "8px";
+
+  const printBtn = document.createElement("button");
+  printBtn.innerHTML = `<i class="fa fa-print"></i> Print This Table`; // FontAwesome print icon
+  printBtn.style.backgroundColor = "#4CAF50";
+  printBtn.style.color = "white";
+  printBtn.style.padding = "8px 12px";
+  printBtn.style.border = "none";
+  printBtn.style.borderRadius = "5px";
+  printBtn.style.cursor = "pointer";
+  printBtn.onclick = () => window.print();
+
+  tableHeaderBar.appendChild(printBtn);
+  wrapper.appendChild(tableHeaderBar);
+
+  // === Table Creation ===
+  const table = document.createElement("table");
+  table.style.width = "100%";
+  table.style.borderCollapse = "collapse";
+  table.style.marginTop = "0px";
+  table.innerHTML = `
+    <thead>
+      <tr style="background-color: #4CAF50; color: white;">
+        <th style="border: 1px solid black; padding: 8px;">Grade</th>
+        <th style="border: 1px solid black; padding: 8px;">Registered Learners</th>
+        <th style="border: 1px solid black; padding: 8px;">Recorded Learners</th>
+        <th style="border: 1px solid black; padding: 8px;">Learners Without Marks</th>
+        <th style="border: 1px solid black; padding: 8px;">Missing Names</th>
+        <th style="border: 1px solid black; padding: 8px;">Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  const tbody = table.querySelector("tbody");
+
+  const learnersByGrade = learners.reduce((acc, learner) => {
+    const grade = learner.grade;
+    if (!acc[grade]) acc[grade] = [];
+    acc[grade].push(learner.name);
+    return acc;
+  }, {});
+
+  const marksByGrade = marks.reduce((acc, entry) => {
+    const grade = entry.grade;
+    if (!acc[grade]) acc[grade] = [];
+    acc[grade].push(entry.learner);
+    return acc;
+  }, {});
+
+  for (const grade in learnersByGrade) {
+    const registered = learnersByGrade[grade];
+    const recorded = marksByGrade[grade] || [];
+    const missing = registered.filter(name => !recorded.includes(name));
+
+    const row = document.createElement("tr");
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = `<i class="fa fa-trash"></i> Delete`; // FontAwesome trash icon
+    deleteBtn.style.backgroundColor = "#f44336";
+    deleteBtn.style.color = "white";
+    deleteBtn.style.padding = "5px 10px";
+    deleteBtn.style.border = "none";
+    deleteBtn.style.borderRadius = "4px";
+    deleteBtn.style.cursor = "pointer";
+    deleteBtn.onclick = () => deleteGradeMarks(grade);
+
+    row.innerHTML = `
+      <td style="border: 1px solid black; padding: 8px;">${grade}</td>
+      <td style="border: 1px solid black; padding: 8px;">${registered.length}</td>
+      <td style="border: 1px solid black; padding: 8px;">${recorded.length}</td>
+      <td style="border: 1px solid black; padding: 8px;">${missing.length}</td>
+      <td style="border: 1px solid black; padding: 8px; color: red;">${missing.join(', ') || 'All recorded'}</td>
+    `;
+
+    const actionCell = document.createElement("td");
+    actionCell.style.border = "1px solid black";
+    actionCell.style.padding = "8px";
+    actionCell.appendChild(deleteBtn);
+
+    row.appendChild(actionCell);
+    tbody.appendChild(row);
+  }
+
+  wrapper.appendChild(table);
+  container.appendChild(wrapper);
+}
+
+
+let isMarksStatusVisible = false;
+
+function toggleMarksStatus() {
+  const wrapper = document.getElementById("marksStatusWrapper");
+  const button = document.getElementById("toggleMarksStatusBtn");
+
+  if (!isMarksStatusVisible) {
+    showMarksStatus(); // Render table
+    wrapper.style.display = "block";
+    button.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Marks Recording Summary';
+    isMarksStatusVisible = true;
+  } else {
+    wrapper.style.display = "none";
+    button.innerHTML = '<i class="fas fa-chart-bar"></i> Show Marks Recording Summary';
+    isMarksStatusVisible = false;
+  }
+}
+
+function deleteGradeMarks(grade) {
+  // Display the custom confirmation modal
+  const modal = document.getElementById("customConfirmModal");
+  const gradeText = document.getElementById("gradeText");
+  gradeText.textContent = grade;
+  
+  modal.style.display = "flex"; // Show the modal
+
+  // Return a promise to handle the user's response asynchronously
+  return new Promise((resolve) => {
+    // Handle Yes button click
+    document.getElementById("confirmYes").onclick = function() {
+      // Remove marks for this grade only
+      marks = marks.filter(entry => entry.grade !== grade);
+      saveMarksToStorage();
+      showMarksStatus();
+      
+      // Show success alert with inline CSS styling
+      showCustomAlert(`
+        <div style="color: white; background-color: #ff4d4d; padding: 10px; border-radius: 5px; font-weight: bold;">
+          All marks for Grade ${grade} have been deleted.
+        </div>`, 
+        "error"
+      );
+      
+      modal.style.display = "none"; // Hide the modal
+      resolve(true); // Resolve with true (confirmed)
+    };
+
+    // Handle No button click
+    document.getElementById("confirmNo").onclick = function() {
+      modal.style.display = "none"; // Hide the modal
+      resolve(false); // Resolve with false (cancelled)
+    };
+  });
+}
+
+// HTML for custom confirmation modal
+document.body.insertAdjacentHTML('beforeend', `
+  <div id="customConfirmModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background-color: white; padding: 20px; border-radius: 10px; text-align: center; width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+      <p style="color: #333; font-size: 16px;">Delete all marks recorded for Grade <span id="gradeText"></span>? This cannot be undone.</p>
+      <button id="confirmYes" style="background-color: red; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">Yes</button>
+      <button id="confirmNo" style="background-color: green; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">No</button>
+    </div>
+  </div>
+`);
+function populateGradeDropdown() {
+  const dropdown = document.getElementById("gradeDropdown");
+  dropdown.innerHTML = '<option value="">-- Select Grade --</option>';
+
+  const grades = [...new Set(learners.map(l => l.grade))].sort();
+  grades.forEach(grade => {
+    const option = document.createElement("option");
+    option.value = grade;
+    option.textContent = grade;
+    dropdown.appendChild(option);
+  });
+}
+
+function showLearnerNamesOnly() {
+  const selectedGrade = document.getElementById("gradeDropdown").value;
+  const tableBody = document.getElementById("learnerNamesList");
+  const gradeHeader = document.getElementById("selectedGradeHeader");
+
+  tableBody.innerHTML = "";
+  gradeHeader.textContent = selectedGrade || "All";
+
+  const filtered = learners.filter(l => l.grade === selectedGrade);
+
+  const boys = filtered.filter(l => l.gender?.toLowerCase() === "male");
+  const girls = filtered.filter(l => l.gender?.toLowerCase() === "female");
+
+  if (boys.length) {
+    const boysHeader = document.createElement("tr");
+    const boysCell = document.createElement("td");
+    boysCell.colSpan = 2;
+    boysCell.textContent = "--- BOYS ---";
+    boysCell.style.textAlign = "center";
+    boysCell.style.fontWeight = "bold";
+    boysCell.style.color = "black";
+    boysHeader.appendChild(boysCell);
+    tableBody.appendChild(boysHeader);
+
+    boys.forEach((l, index) => {
+      const row = document.createElement("tr");
+
+      const noCell = document.createElement("td");
+      noCell.textContent = index + 1;
+      noCell.style.border = "1px solid black";
+      noCell.style.padding = "8px";
+      noCell.style.color = "black";
+
+      const nameCell = document.createElement("td");
+      nameCell.textContent = l.name;
+      nameCell.style.border = "1px solid black";
+      nameCell.style.padding = "8px";
+      nameCell.style.color = "black";
+
+      row.appendChild(noCell);
+      row.appendChild(nameCell);
+      tableBody.appendChild(row);
+    });
+  }
+
+  if (girls.length) {
+    const girlsHeader = document.createElement("tr");
+    const girlsCell = document.createElement("td");
+    girlsCell.colSpan = 2;
+    girlsCell.textContent = "--- GIRLS ---";
+    girlsCell.style.textAlign = "center";
+    girlsCell.style.fontWeight = "bold";
+    girlsCell.style.color = "black";
+    girlsHeader.appendChild(girlsCell);
+    tableBody.appendChild(girlsHeader);
+
+    girls.forEach((l, index) => {
+      const row = document.createElement("tr");
+
+      const noCell = document.createElement("td");
+      noCell.textContent = index + 1;
+      noCell.style.border = "1px solid black";
+      noCell.style.padding = "8px";
+      noCell.style.color = "black";
+
+      const nameCell = document.createElement("td");
+      nameCell.textContent = l.name;
+      nameCell.style.border = "1px solid black";
+      nameCell.style.padding = "8px";
+      nameCell.style.color = "black";
+
+      row.appendChild(noCell);
+      row.appendChild(nameCell);
+      tableBody.appendChild(row);
+    });
+  }
+}
+
+function printLearnersTable() {
+  const printable = document.getElementById("printableLearnersTable").innerHTML;
+  const win = window.open('', '', 'height=600,width=800');
+  win.document.write('<html><head><title>Print Learners</title>');
+  win.document.write('<style>body { color: black; font-family: Arial; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid black; padding: 8px; color: black; } h2, h3 { color: black; }</style>');
+  win.document.write('</head><body>');
+  win.document.write(printable);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.focus();
+  win.print();
+  win.close();
+}
+
+document.addEventListener("DOMContentLoaded", populateGradeDropdown);
+function populateGradeDropdown() {
+    const gradeSelect = document.getElementById("gradeSelect");
+    const tableBody = document.getElementById("marksList");
+    if (!gradeSelect || !tableBody) return;
+
+    const rows = tableBody.querySelectorAll("tr");
+    const grades = new Set();
+
+    rows.forEach(row => {
+        const gradeCell = row.cells[2]; // 3rd column
+        if (gradeCell) {
+            grades.add(gradeCell.textContent.trim());
+        }
+    });
+
+    gradeSelect.innerHTML = '<option value="">All Grades</option>';
+    [...grades].sort().forEach(grade => {
+        const option = document.createElement("option");
+        option.value = grade;
+        option.textContent = grade;
+        gradeSelect.appendChild(option);
+    });
+}
+
+function filterMarksByGrade() {
+    const selectedGrade = document.getElementById("gradeSelect").value;
+    const rows = Array.from(document.querySelectorAll("#marksList tr"));
+    
+    let subjectTotals = Array(9).fill(0);
+    let visibleRowCount = 0;
+    let totalMarksSum = 0;
+
+    // Remove existing totals/averages if present
+    document.querySelectorAll("#marksList .summary-row").forEach(row => row.remove());
+
+    rows.forEach(row => {
+        const grade = row.cells[2]?.textContent.trim();
+        const isVisible = selectedGrade === "" || grade === selectedGrade;
+
+        row.style.display = isVisible ? "" : "none";
+
+        if (isVisible) {
+            visibleRowCount++;
+            for (let i = 3, subjIdx = 0; subjIdx < 9; i += 2, subjIdx++) {
+                const score = parseFloat(row.cells[i]?.textContent.trim()) || 0;
+                subjectTotals[subjIdx] += score;
+            }
+
+            const totalCell = row.cells[row.cells.length - 2];
+            totalMarksSum += parseFloat(totalCell?.textContent.trim()) || 0;
+        }
+    });
+
+    if (visibleRowCount === 0) return;
+
+    const marksList = document.getElementById("marksList");
+
+    // Total row
+    const totalRow = document.createElement("tr");
+    totalRow.classList.add("summary-row");
+    totalRow.innerHTML = `
+        <td colspan="3" style="font-weight:bold;"> Total</td>
+        ${subjectTotals.map(t => `<td style="font-weight:bold;">${t}</td><td></td>`).join('')}
+        <td style="font-weight:bold;">${totalMarksSum}</td>
+        <td></td>
+    `;
+
+    // Average row
+    const averageRow = document.createElement("tr");
+    averageRow.classList.add("summary-row");
+    averageRow.innerHTML = `
+        <td colspan="3" style="font-weight:bold;"> Average</td>
+        ${subjectTotals.map(t => `<td style="font-weight:bold;">${(t / visibleRowCount).toFixed(2)}</td><td></td>`).join('')}
+        <td style="font-weight:bold;">${(totalMarksSum / visibleRowCount).toFixed(2)}</td>
+        <td></td>
+    `;
+
+    marksList.appendChild(totalRow);
+    marksList.appendChild(averageRow);
+}
+
+function printFilteredGrades() {
+  const selectedGrade = document.getElementById("gradeSelect").value;
+  const term = document.getElementById("termSelect")?.value || "Term 1";
+  const year = new Date().getFullYear();
+  const schoolName = "NACHU JUNIOR  SCHOOL";
+  const motto = "Excellence Through Knowledge";
+  const logoUrl = "https://i.imgur.com/uWrz8rt.png";
+
+  const rows = document.querySelectorAll("#marksList tr");
+
+  // Generate today's date in readable format
+  const today = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = today.toLocaleDateString('en-US', options);
+
+  const printWindow = window.open('', '', 'height=900,width=1100');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Filtered Merit List</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid black; padding: 8px; text-align: center; }
+          h2, h3, h4 { margin: 0; }
+          .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+          }
+          .school-info { text-align: left; }
+          .school-info .inline-details {
+            margin-top: 6px;
+            font-size: 16px;
+          }
+          .inline-details span {
+            margin-right: 20px;
+          }
+          .logo img {
+            max-height: 70px;
+            margin-left: 20px;
+          }
+          .stamp {
+            border: 2px solid blue;
+            color: blue;
+            text-align: center;
+            width: 200px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            font-weight: bold;
+            line-height: 1.3;
+            flex-direction: column;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="top-bar">
+          <div class="school-info">
+            <h2>${schoolName}</h2>
+            <h4><em>${motto}</em></h4>
+            <div class="inline-details">
+              <span><strong>Term:</strong> ${term}</span>
+              <span><strong>Grade:</strong> ${selectedGrade || "All"}</span>
+              <span><strong>Year:</strong> ${year}</span>
+            </div>
+          </div>
+          <div class="logo">
+            <img src="${logoUrl}" alt="School Logo">
+          </div>
+        </div>
+
+        <h3 style="text-align:center;">Merit List</h3>
+        <table>
+  `);
+
+  // Remove the last column header
+  const headerRow = document.querySelector(".report-table thead tr");
+  if (headerRow) {
+    const headerCells = headerRow.querySelectorAll('th');
+    if (headerCells.length > 0) {
+      headerCells[headerCells.length - 1].remove();
+    }
+  }
+
+  printWindow.document.write(document.querySelector(".report-table thead").outerHTML);
+
+  rows.forEach(row => {
+    if (row.style.display !== "none") {
+      const cells = row.querySelectorAll('td');
+      if (cells.length > 0) {
+        cells[cells.length - 1].remove();
+      }
+      printWindow.document.write(`<tr>${row.innerHTML}</tr>`);
+    }
+  });
+
+  // Stamp with your specified style
+  printWindow.document.write(`
+        </table>
+        <div class="stamp">
+          Nachu Junior School<br>
+          P.O. Box 561-0902, Kikuyu<br>
+          Date: ${formattedDate}
+        </div>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  printWindow.close();
+}
+
+
+
+
+
+</script>
+
                 
                 
             </body>
