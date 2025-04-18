@@ -1562,8 +1562,8 @@ button {
     <button onclick="closeDeleteModal()" style="background: grey; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
   </div>
 </div>
-<div id="customAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 300px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
-  Fee details submitted  successfully!
+<div id="customAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 30px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
+
 </div>
 <div id="archiveAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #0288d1; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 300px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
   Archived successfully!
@@ -1914,10 +1914,7 @@ button {
 </div>
 <div id="marksTableSection" class="hidden-section">
         <h2>Marks Table</h2>
-        <input type="text" id="searchMarks" onkeyup="searchMarks()" placeholder="Search Marks">
-        <button onclick="printMarksTable()" class="neon-button">
-  <i class="fas fa-print"></i> Print Merit List
-</button>
+        
 <button onclick="sendToArchives()" class="neon-button">
     <i class="fas fa-archive"></i> Send to Archives
 </button>
@@ -1943,9 +1940,7 @@ button {
   <i class="fas fa-chart-bar"></i>  Marks Recording Summary
 </button>
 <div id="marksStatusWrapper" style="margin-top: 20px;"></div>
-<button onclick="printMarksTable()" style="background: green; color: white; padding: 10px; border-radius: 5px; font-weight: bold; margin-left: 10px;">
-    <i class="fas fa-print"></i> Print Merit 
-</button>
+
  <div style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; font-weight: bold; display: flex; align-items: center;">
     <i class="fas fa-bullhorn" style="color: #d32f2f; font-size: 24px; margin-right: 8px;"></i> 
     Kindly generate all reports before deleting this merit list.
@@ -4199,27 +4194,136 @@ function removeLearner(index) {
     updateLearnersTable(); // Update the table after deletion
     localStorage.setItem('learners', JSON.stringify(learners)); // Save the updated list to local storage
 }
+ // Reuse the custom grade-prompt helper (with inline CSS)
+  function promptForGradeCustom(message) {
+    return new Promise(resolve => {
+      const ov = document.createElement('div');
+      Object.assign(ov.style, {
+        position: 'fixed', top: 0, left: 0,
+        width: '100%', height: '100%',
+        background: 'rgba(0,0,0,0.6)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 9999
+      });
+      const box = document.createElement('div');
+      Object.assign(box.style, {
+        background: '#fff', padding: '20px',
+        borderRadius: '8px', width: '320px', maxWidth: '90%',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)', textAlign: 'center'
+      });
+      box.innerHTML = `
+        <p style="margin-bottom:12px;font-weight:bold;">${message}</p>
+        <input id="gradePromptInput" type="text" placeholder="e.g. 7"
+               style="width:100%;padding:8px;margin-bottom:12px;
+                      border:1px solid #ccc;border-radius:4px;" />
+        <div>
+          <button id="gradePromptOk"
+                  style="padding:8px 16px;margin:0 6px;
+                         border:none;border-radius:4px;
+                         background:#4CAF50;color:#fff;
+                         cursor:pointer;">OK</button>
+          <button id="gradePromptCancel"
+                  style="padding:8px 16px;margin:0 6px;
+                         border:none;border-radius:4px;
+                         background:#f44336;color:#fff;
+                         cursor:pointer;">Cancel</button>
+        </div>`;
+      ov.appendChild(box);
+      document.body.appendChild(ov);
+      const inp = document.getElementById('gradePromptInput');
+      inp.focus();
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('gradePromptOk').click();
+      });
+      document.getElementById('gradePromptOk').onclick = () => {
+        const val = inp.value.trim();
+        document.body.removeChild(ov);
+        resolve(val || null);
+      };
+      document.getElementById('gradePromptCancel').onclick = () => {
+        document.body.removeChild(ov);
+        resolve(null);
+      };
+    });
+  }
+
 function showSubjectPerformance() {
+    const modal = document.createElement("div");
+    modal.id = "subjectPerformanceModal";
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.6); display: flex;
+        justify-content: center; align-items: center; z-index: 9999;
+    `;
+
+    const box = document.createElement("div");
+    box.style.cssText = `
+        background: white; padding: 20px; border-radius: 10px;
+        width: 300px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    `;
+
+    box.innerHTML = `
+        <h3 style="color: #4CAF50;">Enter Grade</h3>
+        <input id="performanceGradeInput" placeholder="e.g. 6" style="
+            width: 80%; padding: 10px; margin-bottom: 15px;
+            border: 1px solid #ccc; border-radius: 5px;
+        "/>
+        <br/>
+        <button onclick="generateSubjectPerformance()" style="
+            background: #4CAF50; color: white; padding: 10px 15px;
+            border: none; border-radius: 5px; margin-right: 10px;">
+            Generate
+        </button>
+        <button onclick="document.getElementById('subjectPerformanceModal').remove()" style="
+            background: #f44336; color: white; padding: 10px 15px;
+            border: none; border-radius: 5px;">
+            Cancel
+        </button>
+    `;
+
+    modal.appendChild(box);
+    document.body.appendChild(modal);
+}
+
+function generateSubjectPerformance() {
+    const grade = document.getElementById("performanceGradeInput").value.trim();
+    document.getElementById("subjectPerformanceModal").remove();
+
+    if (!grade) {
+        alert("Please enter a grade.");
+        return;
+    }
+
+    const filteredMarks = marks.filter(mark => mark.grade == grade);
+    if (filteredMarks.length === 0) {
+        alert("No records found for Grade " + grade);
+        return;
+    }
+
+    const subjects = [
+        'English', 'Mathematics', 'Pre-Technical Studies',
+        'Kiswahili', 'Integrated Science', 'Social Studies',
+        'Agriculture', 'Religious Education', 'Creative Art'
+    ];
+
     const subjectScores = {};
 
-    marks.forEach(mark => {
+    filteredMarks.forEach(mark => {
         mark.scores.forEach((score, index) => {
-            const subjects = [
-                'English', 'Mathematics', 'Pre-Technical Studies', 
-                'Kiswahili', 'Integrated Science', 'Social Studies', 
-                'Agriculture', 'Religious Education', 'Creative Art'
-            ];
             const subject = subjects[index];
+            if (!subject) return;
 
-            if (!subjectScores[subject]) {
-                subjectScores[subject] = { total: 0, count: 0 };
+            score = Number(score);
+            if (!isNaN(score)) {
+                if (!subjectScores[subject]) {
+                    subjectScores[subject] = { total: 0, count: 0 };
+                }
+                subjectScores[subject].total += score;
+                subjectScores[subject].count++;
             }
-            subjectScores[subject].total += score;
-            subjectScores[subject].count++;
         });
     });
 
-    // Function to determine performance level
     function getPerformanceLevel(score) {
         if (score >= 0 && score <= 25) return "Level 1 (BE)";
         if (score >= 26 && score <= 49) return "Level 2 (AE)";
@@ -4229,99 +4333,51 @@ function showSubjectPerformance() {
     }
 
     const meanScores = Object.keys(subjectScores).map(subject => {
-        const mean = (subjectScores[subject].total / subjectScores[subject].count).toFixed(2);
-        const level = getPerformanceLevel(mean); // Get performance level
-        return { subject, mean, level };
+        const { total, count } = subjectScores[subject];
+        const mean = count > 0 ? (total / count).toFixed(2) : "0.00";
+        return {
+            subject,
+            mean,
+            level: getPerformanceLevel(mean)
+        };
     }).sort((a, b) => b.mean - a.mean);
 
-    // Extract the top three subjects
     const topSubjects = meanScores.slice(0, 3);
 
-    // Generate performance table
-    let performanceHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Performance</h3>`;
-    performanceHtml += `<table class="report-table" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #4CAF50; color: white;">
-                                    <th>No.</th>
-                                    <th>Subject</th>
-                                    <th>Mean Score</th>
-                                    <th>Performance Level</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+    let html = `<h3 style="color: #4CAF50; text-align: center;">Subject Performance - Grade ${grade}</h3>`;
+    html += `<table style="
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background-color: white;
+        color: black;
+        font-size: 16px;
+    ">
+        <thead>
+            <tr style="background: #f2f2f2;">
+                <th style="border: 1px solid black; padding: 10px;">No.</th>
+                <th style="border: 1px solid black; padding: 10px;">Subject</th>
+                <th style="border: 1px solid black; padding: 10px;">Mean Score</th>
+                <th style="border: 1px solid black; padding: 10px;">Performance Level</th>
+            </tr>
+        </thead>
+        <tbody>`;
 
-    let number = 1; // Add numbering
+    let count = 1;
     meanScores.forEach(({ subject, mean, level }) => {
-        const isTopSubject = topSubjects.find(top => top.subject === subject); // Check if subject is a top subject
-        performanceHtml += `<tr style="${isTopSubject ? 'background: #FFD700; font-weight: bold;' : ''}">
-                                <td>${number++}</td>
-                                <td>${subject}</td>
-                                <td>${mean}</td>
-                                <td>${level}</td>
-                            </tr>`;
+        const isTop = topSubjects.find(top => top.subject === subject);
+        html += `<tr style="${isTop ? 'background: #FFD700; font-weight: bold;' : ''}">
+            <td style="border: 1px solid black; padding: 10px;">${count++}</td>
+            <td style="border: 1px solid black; padding: 10px;">${subject}</td>
+            <td style="border: 1px solid black; padding: 10px;">${mean}</td>
+            <td style="border: 1px solid black; padding: 10px;">${level}</td>
+        </tr>`;
     });
 
-    performanceHtml += `</tbody></table>`;
+    html += `</tbody></table>`;
+    document.getElementById("report").innerHTML = html;
 
-    // Display the subject performance report
-    document.getElementById("report").innerHTML = performanceHtml;
-
-    // Celebrate the top three subjects
     celebrateTopSubjects(topSubjects);
-}
-
-// Celebration for top three subjects
-function celebrateTopSubjects(topSubjects) {
-    const celebrationHtml = topSubjects.map(({ subject, mean }) => {
-        return `<p style="font-size: 18px; font-weight: bold; color: #4CAF50; margin: 5px;">
-                     ${subject}: Mean Score ${mean}
-                </p>`;
-    }).join("");
-
-    const celebrationContainer = document.createElement("div");
-    celebrationContainer.style.position = "fixed";
-    celebrationContainer.style.top = "0";
-    celebrationContainer.style.left = "0";
-    celebrationContainer.style.width = "100%";
-    celebrationContainer.style.height = "100%";
-    celebrationContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    celebrationContainer.style.zIndex = "1000";
-    celebrationContainer.style.display = "flex";
-    celebrationContainer.style.flexDirection = "column";
-    celebrationContainer.style.justifyContent = "center";
-    celebrationContainer.style.alignItems = "center";
-    celebrationContainer.style.color = "white";
-    celebrationContainer.style.textAlign = "center";
-
-    const message = document.createElement("h1");
-    message.textContent = "Congratulations to the Top Subjects!";
-    celebrationContainer.appendChild(message);
-
-    const subjectsHtml = document.createElement("div");
-    subjectsHtml.innerHTML = celebrationHtml;
-    celebrationContainer.appendChild(subjectsHtml);
-
-    const confettiCanvas = document.createElement("canvas");
-    confettiCanvas.style.position = "absolute";
-    confettiCanvas.style.top = "0";
-    confettiCanvas.style.left = "0";
-    confettiCanvas.style.width = "100%";
-    confettiCanvas.style.height = "100%";
-    confettiCanvas.id = "confettiCanvas";
-    celebrationContainer.appendChild(confettiCanvas);
-
-    document.body.appendChild(celebrationContainer);
-
-    // Play confetti animation
-    const confettiSettings = { target: "confettiCanvas", max: 200, size: 1.5, clock: 30 };
-    const confetti = new ConfettiGenerator(confettiSettings);
-    confetti.render();
-
-    // Remove celebration after 5 seconds
-    setTimeout(() => {
-        celebrationContainer.remove();
-        confetti.clear(); // Stop confetti animation
-    }, 5000);
 }
 
 
@@ -4993,8 +5049,62 @@ function printGroupedTable(grade) {
 
      
         }
+
 function showSubjectChampions() {
-    const champions = marks.reduce((acc, mark) => {
+    // Create modal wrapper
+    const modal = document.createElement('div');
+    modal.id = "subjectChampionsModal";
+    modal.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
+
+    // Modal content
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    `;
+
+    modalContent.innerHTML = `
+        <h3 style="color: #4CAF50; margin-bottom: 15px;">Enter Grade</h3>
+        <input type="text" id="gradeInput" placeholder="e.g., 6" 
+            style="padding: 10px; width: 80%; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;" />
+        <br>
+        <button style="background: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; margin-right: 10px;"
+            onclick="generateChampionsFromManualInput()">Generate</button>
+        <button style="background: #f44336; color: white; padding: 10px 15px; border: none; border-radius: 5px;"
+            onclick="document.getElementById('subjectChampionsModal').remove()">Cancel</button>
+    `;
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+}
+function generateChampionsFromManualInput() {
+    const grade = document.getElementById("gradeInput").value.trim();
+    if (!grade) {
+        alert("Please enter a grade.");
+        return;
+    }
+
+    document.getElementById("subjectChampionsModal").remove();
+
+    const filteredMarks = marks.filter(mark => mark.grade == grade);
+    if (filteredMarks.length === 0) {
+        alert("No data found for Grade " + grade);
+        return;
+    }
+
+    const champions = filteredMarks.reduce((acc, mark) => {
         mark.scores.forEach((score, index) => {
             const subjects = [
                 'English', 'Mathematics', 'Pre-Technical Studies', 
@@ -5002,7 +5112,6 @@ function showSubjectChampions() {
                 'Agriculture', 'Religious Education', 'Creative Art'
             ];
             const subject = subjects[index];
-
             if (!acc[subject] || score > acc[subject].score) {
                 acc[subject] = { name: mark.learner, score };
             }
@@ -5010,7 +5119,6 @@ function showSubjectChampions() {
         return acc;
     }, {});
 
-    // Function to determine performance level
     function getPerformanceLevel(score) {
         if (score >= 0 && score <= 25) return "Level 1 (BE)";
         if (score >= 26 && score <= 49) return "Level 2 (AE)";
@@ -5019,30 +5127,29 @@ function showSubjectChampions() {
         return "Invalid Score";
     }
 
-    let championsHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Champions</h3>`;
-    championsHtml += `<table class="learners-table" style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 10px;">
+    let championsHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Champions - Grade ${grade}</h3>`;
+    championsHtml += `<table style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 10px; background-color: #e6f7ff;">
                         <thead>
                             <tr style="background-color: #f2f2f2;">
-                                <th style="padding: 10px;">No.</th>
-                                <th style="padding: 10px;">Subject</th>
-                                <th style="padding: 10px;">Champion</th>
-                                <th style="padding: 10px;">Score</th>
-                                <th style="padding: 10px;">Performance Level</th>
+                                <th style="padding: 10px; border: 1px solid black;">No.</th>
+                                <th style="padding: 10px; border: 1px solid black;">Subject</th>
+                                <th style="padding: 10px; border: 1px solid black;">Champion</th>
+                                <th style="padding: 10px; border: 1px solid black;">Score</th>
+                                <th style="padding: 10px; border: 1px solid black;">Performance Level</th>
                             </tr>
                         </thead>
                         <tbody>`;
 
-    let number = 1; // Add numbering
+    let number = 1;
     for (const subject in champions) {
-        let champion = champions[subject];
-        let level = getPerformanceLevel(champion.score);
-
+        const { name, score } = champions[subject];
+        const level = getPerformanceLevel(score);
         championsHtml += `<tr>
-                            <td style="padding: 10px;">${number++}</td>
-                            <td style="padding: 10px;">${subject}</td>
-                            <td style="padding: 10px;">${champion.name}</td>
-                            <td style="padding: 10px;">${champion.score}</td>
-                            <td style="padding: 10px;">${level}</td>
+                            <td style="padding: 10px; border: 1px solid black;">${number++}</td>
+                            <td style="padding: 10px; border: 1px solid black;">${subject}</td>
+                            <td style="padding: 10px; border: 1px solid black;">${name}</td>
+                            <td style="padding: 10px; border: 1px solid black;">${score}</td>
+                            <td style="padding: 10px; border: 1px solid black;">${level}</td>
                           </tr>`;
     }
 
@@ -5051,77 +5158,84 @@ function showSubjectChampions() {
     const reportDiv = document.getElementById("report");
     reportDiv.innerHTML = championsHtml;
 
-    // Trigger celebration with champions' names
-    const championNames = Object.values(champions)
-        .map(champion => champion.name)
-        .join(", ");
+    const championNames = Object.values(champions).map(c => c.name).join(", ");
     showCelebration(`Congratulations to our Champions: ${championNames}!`, 7000);
 }
 
+  // 2) Updated ranking function with inline styling
+  async function showSubjectRanking() {
+    const grade = await promptForGradeCustom('Enter grade for Subject Rankings:');
+    if (grade === null) return;  // user cancelled
 
-  function showSubjectRanking() {
-    const rankings = marks.reduce((acc, mark) => {
-        mark.scores.forEach((score, index) => {
-            const subjects = [
-                'English', 'Mathematics', 'Pre-Technical Studies', 
-                'Kiswahili', 'Integrated Science', 'Social Studies', 
-                'Agriculture', 'Religious Education', 'Creative Art'
-            ];
-            const subject = subjects[index];
+    const filtered = marks.filter(m => m.grade === grade);
+    if (filtered.length === 0) {
+      alert(`No records found for grade “${grade}.”`);
+      return;
+    }
 
-            if (!acc[subject]) {
-                acc[subject] = [];
-            }
-            acc[subject].push({ name: mark.learner, score });
-        });
-        return acc;
+    // Build per-subject lists
+    const rankings = filtered.reduce((acc, mark) => {
+      mark.scores.forEach((score, idx) => {
+        const subjects = [
+          'English','Mathematics','Pre-Technical Studies',
+          'Kiswahili','Integrated Science','Social Studies',
+          'Agriculture','Religious Education','Creative Art'
+        ];
+        const subj = subjects[idx];
+        acc[subj] = acc[subj] || [];
+        acc[subj].push({ name: mark.learner, score });
+      });
+      return acc;
     }, {});
 
-    for (const subject in rankings) {
-        rankings[subject].sort((a, b) => b.score - a.score);
+    // Sort descending
+    for (let subj in rankings) {
+      rankings[subj].sort((a,b) => b.score - a.score);
     }
 
-    // Function to determine performance level
+    // Level helper
     function getPerformanceLevel(score) {
-        if (score >= 0 && score <= 25) return "Level 1 (BE)";
-        if (score >= 26 && score <= 49) return "Level 2 (AE)";
-        if (score >= 50 && score <= 75) return "Level 3 (ME)";
-        if (score >= 76 && score <= 100) return "Level 4 (EE)";
-        return "Invalid Score";
+      if (score <= 25)  return "Level 1 (BE)";
+      if (score <= 49)  return "Level 2 (AE)";
+      if (score <= 75)  return "Level 3 (ME)";
+      if (score <= 100) return "Level 4 (EE)";
+      return "Invalid Score";
     }
 
-    let rankingsHtml = `<h3 style="color: #4CAF50; text-align: center;">Subject Rankings</h3>`;
-    
-    for (const subject in rankings) {
-        rankingsHtml += `<h4 style="color: #2E86C1;">${subject}</h4>`;
-        rankingsHtml += `<table class="learners-table">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Name</th>
-                                    <th>Score</th>
-                                    <th>Performance Level</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-
-        rankings[subject].forEach((entry, index) => {
-            let level = getPerformanceLevel(entry.score);
-            rankingsHtml += `<tr>
-                                <td>${index + 1}</td>
-                                <td>${entry.name}</td>
-                                <td>${entry.score}</td>
-                                <td>${level}</td>
-                            </tr>`;
-        });
-
-        rankingsHtml += `</tbody></table>`;
+    // Render HTML
+    let html = `<h3 style="color:#4CAF50;text-align:center;
+                            margin-bottom:16px;">
+                  Subject Rankings – Grade ${grade}
+                </h3>`;
+    for (let subj in rankings) {
+      html += `<h4 style="color:#2E86C1;margin-top:16px;">${subj}</h4>
+               <table class="learners-table"
+                      style="width:100%;border-collapse:collapse;
+                             text-align:center;margin-bottom:24px;">
+                 <thead>
+                   <tr style="background:#f2f2f2;">
+                     <th style="padding:8px;border:1px solid #ddd;">Rank</th>
+                     <th style="padding:8px;border:1px solid #ddd;">Name</th>
+                     <th style="padding:8px;border:1px solid #ddd;">Score</th>
+                     <th style="padding:8px;border:1px solid #ddd;">Level</th>
+                   </tr>
+                 </thead>
+                 <tbody>`;
+      rankings[subj].forEach((ent,i) => {
+        html += `<tr>
+                   <td style="padding:6px;border:1px solid #ddd;">${i+1}</td>
+                   <td style="padding:6px;border:1px solid #ddd;">${ent.name}</td>
+                   <td style="padding:6px;border:1px solid #ddd;">${ent.score}</td>
+                   <td style="padding:6px;border:1px solid #ddd;">
+                     ${getPerformanceLevel(ent.score)}
+                   </td>
+                 </tr>`;
+      });
+      html += `</tbody></table>`;
     }
 
-    const reportDiv = document.getElementById("report");
-    reportDiv.innerHTML = rankingsHtml;
-}
-     
+    document.getElementById('report').innerHTML = html;
+  }
 
  function printSubjectChampions() {
     // Retrieve input values
@@ -8036,21 +8150,80 @@ function printSubjectLevels() {
     newWindow.document.write(printContents);
     newWindow.document.close();
 }
-function groupLearnersByPathways() {
+// Reuse custom prompt
+function promptForGradeCustom(message) {
+    return new Promise(resolve => {
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'fixed', top: '0', left: '0',
+            width: '100%', height: '100%',
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex', justifyContent: 'center', alignItems: 'center',
+            zIndex: '9999'
+        });
+
+        const box = document.createElement('div');
+        Object.assign(box.style, {
+            background: '#fff', padding: '20px',
+            borderRadius: '8px', width: '320px',
+            maxWidth: '90%', boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            textAlign: 'center'
+        });
+
+        box.innerHTML = `
+            <p style="margin-bottom:12px;font-weight:bold;">${message}</p>
+            <input id="gradePromptInput" type="text"
+                   placeholder="e.g. 7"
+                   style="width:100%;padding:8px;margin-bottom:12px;
+                          border:1px solid #ccc;border-radius:4px;" />
+            <div>
+                <button id="gradePromptOk"
+                        style="padding:8px 16px;margin:0 6px;
+                               border:none;border-radius:4px;
+                               background:#4CAF50;color:#fff;
+                               cursor:pointer;">OK</button>
+                <button id="gradePromptCancel"
+                        style="padding:8px 16px;margin:0 6px;
+                               border:none;border-radius:4px;
+                               background:#f44336;color:#fff;
+                               cursor:pointer;">Cancel</button>
+            </div>`;
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        const input = document.getElementById('gradePromptInput');
+        input.focus();
+
+        document.getElementById('gradePromptOk').onclick = () => {
+            const value = input.value.trim();
+            document.body.removeChild(overlay);
+            resolve(value || null);
+        };
+
+        document.getElementById('gradePromptCancel').onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        };
+
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('gradePromptOk').click();
+        });
+    });
+}
+
+// Updated pathway grouping function
+async function groupLearnersByPathways() {
+    const grade = await promptForGradeCustom("Enter grade for Career Pathway Report:");
+    if (grade === null) return;
+
     const learnersTable = document.querySelector("#marksTableSection .report-table tbody");
     const learnersRows = Array.from(learnersTable.querySelectorAll("tr"));
     const resultsTable = document.querySelector("#pathwaysResultsTable tbody");
 
-    // Clear previous results from the main table
     resultsTable.innerHTML = "";
+    const existingSummary = document.getElementById("summaryTable");
+    if (existingSummary) existingSummary.remove();
 
-    // Remove existing summary table if it exists
-    let existingSummary = document.getElementById("summaryTable");
-    if (existingSummary) {
-        existingSummary.parentNode.removeChild(existingSummary);
-    }
-
-    // Initialize summary counts for each pathway
     const pathwayCounts = {
         STEM: 0,
         "Social Sciences": 0,
@@ -8059,12 +8232,12 @@ function groupLearnersByPathways() {
 
     learnersRows.forEach((row) => {
         const cells = row.querySelectorAll("td");
-        if (cells.length < 22) return; // Ensure row has enough data
+        if (cells.length < 22) return;
 
         const learnerName = cells[1].textContent.trim();
-        const grade = cells[2].textContent.trim();
+        const learnerGrade = cells[2].textContent.trim();
+        if (learnerGrade !== grade) return;
 
-        // Extract scores from table cells
         const scores = {
             English: parseInt(cells[3].textContent.trim()) || 0,
             Math: parseInt(cells[5].textContent.trim()) || 0,
@@ -8077,7 +8250,6 @@ function groupLearnersByPathways() {
             "Creative Art": parseInt(cells[19].textContent.trim()) || 0,
         };
 
-        // Define pathways and their subject associations
         const pathways = {
             STEM: ["English", "Math", "Pre-technical Studies", "Kiswahili", "Integrated Science", "Agriculture"],
             "Social Sciences": ["Kiswahili", "English", "Social Studies", "Religious Education"],
@@ -8085,59 +8257,45 @@ function groupLearnersByPathways() {
         };
 
         const pathwayResults = {};
+        for (const path in pathways) {
+            const subjects = pathways[path];
+            const total = subjects.reduce((sum, subj) => sum + (scores[subj] || 0), 0);
+            pathwayResults[path] = total / subjects.length;
+        }
 
-        // Calculate average scores for each pathway
-        Object.keys(pathways).forEach((pathway) => {
-            const subjects = pathways[pathway];
-            const total = subjects.reduce((sum, subject) => sum + (scores[subject] || 0), 0);
-            const average = total / subjects.length;
-            pathwayResults[pathway] = average;
-        });
-
-        // Determine the best pathway
         const bestPathway = Object.keys(pathwayResults).reduce((a, b) =>
             pathwayResults[a] > pathwayResults[b] ? a : b
         );
-
-        // Increase count for the selected best pathway
         pathwayCounts[bestPathway]++;
 
-        // Append learner's result to the main results table
         const resultRow = document.createElement("tr");
         resultRow.innerHTML = `
             <td>${learnerName}</td>
-            <td>${grade}</td>
+            <td>${learnerGrade}</td>
             ${pathways.STEM.map(subject => `<td>${scores[subject]}</td>`).join("")}
             ${pathways["Social Sciences"].map(subject => `<td>${scores[subject]}</td>`).join("")}
             ${pathways["Sports, Arts & Science"].map(subject => `<td>${scores[subject]}</td>`).join("")}
             <td>${pathwayResults.STEM.toFixed(2)}</td>
             <td>${pathwayResults["Social Sciences"].toFixed(2)}</td>
             <td>${pathwayResults["Sports, Arts & Science"].toFixed(2)}</td>
-            <td><strong>${bestPathway}</strong></td>
-        `;
+            <td><strong>${bestPathway}</strong></td>`;
         resultsTable.appendChild(resultRow);
     });
 
-    // Build the summary table HTML
     const summaryHTML = `
-       <table id="summaryTable" border="1" cellspacing="0" cellpadding="5" style="width: 50%; margin: 10px auto; text-align: center; font-family: Arial, sans-serif;">
-           <thead>
-              <tr>
-                 <th>Pathway</th>
-                 <th>Number of Learners</th>
-              </tr>
+        <table id="summaryTable" border="1" cellspacing="0" cellpadding="5"
+               style="width: 50%; margin: 10px auto; text-align: center; font-family: Arial, sans-serif;">
+           <thead style="background-color:#f2f2f2;">
+              <tr><th>Pathway</th><th>Number of Learners</th></tr>
            </thead>
            <tbody>
               <tr><td>STEM</td><td>${pathwayCounts["STEM"]}</td></tr>
               <tr><td>Social Sciences</td><td>${pathwayCounts["Social Sciences"]}</td></tr>
               <tr><td>Sports, Arts & Science</td><td>${pathwayCounts["Sports, Arts & Science"]}</td></tr>
            </tbody>
-       </table>
-    `;
-
-    // Insert the summary table after the main results table
-    const resultsSection = document.getElementById("resultsSection");
-    resultsSection.insertAdjacentHTML("beforeend", summaryHTML);
+        </table>`;
+    
+    document.getElementById("resultsSection").insertAdjacentHTML("beforeend", summaryHTML);
 }
 
 function togglePathwaysTable() {
