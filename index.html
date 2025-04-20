@@ -1006,7 +1006,7 @@ button {
     </style>
 </head>
 <body>
-     <div id="loginSection" style="display: block; text-align: center; margin-top: 30px;">
+     <div id="loginSection" style="display: block; text-align: center; margin-top: 50px;">
  <div class="logo">
         <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" class="logo-img">
     </div>
@@ -1057,17 +1057,10 @@ button {
 <button class="btn-actions" onclick="toggleSection('juniorSchoolActions')">
     <span class="material-icons">school</span> Assessment Actions
 </button>
-<button class="btn-purple" onclick="toggleSection('championsForm')">
-    <span class="material-icons" style="color: #9b59b6;">admin_panel_settings</span> Admin Details
-</button>
 
 <!-- Menu Button -->
 <button id="menuToggle" class="btn-toggle" onclick="toggleSection('menuActions')">
     <span class="material-icons" style="color: #3498db;">group</span> Manage Staff
-</button>
-
-<button id="logoutButton" onclick="logout()" style="background-color: #e74c3c; color: white; border: none; padding: 10px 15px; font-size: 16px; cursor: pointer; border-radius: 5px;">
-    <i class="fas fa-sign-out-alt" style="color: #fff; margin-right: 5px;"></i> Logout
 </button>
 
 <!-- Button to Show/Hide Fee Management Menu -->
@@ -1332,11 +1325,22 @@ button {
   <i class="fas fa-trash-alt"></i> Delete All Fee Records
 </button>
 
-<!-- Button to Show Learner Count -->
-<button onclick="openOnlyOneSection('learnerCountContainer')" 
-  style="background: #4CAF50; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
-  <i class="fas fa-users"></i> Show Learner Count Per Grade
+<!-- Toggle Button -->
+<button id="toggleLearnerCountBtn" onclick="toggleLearnerCountTable()" style="padding: 10px; background-color: #1976D2; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  <i class="fas fa-table"></i> Show Learner Count
 </button>
+
+<!-- Learner Count Table Container -->
+<div id="learnerCountContainer" style="display: none; margin-top: 20px;"></div>
+
+<!-- Print Button -->
+<div style="text-align: center; margin-top: 10px;">
+  <button onclick="printLearnerCountTable()" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    <i class="fas fa-print"></i> Print Learner Count
+  </button>
+</div>
+
+
   </div>
    <!-- Archived Fees Container -->
 <div id="archivedFeesContainer" style="display: none; text-align: left; background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 20px;">
@@ -1632,26 +1636,17 @@ button {
 </button> 
 
 <div class="dropdown" id="registrationMenu">
-  <button onclick="toggleSection('parentRegistrationSection')" class="neon-button" style="width: 90px; padding: 10px;">
-    <i class="fas fa-user-plus"></i> Register Parent
-  </button>
+  
   <button onclick="toggleSection('staffRegistrationSection')" class="neon-button" style="width: 90px; padding: 10px;">
     <i class="fas fa-chalkboard-teacher"></i> Register Staff
   </button>
   <button onclick="toggleRegisterSupportStaff()" class="neon-button">
     <i class="fas fa-users-cog"></i> Register Support Staff
   </button>
-  <button onclick="toggleSection('registeredParentsSection')" class="neon-button" style="width: 90px; padding: 10px;">
-    <i class="fas fa-users"></i> View Parents
-  </button>
+ 
   <button onclick="toggleSection('registeredStaffSection')" class="neon-button" style="width: 90px; padding: 10px;">
     <i class="fas fa-users"></i> View Staff
   </button>
-
-
- <button onclick="toggleSection('registerLearnerSection')" class="neon-button" style="width: 90px; padding: 10px;">
-    <i class="fas fa-user-plus"></i> Register Learner
-</button>
 
     </div>
   </div>
@@ -1711,6 +1706,31 @@ button {
 <button onclick="printRegisteredLearners()" class="neon-button">
     <i class="fas fa-print" style="color: #2ecc71;"></i> Print Registered Learners
 </button>
+<h3>Parent Contact List by Grade</h3>
+
+<label for="gradeFilterDropdown">Select Grade:</label>
+<select id="gradeFilterDropdown" onchange="filterParentInfoByGrade()">
+  <option value="">-- All Grades --</option>
+</select>
+
+<button onclick="printParentInfoTable()">
+    <span class="material-icons">print</span> Print Table
+</button>
+
+
+<table id="parentInfoTable" border="1" style="margin-top: 10px; display: none;">
+  <thead>
+    <tr>
+    <th>Number</th>
+<th>Parent Name</th>
+<th>Phone Number</th>
+<th>Grade</th>
+<th>Signature</th>
+
+    </tr>
+  </thead>
+  <tbody id="parentInfoBody"></tbody>
+</table>
 
 <button onclick="groupLearnersByGrade()" class="neon-button">
     <i class="fas fa-users" style="color: #3498db;"></i> Group by Grade
@@ -1733,15 +1753,6 @@ button {
     <i class="fas fa-print" style="color: #2ecc71;"></i> Print Grouped by Gender
 </button>
 
-<!-- Button to Toggle Learners Count --> 
-<button id="toggleLearnersCountButton" onclick="toggleLearnersCount()" class="neon-button">
-    <i class="fas fa-eye" style="color: #f1c40f;"></i> Show Learners Count
-</button>
-
-<!-- Button to Print Learners Count -->
-<button onclick="printLearnersCount()" class="neon-button orange-neon">
-    <i class="fas fa-print" style="color: #e74c3c;"></i> Print Learners Count
-</button>
 <div style="margin-top: 20px;">
   <label for="gradeDropdown"><strong>Select Grade:</strong></label>
   <select id="gradeDropdown" onchange="showLearnerNamesOnly()" style="margin-left: 10px;">
@@ -1971,6 +1982,7 @@ button {
             <th>Cre</th><th>Lev</th>
             <th>C/A</th><th>Lev</th>
             <th>Total Marks</th>
+           <th>Perform</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -2064,13 +2076,14 @@ button {
     <i class="fas fa-file-alt" style="color: #2c3e50;"></i> Bulk Report Generation
   </button>
 
-  <button onclick="generateGenderPerformance()" class="neon-button">
-    <i class="fas fa-venus-mars" style="color: #d35400;"></i> Generate Gender Merit List
-  </button>
+<button onclick="toggleGenderReport()" class="neon-button" id="genderToggleBtn">
+  <i class="fas fa-venus-mars" style="color: #d35400;"></i> Generate Gender Merit List
+</button>
 
-  <button onclick="togglePathwaysTable()" class="button toggle-button">
-    <i class="fas fa-project-diagram" style="color: #16a085;"></i> Group Learners by Pathways
-  </button>
+<button onclick="togglePathwaysTable()" class="neon-button btn-toggle">
+  <i class="fas fa-project-diagram" style="color: #16a085;"></i> Group Learners by Pathways
+</button>
+
 <!-- Merit List Control Buttons -->
 <button onclick="generateMeritList()" class="neon-button btn-ranking">
     <i class="fas fa-chart-line" style="color: #f39c12;"></i> Get Merit List
@@ -2082,6 +2095,9 @@ button {
 
 <button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
     <i class="fas fa-print" style="color: #2ecc71;"></i> Print
+</button>
+<button onclick="toggleSection('championsForm')" class="neon-button btn-toggle">
+    <span class="material-icons" style="color: #e74c3c;">admin_panel_settings</span> Admin Details
 </button>
 
  <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
@@ -2474,6 +2490,8 @@ button {
         </table>
     </div>
 </div>
+<div id="genderPerformanceContainer" style="margin-top: 30px;"></div>
+
 <!-- Learner Count Display Section -->
 <div id="learnerCountContainer" style="display: none; margin-top: 20px; font-weight: bold; text-align: center;">
     <table style="width: 100%; margin: auto; border-collapse: collapse; border: 1px solid black;">
@@ -2488,7 +2506,6 @@ button {
         </thead>
         <tbody id="learnerCountTableBody"></tbody>
     </table>
-</div>
 
     <!-- Footer Section -->
     <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 5px 0; text-align: center;">
@@ -3093,22 +3110,6 @@ function combineMeritListsByGrade() {
     // Optionally, save the combined merit lists
     localStorage.setItem("combinedMeritLists", JSON.stringify(allCombinedHtml));
 }
-function logout() {
-    // Hide main content and footer
-    document.getElementById("mainContent").style.display = "none";
-    document.getElementById("footer").style.display = "none";
-    
-    // Show login section
-    document.getElementById("loginSection").style.display = "block";
-
-
-    // Clear any session or user data if necessary
-    // For example, if you're storing user info in localStorage, you can clear it:
-    localStorage.removeItem("userData"); // Remove stored user data (if any)
-
-    // Optionally, reset login form for next use
-    document.getElementById("loginForm").reset();
-}
 function groupLearnersByGender() {
     const groupedByGender = learners.reduce((groups, learner) => {
         if (!groups[learner.gender]) {
@@ -3631,6 +3632,14 @@ function saveGroupedChanges(grade) {
     localStorage.setItem('learners', JSON.stringify(learners));
     alert(`Changes for Grade ${grade} have been saved successfully.`);
 }
+function getPerformanceLevel(totalMarks) {
+    if (totalMarks >= 1 && totalMarks <= 200) return "Below expectations";
+    if (totalMarks >= 201 && totalMarks <= 399) return "Approaching expectations";
+    if (totalMarks >= 400 && totalMarks <= 600) return "Meeting expectations";
+    if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding expectations";
+    return "";
+}
+
 function updateMarksTable() {
     // Sort the marks by totalMarks in descending order
     marks.sort((a, b) => b.totalMarks - a.totalMarks);
@@ -3650,6 +3659,7 @@ function updateMarksTable() {
                 <td>${mark.grade}</td>
                 ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
                 <td style="font-weight:bold; border: 2px solid black;">${mark.totalMarks}</td>
+                <td>${getPerformanceLevel(mark.totalMarks)}</td> <!-- Performance Level -->
                 <td>
                     <button onclick="deleteMarks(${index})" class="circle-button">
                         <i class="fas fa-trash-alt"></i> Del
@@ -3666,19 +3676,22 @@ function updateMarksTable() {
             <td colspan="3" style="font-weight:bold;">Total</td>
             ${subjectTotals.map(total => `<td style="font-weight:bold;">${total}</td><td></td>`).join('')}
             <td style="font-weight:bold;">${totalMarksSum}</td>
+            <td></td> <!-- For Performance Level column -->
         </tr>`;
     const averageRow = `
         <tr>
             <td colspan="3" style="font-weight:bold;">Average</td>
             ${averages.map(avg => `<td style="font-weight:bold;">${avg}</td><td></td>`).join('')}
             <td style="font-weight:bold;">${(totalMarksSum / marks.length).toFixed(2)}</td>
+            <td></td> <!-- For Performance Level column -->
         </tr>`;
 
     marksList.innerHTML += totalRow + averageRow;
 
-    // ? Refresh the grade filter dropdown
+    // Refresh the grade filter dropdown
     populateGradeDropdown();
 }
+
 
 
         function deleteMarks(index) {
@@ -6094,6 +6107,8 @@ function removeLearner(index) {
 // Function to update the learners table after deletion
 function updateLearnersTable() {
     const learnersList = document.getElementById("learnersList");
+    
+    // Update learners table
     learnersList.innerHTML = learners.map((learner, index) => `
         <tr>
           <td>${index + 1}</td> <!-- Serial Number -->
@@ -6109,6 +6124,9 @@ function updateLearnersTable() {
             <td><button onclick="confirmDeleteLearner(${index})">Remove</button></td>
         </tr>
     `).join("");
+
+    // Call the function to update the parent table whenever the learners table is updated
+    updateParentTableFromLearners();
 }
 
 
@@ -6586,6 +6604,15 @@ function saveMarksToStorage() {
     data.marks = marks;
     updateStorage(data);
 }
+
+function getPerformanceLevel(totalMarks) {
+    if (totalMarks >= 1 && totalMarks <= 200) return "BE";
+    if (totalMarks >= 201 && totalMarks <= 399) return "AE";
+    if (totalMarks >= 400 && totalMarks <= 600) return "ME";
+    if (totalMarks >= 601 && totalMarks <= 800) return "EE";
+    return "";
+}
+
 function updateMarksTable() {
     // Sort the marks by totalMarks in descending order
     marks.sort((a, b) => b.totalMarks - a.totalMarks);
@@ -6605,6 +6632,7 @@ function updateMarksTable() {
                 <td>${mark.grade}</td>
                 ${mark.scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join('')}
                 <td style="font-weight:bold; border: 2px solid black;">${mark.totalMarks}</td>
+                <td>${getPerformanceLevel(mark.totalMarks)}</td> <!-- Performance Level -->
                 <td>
                     <button onclick="deleteMarks(${index})" class="circle-button">
                         <i class="fas fa-trash-alt"></i> Del
@@ -6621,17 +6649,19 @@ function updateMarksTable() {
             <td colspan="3" style="font-weight:bold;">Total</td>
             ${subjectTotals.map(total => `<td style="font-weight:bold;">${total}</td><td></td>`).join('')}
             <td style="font-weight:bold;">${totalMarksSum}</td>
+            <td></td> <!-- For Performance Level column -->
         </tr>`;
     const averageRow = `
         <tr>
             <td colspan="3" style="font-weight:bold;">Average</td>
             ${averages.map(avg => `<td style="font-weight:bold;">${avg}</td><td></td>`).join('')}
             <td style="font-weight:bold;">${(totalMarksSum / marks.length).toFixed(2)}</td>
+            <td></td> <!-- For Performance Level column -->
         </tr>`;
 
     marksList.innerHTML += totalRow + averageRow;
 
-    // ? Refresh the grade filter dropdown
+    // Refresh the grade filter dropdown
     populateGradeDropdown();
 }
 
@@ -6666,200 +6696,267 @@ function generateGenderPerformance() {
         return;
     }
 
-    // Extract learners' details (Name, Gender)
-    const learners = Array.from(learnersTableBody.querySelectorAll("tr")).map(row => {
-        const cells = row.querySelectorAll("td");
-        return {
-            name: cells[2]?.textContent.trim(),
-            gender: cells[3]?.textContent.trim().toLowerCase(),
-        };
-    });
+    // === Overlay Grade Prompt ===
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.backgroundColor = "rgba(0,0,0,0.5)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "1000";
 
-    // Extract marks data
-    const marks = Array.from(marksTableBody.querySelectorAll("tr")).map(row => {
-        const cells = row.querySelectorAll("td");
-        return {
-            learner: cells[1]?.textContent.trim(),
-            grade: cells[2]?.textContent.trim(),
-            english: parseInt(cells[3]?.textContent.trim()) || 0,
-            englishLevel: cells[4]?.textContent.trim() || "-",
-            math: parseInt(cells[5]?.textContent.trim()) || 0,
-            mathLevel: cells[6]?.textContent.trim() || "-",
-            preTech: parseInt(cells[7]?.textContent.trim()) || 0,
-            preTechLevel: cells[8]?.textContent.trim() || "-",
-            kiswahili: parseInt(cells[9]?.textContent.trim()) || 0,
-            kiswahiliLevel: cells[10]?.textContent.trim() || "-",
-            science: parseInt(cells[11]?.textContent.trim()) || 0,
-            scienceLevel: cells[12]?.textContent.trim() || "-",
-            social: parseInt(cells[13]?.textContent.trim()) || 0,
-            socialLevel: cells[14]?.textContent.trim() || "-",
-            agriculture: parseInt(cells[15]?.textContent.trim()) || 0,
-            agricultureLevel: cells[16]?.textContent.trim() || "-",
-            religion: parseInt(cells[17]?.textContent.trim()) || 0,
-            religionLevel: cells[18]?.textContent.trim() || "-",
-            art: parseInt(cells[19]?.textContent.trim()) || 0,
-            artLevel: cells[20]?.textContent.trim() || "-",
-            totalMarks: parseInt(cells[cells.length - 2]?.textContent.trim()) || 0,
-        };
-    });
+    const promptBox = document.createElement("div");
+    promptBox.style.background = "#fff";
+    promptBox.style.padding = "20px";
+    promptBox.style.borderRadius = "8px";
+    promptBox.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.2)";
+    promptBox.style.textAlign = "center";
+    promptBox.innerHTML = `
+        <h3 style="margin-top: 0; color: #333;">Enter Grade</h3>
+        <input type="text" id="gradeInput" placeholder="e.g., 9A" style="padding: 8px; width: 80%; border: 1px solid #ccc; border-radius: 4px;"><br><br>
+        <button id="submitGrade" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
+        <button id="cancelPrompt" style="padding: 8px 16px; margin-left: 10px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+    `;
+    overlay.appendChild(promptBox);
+    document.body.appendChild(overlay);
 
-    // Group marks by gender
-    const genderPerformance = { Male: [], Female: [] };
+    function alertInline(message) {
+        const alertDiv = document.createElement("div");
+        alertDiv.textContent = message;
+        alertDiv.style.position = "fixed";
+        alertDiv.style.top = "20px";
+        alertDiv.style.left = "50%";
+        alertDiv.style.transform = "translateX(-50%)";
+        alertDiv.style.backgroundColor = "#f44336";
+        alertDiv.style.color = "#fff";
+        alertDiv.style.padding = "10px 20px";
+        alertDiv.style.borderRadius = "5px";
+        alertDiv.style.zIndex = "1001";
+        alertDiv.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
+        document.body.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), 3000);
+    }
 
-    marks.forEach(markEntry => {
-        const learner = learners.find(l => l.name === markEntry.learner);
-        if (learner) {
-            markEntry.gender = learner.gender;
-            if (learner.gender === "male") {
-                genderPerformance.Male.push(markEntry);
-            } else if (learner.gender === "female") {
-                genderPerformance.Female.push(markEntry);
-            }
+    document.getElementById("cancelPrompt").onclick = () => {
+        document.body.removeChild(overlay);
+    };
+
+    document.getElementById("submitGrade").onclick = () => {
+        const gradeInput = document.getElementById("gradeInput").value.trim();
+        if (!gradeInput) {
+            alertInline("Grade input is required.");
+            return;
         }
-    });
 
-    // Sort learners within each gender by total marks (Descending order)
-    genderPerformance.Male.sort((a, b) => b.totalMarks - a.totalMarks);
-    genderPerformance.Female.sort((a, b) => b.totalMarks - a.totalMarks);
+        document.body.removeChild(overlay);
 
-    // Determine performance level based on total marks
-    function getPerformanceLevel(totalMarks) {
-        if (totalMarks >= 1 && totalMarks <= 200) return "BE";
-        if (totalMarks >= 201 && totalMarks <= 400) return "AE";
-        if (totalMarks >= 401 && totalMarks <= 600) return "ME";
-        if (totalMarks >= 601 && totalMarks <= 800) return "EE";
-        return "";
-    }
-
-    // Function to calculate correct totals and averages
-    function calculateSubjectStats(data) {
-        let totals = {
-            english: 0, math: 0, preTech: 0, kiswahili: 0, science: 0,
-            social: 0, agriculture: 0, religion: 0, art: 0, totalMarks: 0
-        };
-
-        data.forEach(entry => {
-            totals.english += entry.english;
-            totals.math += entry.math;
-            totals.preTech += entry.preTech;
-            totals.kiswahili += entry.kiswahili;
-            totals.science += entry.science;
-            totals.social += entry.social;
-            totals.agriculture += entry.agriculture;
-            totals.religion += entry.religion;
-            totals.art += entry.art;
-            totals.totalMarks += entry.totalMarks;
+        const marks = Array.from(marksTableBody.querySelectorAll("tr")).map(row => {
+            const cells = row.querySelectorAll("td");
+            return {
+                learner: cells[1]?.textContent.trim(),
+                grade: cells[2]?.textContent.trim(),
+                english: parseInt(cells[3]?.textContent.trim()) || 0,
+                englishLevel: cells[4]?.textContent.trim() || "-",
+                math: parseInt(cells[5]?.textContent.trim()) || 0,
+                mathLevel: cells[6]?.textContent.trim() || "-",
+                preTech: parseInt(cells[7]?.textContent.trim()) || 0,
+                preTechLevel: cells[8]?.textContent.trim() || "-",
+                kiswahili: parseInt(cells[9]?.textContent.trim()) || 0,
+                kiswahiliLevel: cells[10]?.textContent.trim() || "-",
+                science: parseInt(cells[11]?.textContent.trim()) || 0,
+                scienceLevel: cells[12]?.textContent.trim() || "-",
+                social: parseInt(cells[13]?.textContent.trim()) || 0,
+                socialLevel: cells[14]?.textContent.trim() || "-",
+                agriculture: parseInt(cells[15]?.textContent.trim()) || 0,
+                agricultureLevel: cells[16]?.textContent.trim() || "-",
+                religion: parseInt(cells[17]?.textContent.trim()) || 0,
+                religionLevel: cells[18]?.textContent.trim() || "-",
+                art: parseInt(cells[19]?.textContent.trim()) || 0,
+                artLevel: cells[20]?.textContent.trim() || "-",
+                totalMarks: 0,
+            };
         });
 
-        let count = data.length;
-        let averages = count > 0 ? {
-            english: (totals.english / count).toFixed(1),
-            math: (totals.math / count).toFixed(1),
-            preTech: (totals.preTech / count).toFixed(1),
-            kiswahili: (totals.kiswahili / count).toFixed(1),
-            science: (totals.science / count).toFixed(1),
-            social: (totals.social / count).toFixed(1),
-            agriculture: (totals.agriculture / count).toFixed(1),
-            religion: (totals.religion / count).toFixed(1),
-            art: (totals.art / count).toFixed(1),
-            totalMarks: (totals.totalMarks / count).toFixed(1)
-        } : totals;
+        const validGrade = marks.some(markEntry => markEntry.grade.toLowerCase() === gradeInput.toLowerCase());
+        if (!validGrade) {
+            alertInline("The entered grade is not available in the mark list.");
+            return;
+        }
 
-        return { totals, averages };
-    }
+        const learners = Array.from(learnersTableBody.querySelectorAll("tr")).map(row => {
+            const cells = row.querySelectorAll("td");
+            return {
+                name: cells[2]?.textContent.trim(),
+                gender: cells[3]?.textContent.trim().toLowerCase(),
+            };
+        });
 
-    // Function to generate performance tables with numbering, print buttons, and performance level
-    function createPerformanceTable(data, gender) {
-        if (data.length === 0) return `<h3>No ${gender} learners with recorded marks.</h3>`;
+        const filteredMarks = marks.filter(markEntry => markEntry.grade.toLowerCase() === gradeInput.toLowerCase());
 
-        let { totals, averages } = calculateSubjectStats(data);
+        filteredMarks.forEach(markEntry => {
+            markEntry.totalMarks =
+                markEntry.english + markEntry.math + markEntry.preTech +
+                markEntry.kiswahili + markEntry.science + markEntry.social +
+                markEntry.agriculture + markEntry.religion + markEntry.art;
+        });
 
-        let tableId = `${gender.toLowerCase()}PerformanceTable`;
+        const genderPerformance = { Male: [], Female: [] };
 
-        let tableHtml = `
-            <h2 style="color: ${gender === "Male" ? "blue" : "purple"}; text-align: center;">
-                ${gender} Performance Report
-            </h2>
-            <table id="${tableId}" border="1" style="width:100%; border-collapse: collapse; margin-bottom: 10px;">
-                <thead>
-                    <tr style="background: #4CAF50; color: white;">
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Grade</th>
-                        <th>Eng</th><th>Lev</th>
-                        <th>Math</th><th>Lev</th>
-                        <th>Pre-Tech</th><th>Lev</th>
-                        <th>Kisw</th><th>Lev</th>
-                        <th>Scie</th><th>Lev</th>
-                        <th>Sst</th><th>Lev</th>
-                        <th>Agric</th><th>Lev</th>
-                        <th>Cre</th><th>Lev</th>
-                        <th>C/A</th><th>Lev</th>
-                        <th>Total Marks</th>
-                        <th>Perf Lev</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+        filteredMarks.forEach(markEntry => {
+            const learner = learners.find(l => l.name === markEntry.learner);
+            if (learner) {
+                markEntry.gender = learner.gender;
+                if (learner.gender === "male") {
+                    genderPerformance.Male.push(markEntry);
+                } else if (learner.gender === "female") {
+                    genderPerformance.Female.push(markEntry);
+                }
+            }
+        });
 
-        // Add learners' data with numbering and performance level
-        data.forEach((entry, index) => {
+        genderPerformance.Male.sort((a, b) => b.totalMarks - a.totalMarks);
+        genderPerformance.Female.sort((a, b) => b.totalMarks - a.totalMarks);
+
+        function getPerformanceLevel(totalMarks) {
+            if (totalMarks >= 1 && totalMarks <= 200) return "BE";
+            if (totalMarks >= 201 && totalMarks <= 400) return "AE";
+            if (totalMarks >= 401 && totalMarks <= 600) return "ME";
+            if (totalMarks >= 601 && totalMarks <= 800) return "EE";
+            return "";
+        }
+
+        function calculateSubjectStats(data) {
+            let totals = {
+                english: 0, math: 0, preTech: 0, kiswahili: 0, science: 0,
+                social: 0, agriculture: 0, religion: 0, art: 0, totalMarks: 0
+            };
+
+            data.forEach(entry => {
+                totals.english += entry.english;
+                totals.math += entry.math;
+                totals.preTech += entry.preTech;
+                totals.kiswahili += entry.kiswahili;
+                totals.science += entry.science;
+                totals.social += entry.social;
+                totals.agriculture += entry.agriculture;
+                totals.religion += entry.religion;
+                totals.art += entry.art;
+                totals.totalMarks += entry.totalMarks;
+            });
+
+            let count = data.length;
+            let averages = count > 0 ? {
+                english: (totals.english / count).toFixed(1),
+                math: (totals.math / count).toFixed(1),
+                preTech: (totals.preTech / count).toFixed(1),
+                kiswahili: (totals.kiswahili / count).toFixed(1),
+                science: (totals.science / count).toFixed(1),
+                social: (totals.social / count).toFixed(1),
+                agriculture: (totals.agriculture / count).toFixed(1),
+                religion: (totals.religion / count).toFixed(1),
+                art: (totals.art / count).toFixed(1),
+                totalMarks: (totals.totalMarks / count).toFixed(1)
+            } : totals;
+
+            return { totals, averages };
+        }
+
+        function createPerformanceTable(data, gender) {
+            if (data.length === 0) return `<h3>No ${gender} learners with recorded marks.</h3>`;
+
+            let { totals, averages } = calculateSubjectStats(data);
+            let tableId = `${gender.toLowerCase()}PerformanceTable`;
+
+            let tableHtml = `
+                <h2 style="color: ${gender === "Male" ? "blue" : "purple"}; text-align: center;">
+                    ${gender} Performance Report for Grade: ${gradeInput}
+                </h2>
+                <table id="${tableId}" border="1" style="width:100%; border-collapse: collapse; margin-bottom: 10px;">
+                    <thead>
+                        <tr style="background: #4CAF50; color: white;">
+                            <th>No.</th><th>Name</th><th>Grade</th>
+                            <th>Eng</th><th>Lev</th><th>Math</th><th>Lev</th>
+                            <th>Pre-Tech</th><th>Lev</th><th>Kisw</th><th>Lev</th>
+                            <th>Scie</th><th>Lev</th><th>Sst</th><th>Lev</th>
+                            <th>Agric</th><th>Lev</th><th>Cre</th><th>Lev</th>
+                            <th>C/A</th><th>Lev</th><th>Total Marks</th><th>Perf Lev</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            data.forEach((entry, index) => {
+                tableHtml += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${entry.learner}</td>
+                        <td>${entry.grade}</td>
+                        <td>${entry.english}</td><td>${entry.englishLevel}</td>
+                        <td>${entry.math}</td><td>${entry.mathLevel}</td>
+                        <td>${entry.preTech}</td><td>${entry.preTechLevel}</td>
+                        <td>${entry.kiswahili}</td><td>${entry.kiswahiliLevel}</td>
+                        <td>${entry.science}</td><td>${entry.scienceLevel}</td>
+                        <td>${entry.social}</td><td>${entry.socialLevel}</td>
+                        <td>${entry.agriculture}</td><td>${entry.agricultureLevel}</td>
+                        <td>${entry.religion}</td><td>${entry.religionLevel}</td>
+                        <td>${entry.art}</td><td>${entry.artLevel}</td>
+                        <td><strong>${entry.totalMarks}</strong></td>
+                        <td><strong>${getPerformanceLevel(entry.totalMarks)}</strong></td>
+                    </tr>`;
+            });
+
             tableHtml += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${entry.learner}</td>
-                    <td>${entry.grade}</td>
-                    <td>${entry.english}</td><td>${entry.englishLevel}</td>
-                    <td>${entry.math}</td><td>${entry.mathLevel}</td>
-                    <td>${entry.preTech}</td><td>${entry.preTechLevel}</td>
-                    <td>${entry.kiswahili}</td><td>${entry.kiswahiliLevel}</td>
-                    <td>${entry.science}</td><td>${entry.scienceLevel}</td>
-                    <td>${entry.social}</td><td>${entry.socialLevel}</td>
-                    <td>${entry.agriculture}</td><td>${entry.agricultureLevel}</td>
-                    <td>${entry.religion}</td><td>${entry.religionLevel}</td>
-                    <td>${entry.art}</td><td>${entry.artLevel}</td>
-                    <td><strong>${entry.totalMarks}</strong></td>
-                    <td><strong>${getPerformanceLevel(entry.totalMarks)}</strong></td>
-                </tr>`;
-        });
+                <tr style="background: yellow; font-weight: bold;">
+                    <td colspan="3">Totals</td>
+                    <td>${totals.english}</td><td>-</td>
+                    <td>${totals.math}</td><td>-</td>
+                    <td>${totals.preTech}</td><td>-</td>
+                    <td>${totals.kiswahili}</td><td>-</td>
+                    <td>${totals.science}</td><td>-</td>
+                    <td>${totals.social}</td><td>-</td>
+                    <td>${totals.agriculture}</td><td>-</td>
+                    <td>${totals.religion}</td><td>-</td>
+                    <td>${totals.art}</td><td>-</td>
+                    <td><strong>${totals.totalMarks}</strong></td>
+                    <td>-</td>
+                </tr>
+                <tr style="background: lightblue; font-weight: bold;">
+                    <td colspan="3">Averages</td>
+                    <td>${averages.english}</td><td>-</td>
+                    <td>${averages.math}</td><td>-</td>
+                    <td>${averages.preTech}</td><td>-</td>
+                    <td>${averages.kiswahili}</td><td>-</td>
+                    <td>${averages.science}</td><td>-</td>
+                    <td>${averages.social}</td><td>-</td>
+                    <td>${averages.agriculture}</td><td>-</td>
+                    <td>${averages.religion}</td><td>-</td>
+                    <td>${averages.art}</td><td>-</td>
+                    <td><strong>${averages.totalMarks}</strong></td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+            </table>
+            <button onclick="printTable('${tableId}')" style="margin: 10px; padding: 10px; background-color: #FF9800; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Print ${gender} Performance
+            </button>`;
 
-        // Add totals and averages rows
-        tableHtml += `
-            <tr style="background: yellow; font-weight: bold;">
-                <td colspan="3">Totals</td>
-                <td>${totals.english}</td><td>-</td>
-                <td>${totals.math}</td><td>-</td>
-                <td>${totals.preTech}</td><td>-</td>
-                <td>${totals.kiswahili}</td><td>-</td>
-                <td>${totals.science}</td><td>-</td>
-                <td>${totals.social}</td><td>-</td>
-                <td>${totals.agriculture}</td><td>-</td>
-                <td>${totals.religion}</td><td>-</td>
-                <td>${totals.art}</td><td>-</td>
-                <td><strong>${totals.totalMarks}</strong></td>
-                <td>-</td>
-            </tr>
-            <tr style="background: lightblue; font-weight: bold;">
-                <td colspan="3">Averages</td>
-                <td>${averages.english}</td><td>-</td>
-                <td>${averages.math}</td><td>-</td>
-                <td>${averages.preTech}</td><td>-</td>
-                <td>${averages.kiswahili}</td><td>-</td>
-                <td>${averages.science}</td><td>-</td>
-                <td>${averages.social}</td><td>-</td>
-                <td>${averages.agriculture}</td><td>-</td>
-                <td>${averages.religion}</td><td>-</td>
-                <td>${averages.art}</td><td>-</td>
-                <td><strong>${averages.totalMarks}</strong></td>
-                <td>-</td>
-            </tr>
-        </tbody>
-        </table>
-        <button onclick="printTable('${tableId}')" style="margin: 10px; padding: 10px; background-color: #FF9800; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            Print ${gender} Performance
-        </button>`;
-
-        return tableHtml;
+            return tableHtml;
+        }
+    // Insert tables into the document
+    const outputContainer = document.getElementById("genderPerformanceContainer");
+    if (!outputContainer) {
+        alert("Output container with ID 'genderPerformanceContainer' not found in the HTML.");
+        return;
     }
+
+    outputContainer.innerHTML = `
+        ${createPerformanceTable(genderPerformance.Male, "Male")}
+        ${createPerformanceTable(genderPerformance.Female, "Female")}
+    `;
+}
 
     // Updated printTable function with headers
     window.printTable = function (tableId) {
@@ -7669,13 +7766,13 @@ function printParentsTable() {
 }
 function logout() {
     const logoutButton = document.getElementById("logoutButton");
-    // Change button text to "Logging Out..."
+
     if (logoutButton) {
         logoutButton.textContent = "Logging Out...";
-        logoutButton.disabled = true; // Disable the button to prevent multiple clicks
+        logoutButton.disabled = true;
     }
 
-    // Hide all sections that might be visible
+    // List of static sections to hide
     const sectionsToHide = [
         "mainContent",
         "registeredLearnersBox",
@@ -7692,44 +7789,59 @@ function logout() {
         "photoAlbumSection",
         "menuActions",
         "championsForm",
+        "learnerCountContainer",
+        "genderPerformanceContainer"
     ];
 
-    sectionsToHide.forEach(sectionId => {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.style.display = "none";
-        }
+    sectionsToHide.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
     });
 
-    // Show only the login section
+    // CLEAR DYNAMICALLY GENERATED REPORTS & ELEMENTS
+    // Remove dynamically added report containers
+    const dynamicReports = document.querySelectorAll(".gender-performance-container, .report-container, .generated-report");
+    dynamicReports.forEach(el => el.remove());
+
+    // Clear contents inside genderPerformanceContainer (if it’s used as a container)
+    const genderPerformanceContainer = document.getElementById("genderPerformanceContainer");
+    if (genderPerformanceContainer) {
+        genderPerformanceContainer.innerHTML = "";
+        genderPerformanceContainer.style.display = "none";
+    }
+
+    // Remove any "Print" buttons manually added
+    const printButtons = document.querySelectorAll("button#printReportBtn, button#printBtn");
+    printButtons.forEach(btn => btn.remove());
+
+    // Remove any leftover overlays or modals
+    const overlays = document.querySelectorAll("div[style*='position: fixed']");
+    overlays.forEach(overlay => overlay.remove());
+
+    // Show login section
     const loginSection = document.getElementById("loginSection");
     if (loginSection) {
         loginSection.style.display = "block";
+
+        const successMessage = document.createElement("div");
+        successMessage.textContent = "You have been logged out successfully!";
+        successMessage.style.color = "green";
+        successMessage.style.fontWeight = "bold";
+        successMessage.style.fontSize = "16px";
+        successMessage.style.textAlign = "center";
+        successMessage.style.marginTop = "20px";
+        loginSection.appendChild(successMessage);
+
+        setTimeout(() => {
+            if (logoutButton) {
+                logoutButton.textContent = "Logout";
+                logoutButton.disabled = false;
+            }
+            successMessage.remove();
+        }, 3000);
     }
-
-    // Display styled success message
-    const successMessage = document.createElement("div");
-    successMessage.textContent = "You have been logged out successfully!";
-    successMessage.style.color = "green"; // Set text color to green
-    successMessage.style.fontWeight = "bold"; // Make it bold
-    successMessage.style.fontSize = "16px"; // Adjust font size
-    successMessage.style.textAlign = "center"; // Center the message
-    successMessage.style.marginTop = "20px";
-
-    loginSection.appendChild(successMessage);
-
-    // Simulate a short delay to reset the button
-    setTimeout(() => {
-        // Reset button text and enable it again
-        if (logoutButton) {
-            logoutButton.textContent = "Logout";
-            logoutButton.disabled = false;
-        }
-
-        // Remove the success message after a few seconds
-        setTimeout(() => successMessage.remove(), 3000); // Message disappears after 3 seconds
-    }, 1000); // Delay for 1 second
 }
+
 // Function to search learners by name or admission number
 function searchLearner() {
     const searchInput = document.getElementById("searchLearner").value.toLowerCase();
@@ -10175,142 +10287,6 @@ function toggleLearnersCount() {
         toggleButton.textContent = 'Show Learners Count';
     }
 }
-
-function generateLearnersCount() {
-    // Get the table body where learners' data is stored
-    const learnersTable = document.getElementById('learnersList');
-    if (!learnersTable) {
-        console.error('Learners table not found!');
-        return;
-    }
-
-    const rows = learnersTable.querySelectorAll('tr');
-    const gradeCounts = {};
-
-    // Loop through rows to process each learner's data
-    rows.forEach(row => {
-        const gradeCell = row.querySelector('td:nth-child(5)'); // Assuming 5th column is grade
-        const genderCell = row.querySelector('td:nth-child(4)'); // Assuming 4th column is gender
-
-        if (!gradeCell || !genderCell) return;
-
-        const grade = gradeCell.textContent.trim();
-        const gender = genderCell.textContent.trim().toLowerCase();
-
-        // Initialize grade object if not exists
-        if (!gradeCounts[grade]) {
-            gradeCounts[grade] = { boys: 0, girls: 0, total: 0 };
-        }
-
-        // Increment based on gender
-        if (gender === 'male' || gender === 'boy') {
-            gradeCounts[grade].boys += 1;
-        } else if (gender === 'female' || gender === 'girl') {
-            gradeCounts[grade].girls += 1;
-        }
-
-        // Update total
-        gradeCounts[grade].total = gradeCounts[grade].boys + gradeCounts[grade].girls;
-    });
-
-    // Display counts dynamically in the HTML table
-    const resultTable = document.getElementById('learnerCountTableBody');
-    resultTable.innerHTML = ''; // Clear previous content
-    let count = 1;
-    Object.keys(gradeCounts).forEach(grade => {
-        const { boys, girls, total } = gradeCounts[grade];
-        resultTable.innerHTML += `
-            <tr>
-                <td style="font-size: 50px;">${count}</td>
-                <td style="font-size: 50px;">${grade}</td>
-                <td style="font-size: 50px;">${boys}</td>
-                <td style="font-size: 50px;">${girls}</td>
-                <td style="font-size: 50px;">${total}</td>
-            </tr>
-        `;
-        count++;
-    });
-}
-
-function printLearnersCount() {
-    const container = document.getElementById('learnerCountContainer');
-    if (container) {
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Learners Count</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            text-align: center;
-                            margin: 20px;
-                        }
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-top: 20px;
-                        }
-                        th, td {
-                            border: 1px solid black;
-                            padding: 10px;
-                            text-align: center;
-                        }
-                        th {
-                            background-color: #f2f2f2;
-                        }
-                        td {
-                            font-size: 20px;
-                        }
-                        .header {
-                            text-align: center;
-                            margin-bottom: 20px;
-                        }
-                        .header img {
-                            max-width: 80px;
-                            margin-bottom: 10px;
-                        }
-                        .header h1 {
-                            font-size: 20px;
-                            margin: 0;
-                        }
-                        .header p {
-                            margin: 5px 0;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
-                        <h1>NACHU COMPREHENSIVE SCHOOL LEARNERS COUNT PER GRADE </h1>
-                        <p>ADDRESS: PO BOX 561-00902 KIKUYU, KENYA</p>
-                        <p>Phone: +254-700-123456</p>
-                        <p>School Motto: "HARD WORK PAYS"</p>
-                        <p>Year: 2025</p>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Grade</th>
-                                <th>Boys</th>
-                                <th>Girls</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${document.getElementById('learnerCountTableBody').innerHTML}
-                        </tbody>
-                    </table>
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-    } else {
-        console.error('Learner count container not found!');
-    }
-}
 function showCelebration(message = "Congratulations!", duration = 5000) {
     // Create celebration container
     const celebrationContainer = document.createElement("div");
@@ -11334,8 +11310,419 @@ function printFilteredGrades() {
 }
 
 
+function toggleGenderReport() {
+  const outputContainer = document.getElementById("genderPerformanceContainer");
+  const btn = document.getElementById("genderToggleBtn");
+
+  if (!outputContainer) {
+    alert("Output container with ID 'genderPerformanceContainer' not found in the HTML.");
+    return;
+  }
+
+  if (outputContainer.innerHTML.trim() !== "") {
+    outputContainer.innerHTML = ""; // Clear report
+    btn.innerHTML = `<i class="fas fa-venus-mars" style="color: #d35400;"></i> Generate Gender Merit List`;
+  } else {
+    generateGenderPerformance(); // Show report
+    btn.innerHTML = `<i class="fas fa-times-circle" style="color: red;"></i> Hide Gender Merit List`;
+  }
+}
+function getLearnersFromTable() {
+    const rows = document.querySelectorAll('#learnersList tr');
+    const learners = [];
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 8) {
+            learners.push({
+                parentName: cells[6].textContent.trim(),
+                phone: cells[7].textContent.trim(),
+                grade: cells[4].textContent.trim()
+            });
+        }
+    });
+
+    return learners;
+}
+function populateGradeDropdown() {
+  // If learners array exists globally, use it
+  let grades = [];
+
+  if (typeof learners !== 'undefined' && Array.isArray(learners)) {
+    grades = [...new Set(learners.map(l => l.grade))];
+  } else {
+    // If learners array isn't global, try extracting from table instead
+    const rows = document.querySelectorAll('#learnersList tr');
+    const gradeSet = new Set();
+
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length >= 5) {
+        gradeSet.add(cells[4].textContent.trim());
+      }
+    });
+
+    grades = [...gradeSet];
+  }
+
+  grades.sort();
+
+  // Populate original dropdown (if it exists)
+  const mainDropdown = document.getElementById("gradeDropdown");
+  if (mainDropdown) {
+    mainDropdown.innerHTML = '<option value="">-- Select Grade --</option>';
+    grades.forEach(grade => {
+      const option = document.createElement("option");
+      option.value = grade;
+      option.textContent = grade;
+      mainDropdown.appendChild(option);
+    });
+  }
+
+  // Populate parent info dropdown (if it exists)
+  const parentDropdown = document.getElementById("gradeFilterDropdown");
+  if (parentDropdown) {
+    parentDropdown.innerHTML = '<option value="">-- All Grades --</option>';
+    grades.forEach(grade => {
+      const option = document.createElement("option");
+      option.value = grade;
+      option.textContent = grade;
+      parentDropdown.appendChild(option);
+    });
+  }
+}
 
 
+
+function filterParentInfoByGrade() {
+    const selectedGrade = document.getElementById('gradeFilterDropdown').value;
+    const learners = getLearnersFromTable();
+    const filtered = selectedGrade
+        ? learners.filter(l => l.grade === selectedGrade)
+        : learners;
+
+    const table = document.getElementById('parentInfoTable');
+    const body = document.getElementById('parentInfoBody');
+    body.innerHTML = "";
+
+   filtered.forEach((l, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${index + 1}</td> <!-- Dynamically display the index as Number -->
+        <td>${l.parentName}</td>
+        <td>${l.phone}</td>
+        <td>${l.grade}</td>
+        <td>${l.signature || ''}</td> <!-- Include the signature column -->
+    `;
+    body.appendChild(row);
+});
+
+table.style.display = filtered.length ? 'table' : 'none';
+}
+
+function printParentInfoTable() {
+    const table = document.getElementById('parentInfoTable');
+    if (table.style.display === 'none') {
+        alert("No data to print. Please select a grade.");
+        return;
+    }
+
+    const currentYear = new Date().getFullYear();
+
+    // Get grade dynamically from the first row's 4th column (index 3)
+    let grade = 'N/A';
+    const firstRow = table.querySelector('tbody tr');
+    if (firstRow) {
+        const cells = firstRow.querySelectorAll('td');
+        if (cells.length >= 4) {
+            grade = cells[3].textContent.trim();
+        }
+    }
+
+    const printWindow = window.open('', '', 'height=800,width=1000');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Parent Info</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .header { text-align: center; }
+                .logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; }
+                h2, h3 { margin: 5px 0; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <img src=" https://i.imgur.com/uWrz8rt.png" class="logo" alt="School Logo" />
+                <h2>NACHU COMPREHENSIVE  SCHOOL PARENTS ATTENDANCE REGISTER</h2>
+                <h3>ADDRESS: PO BOX 561-00902 KIKUYU, KENYA</h3>
+                <h3>Phone: +254-700-123456</h3>
+                <h3>School Motto: "HARD WORK PAYS"</h3>
+               <h3>Year: ${currentYear} / GRADE: ${grade}</h3>
+            </div>
+            ${table.outerHTML}
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function toggleLearnerCountTable() {
+  const container = document.getElementById("learnerCountContainer");
+  const button = document.getElementById("toggleLearnerCountBtn");
+
+  if (container.style.display === "block") {
+    container.style.display = "none";
+    button.innerHTML = `<i class="fas fa-table"></i> Show Learner Count`;
+  } else {
+    displayLearnerCountTable(); // Builds and shows the table
+    container.style.display = "block";
+    button.innerHTML = `<i class="fas fa-eye-slash"></i> Hide Learner Count`;
+  }
+}
+
+function displayLearnerCountTable() {
+  const gradeCounts = {};
+
+  feeDetails.forEach(detail => {
+    const grade = detail.grade;
+    gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
+  });
+
+  let tableHTML = `
+    <h2 style="color: #4CAF50; text-align: center;">Total Learners Per Grade</h2>
+    <table style="width: 50%; margin: 0 auto; border-collapse: collapse; text-align: center;">
+      <thead>
+        <tr style="background: #1976D2; color: white;">
+          <th style="border: 1px solid #ccc; padding: 10px;">Grade</th>
+          <th style="border: 1px solid #ccc; padding: 10px;">Number of Learners</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  Object.keys(gradeCounts).sort((a, b) => a - b).forEach(grade => {
+    tableHTML += `
+      <tr style="background: #f9f9f9;">
+        <td style="border: 1px solid #ccc; padding: 10px;">${grade}</td>
+        <td style="border: 1px solid #ccc; padding: 10px;">${gradeCounts[grade]}</td>
+      </tr>
+    `;
+  });
+
+  tableHTML += `</tbody></table>`;
+
+  document.getElementById("learnerCountContainer").innerHTML = tableHTML;
+}
+function printLearnerCountTable() {
+  const tableContent = document.getElementById("learnerCountContainer").innerHTML;
+  const currentYear = new Date().getFullYear();
+
+  const printWindow = window.open("", "", "width=900,height=650");
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>Nachu Primary School - Learner Count</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          color: black;
+        }
+        .header-container {
+          margin-bottom: 20px;
+        }
+        .header-container img {
+          max-width: 80px;
+        }
+        .header-container h2,
+        .header-container h3,
+        .header-container p {
+          margin: 5px 0;
+        }
+        table {
+          width: 80%;
+          margin: 0 auto;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+        th, td {
+          border: 2px solid black; /* black border for all cells */
+          padding: 10px;
+          text-align: center;
+          color: black;
+        }
+        th {
+          background-color: white;
+          font-weight: bold;
+        }
+        tr:nth-child(even) {
+          background-color: #f2f2f2;
+        }
+        .footer {
+          margin-top: 40px;
+          background-color: black;
+          color: white;
+          padding: 10px;
+          font-size: 14px;
+          text-align: center;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header-container">
+        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
+        <h2>NACHU PRIMARY SCHOOL FEE REPORT</h2>
+        <p><strong>ADDRESS:</strong> PO BOX 561-00902 KIKUYU, KENYA</p>
+        <p><strong>Phone:</strong> +254-700-123456</p>
+        <p><strong>School Motto:</strong> "HARD WORK PAYS"</p>
+        <p><strong>Year:</strong> ${currentYear}</p>
+        <hr>
+      </div>
+
+      ${tableContent}
+
+      <div class="footer">
+        <p>Generated by <strong>Rasm School Automation Management System</strong></p>
+        <p><em>Your Gateway To Smooth And Efficient School Management Software</em></p>
+      </div>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.print();
+}
+function toggleLearnerCountTable() {
+  const container = document.getElementById("learnerCountContainer");
+  const button = document.getElementById("toggleLearnerCountBtn");
+
+  if (container.style.display === "block") {
+    container.style.display = "none";
+    button.innerHTML = `<i class="fas fa-table"></i> Show Learner Count`;
+  } else {
+    displayLearnerCountTable(); // Builds and shows the table
+    container.style.display = "block";
+    button.innerHTML = `<i class="fas fa-eye-slash"></i> Hide Learner Count`;
+  }
+}
+
+function displayLearnerCountTable() {
+  const gradeCounts = {};
+
+  feeDetails.forEach(detail => {
+    const grade = detail.grade;
+    gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
+  });
+
+  let tableHTML = `
+    <h2 style="color: #4CAF50; text-align: center;">Total Learners Per Grade</h2>
+    <table style="width: 50%; margin: 0 auto; border-collapse: collapse; text-align: center;">
+      <thead>
+        <tr style="background: #1976D2; color: white;">
+          <th style="border: 1px solid #ccc; padding: 10px;">Grade</th>
+          <th style="border: 1px solid #ccc; padding: 10px;">Number of Learners</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  Object.keys(gradeCounts).sort((a, b) => a - b).forEach(grade => {
+    tableHTML += `
+      <tr style="background: #f9f9f9;">
+        <td style="border: 1px solid #ccc; padding: 10px;">${grade}</td>
+        <td style="border: 1px solid #ccc; padding: 10px;">${gradeCounts[grade]}</td>
+      </tr>
+    `;
+  });
+
+  tableHTML += `</tbody></table>`;
+
+  document.getElementById("learnerCountContainer").innerHTML = tableHTML;
+}
+function printLearnerCountTable() {
+  const tableContent = document.getElementById("learnerCountContainer").innerHTML;
+  const currentYear = new Date().getFullYear();
+
+  const printWindow = window.open("", "", "width=900,height=650");
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>Nachu Primary School - Learner Count</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          color: black;
+        }
+        .header-container {
+          margin-bottom: 20px;
+        }
+        .header-container img {
+          max-width: 80px;
+        }
+        .header-container h2,
+        .header-container h3,
+        .header-container p {
+          margin: 5px 0;
+        }
+        table {
+          width: 80%;
+          margin: 0 auto;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+        th, td {
+          border: 2px solid black; /* black border for all cells */
+          padding: 10px;
+          text-align: center;
+          color: black;
+        }
+        th {
+          background-color: white;
+          font-weight: bold;
+        }
+        tr:nth-child(even) {
+          background-color: #f2f2f2;
+        }
+        .footer {
+          margin-top: 40px;
+          background-color: black;
+          color: white;
+          padding: 10px;
+          font-size: 14px;
+          text-align: center;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header-container">
+        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
+        <h2>NACHU PRIMARY SCHOOL FEE REPORT</h2>
+        <p><strong>ADDRESS:</strong> PO BOX 561-00902 KIKUYU, KENYA</p>
+        <p><strong>Phone:</strong> +254-700-123456</p>
+        <p><strong>School Motto:</strong> "HARD WORK PAYS"</p>
+        <p><strong>Year:</strong> ${currentYear}</p>
+        <hr>
+      </div>
+
+      ${tableContent}
+
+      <div class="footer">
+        <p>Generated by <strong>Rasm School Automation Management System</strong></p>
+        <p><em>Your Gateway To Smooth And Efficient School Management Software</em></p>
+      </div>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.print();
+}
 
 </script>
 
