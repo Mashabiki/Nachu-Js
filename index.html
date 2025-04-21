@@ -1339,9 +1339,18 @@ button {
     <i class="fas fa-print"></i> Print Learner Count
   </button>
 </div>
+<button onclick="sendSmsToAllDefaulters()" 
+  style="margin: 20px 0; padding: 10px 20px; background: #FF5722; color: white; border: none; border-radius: 5px;">
+  Send SMS to All Defaulters
+</button>
+<!-- Back Button -->
+<button onclick="hideAllSections()" 
+  style="width: 40%; padding: 10px; background-color: #607D8B; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+  <i class="fas fa-arrow-left"></i> Back
+</button>
 
 
-  </div>
+    </div>
    <!-- Archived Fees Container -->
 <div id="archivedFeesContainer" style="display: none; text-align: left; background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 20px;">
   <h2 style="color: #4CAF50;">Archived Fee Records</h2>
@@ -1359,10 +1368,26 @@ button {
   <div id="feeCaptureForm" style="display: none; text-align: center; padding: 20px; width: 60%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
     <h2 style="color: #333;">Fee Capture Form</h2>
     <form id="feeForm">
+<!-- Simulated MPESA Pay Button -->
+<button type="button" onclick="openMpesaModal()" 
+  style="padding: 10px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; margin-right: 10px;">
+  Pay with MPESA
+</button>
+
       <label for="feeLearnerName"><strong>Learner Name:</strong></label>
       <input type="text" id="feeLearnerName" placeholder="Enter learner name" required><br><br>
       <label for="feeLearnerGrade"><strong>Grade:</strong></label>
       <input type="text" id="feeLearnerGrade" placeholder="Enter learner grade" required><br><br>
+<label for="feeTerm"><strong>Term:</strong></label>
+<select id="feeTerm" required>
+  <option value="">Select Term</option>
+  <option value="Term 1">Term 1</option>
+  <option value="Term 2">Term 2</option>
+  <option value="Term 3">Term 3</option>
+</select><br><br>
+<label for="feePhone"><strong>Parent Phone Number:</strong></label>
+<input type="text" id="feePhone" placeholder="e.g. 0712345678" required><br><br>
+
       <label for="securityFee"><strong>Security Fee (KSH):</strong></label>
       <input type="number" id="securityFee" placeholder="Enter amount" required><br><br>
       <label for="bomFee"><strong>BOM Fee (KSH):</strong></label>
@@ -1377,57 +1402,60 @@ button {
       <input type="number" id="exam3Fee" placeholder="Enter amount" required><br><br>
       <label for="activityFee"><strong>Activity Fee (KSH):</strong></label>
       <input type="number" id="activityFee" placeholder="Enter amount" required><br><br>
-      <button type="submit" style="padding: 10px 15px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px;">
-        Save Fee Details
-      </button>
+     <!-- Save Fee Details Button with Icon -->
+<button type="submit" style="padding: 10px 15px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px;">
+  <i class="fas fa-money-check-alt" style="margin-right: 5px;"></i> Save Fee Details
+</button>
     </form>
   </div>
 
   <!-- Fee Summary Table Container (Wrapped with Grade Filter) -->
-<div id="feeSummaryTableContainer" style="display: none; text-align: center; padding: 20px; width: 100%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
-    <h2 style="margin-bottom: 10px; color: #333;">Fee Records</h2>
-
-    <!-- Search Learner -->
-    <input type="text" id="searchLearnerFee" onkeyup="searchLearnerFee()" placeholder="Search for learner..." 
-    style="margin-bottom: 10px; padding: 8px; width: 250px; border: 1px solid #ccc; border-radius: 5px; text-align: center;">
-
+  <div id="feeSummaryTableContainer" style="display: none; text-align: center; padding: 20px; width: 100%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
+    <h2 style="margin-bottom: 10px; color: #333;">Fee Summary</h2>
     <!-- Grade Filter -->
     <label for="gradeFilter"><strong>Filter by Grade:</strong></label>
     <select id="gradeFilter" onchange="filterFeeRecords()">
-        <option value="">All Grades</option>
-        <option value="1">Grade 1</option>
-        <option value="2">Grade 2</option>
-        <option value="3">Grade 3</option>
-        <option value="4">Grade 4</option>
-        <option value="5">Grade 5</option>
-        <option value="6">Grade 6</option>
-        <option value="7">Grade 7</option>
-        <option value="8">Grade 8</option>
-        <option value="9">Grade 9</option>
+      <option value="">All Grades</option>
+      <option value="1">Grade 1</option>
+      <option value="2">Grade 2</option>
+      <option value="3">Grade 3</option>
+      <option value="4">Grade 4</option>
+      <option value="5">Grade 5</option>
+      <option value="6">Grade 6</option>
+      <option value="7">Grade 7</option>
+      <option value="8">Grade 8</option>
+      <option value="9">Grade 9</option>
     </select>
+<!-- Search Input -->
+<input type="text" id="searchLearnerInput" onkeyup="searchLearnerByName()" 
+  placeholder=" Search learner by name..." 
+  style="margin-bottom: 10px; padding: 8px; width: 200px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
 
     <table class="learners-table" id="feeSummaryTable" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-        <thead>
-            <tr style="background: #4CAF50; color: white;">
-                <th>No</th>
-                <th>Learner Name</th>
-                <th>Grade</th>
-                <th>Security Fee</th>
-                <th>BOM Fee</th>
-                <th>Tuition Fee</th>
-                <th>Exam 1 Fee</th>
-                <th>Exam 2 Fee</th>
-                <th>Exam 3 Fee</th>
-                <th>Activity Fee</th>
-                <th>Constant Fee</th>
-                <th>Total Paid</th>
-                <th>Total Balance</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="feeSummaryTableBody"></tbody>
+      <thead>
+        <tr style="background: #4CAF50; color: white;">
+
+         <th>No</th>
+          <th>Learner Name</th>
+          <th>Grade</th>
+<th>Phone</th>
+
+          <th>Security Fee</th>
+          <th>BOM Fee</th>
+          <th>Tuition Fee</th>
+          <th>Exam 1 Fee</th>
+          <th>Exam 2 Fee</th>
+          <th>Exam 3 Fee</th>
+          <th>Activity Fee</th>
+          <th>Constant Fee</th>
+          <th>Total Paid</th>
+          <th>Total Balance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="feeSummaryTableBody"></tbody>
     </table>
-</div>
+  </div>
 
   <!-- Receipt Container -->
   <div id="receiptContainer" style="display: none; text-align: center; border-radius: 10px; padding: 20px; width: 60%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); font-family: 'Arial', sans-serif;">
@@ -1435,8 +1463,8 @@ button {
     <div style="display: flex; align-items: center; justify-content: center;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 80px; margin-right: 10px;">
       <div style="text-align: left;">
-        <h2 style="margin: 0;">NACHU COMPREHENSIVE SCHOOL</h2>
-        <p style="margin: 2px; font-size: 14px; color: #555;">561-00902 Kikuyu, Kenya</p>
+        <h2 style="margin: 0;">Nachu Comprehensive  School</h2>
+        <p style="margin: 2px; font-size: 14px; color: #555;">P.O BOX 561-00902, Kikuyu, Kenya</p>
         <p style="margin: 2px; font-size: 14px; color: #555;">Phone: +254-700-123456</p>
       </div>
     </div>
@@ -1468,8 +1496,8 @@ button {
     <p style="font-weight: bold; color: green;">Amount Paid: KSH <span id="receiptPaid"></span></p>
     <p style="font-weight: bold; color: red;">Balance: KSH <span id="receiptBalance"></span></p>
     <!-- Official Stamp -->
-    <div style="border: 2px solid blue; color: blue; width: 150px; height: 80px; margin: 15px auto; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center;">
-      NACHU COMPREHENSIVE SCHOOL 
+    <div style="border: 2px solid blue; color: blue; width: 150px; height: 50px; margin: 15px auto; text-align: center; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+      Nachu Comprehensive School 
     </div>
     <!-- Authorized Signature -->
     <div style="text-align: left; margin-top: 30px; font-size: 14px;">
@@ -1492,8 +1520,8 @@ button {
     <div style="display: flex; align-items: center; justify-content: center;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 80px; margin-right: 10px;">
       <div style="text-align: left;">
-        <h2 style="margin: 0;">NACHU COMPREHENSIVE SCHOOL </h2>
-        <p style="margin: 2px; font-size: 14px; color: #555;">561-00902 Kikuyu, Kenya</p>
+        <h2 style="margin: 0;">Nachu Junior School</h2>
+        <p style="margin: 2px; font-size: 14px; color: #555;">P.O BOX 123, Nairobi, Kenya</p>
         <p style="margin: 2px; font-size: 14px; color: #555;">Phone: +254-700-123456</p>
         <p style="margin: 2px; font-size: 14px; color: #555;"><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
         <p style="margin: 2px; font-size: 14px; color: #555;"><strong>Year:</strong> <span id="currentYear"></span></p>
@@ -1533,8 +1561,8 @@ button {
     <!-- School Header -->
     <div style="text-align: center; margin-bottom: 10px;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-width: 80px; margin-bottom: 5px;">
-      <h2 style="margin: 0; color: #4CAF50;">NACHU COMPREHENSIVE SCHOOL </h2>
-      <p style="margin: 2px; font-size: 14px;">P.O BOX 886-01000, THIKA, Kenya</p>
+      <h2 style="margin: 0; color: #4CAF50;">Nachu Junior School</h2>
+      <p style="margin: 2px; font-size: 14px;">P.O BOX 123, Nairobi, Kenya</p>
       <p style="margin: 2px; font-size: 14px;">Phone: +254-700-123456</p>
       <p style="margin: 2px; font-size: 14px; font-weight: bold;">School Motto: "Excellence Through Knowledge"</p>
       <h3 style="margin-top: 10px; color: #333;">Year: 2025</h3>
@@ -1566,8 +1594,8 @@ button {
     <button onclick="closeDeleteModal()" style="background: grey; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
   </div>
 </div>
-<div id="customAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 30px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
-
+<div id="customAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 300px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
+  Fee details deleted  successfully!
 </div>
 <div id="archiveAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #0288d1; color: white; padding: 15px; border-radius: 5px; font-size: 16px; text-align: center; width: 300px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);">
   Archived successfully!
@@ -1585,17 +1613,15 @@ button {
   Fees table for <span id="successYear"></span> archived successfully!
 </div>
 
+
+
 <!-- Summary Table Container (Initially Hidden) -->
 <div id="feeSummaryContainer" style="display: none; margin-top: 20px;"></div>
 <!-- Defaulters List Container -->
 <div id="defaultersTableContainer" style="display: none; text-align: center; padding: 20px; width: 80%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
     <h2 style="background: red; color: white; padding: 10px;">Defaulters List</h2>
-
-    <!-- Search Learner -->
-    <input type="text" id="searchDefaulter" onkeyup="searchDefaulter()" placeholder="Search for learner..." 
-    style="margin-bottom: 10px; padding: 8px; width: 250px; border: 1px solid #ccc; border-radius: 5px; text-align: center;">
-
- <!-- Grade Filter -->
+    
+    <!-- Grade Filter -->
    <label for="defaultersGradeFilter"><strong>Filter by Grade:</strong></label>
 <select id="defaultersGradeFilter" onchange="filterDefaulters()">
   <option value="">All Grades</option>
@@ -1609,6 +1635,7 @@ button {
   <option value="8">Grade 8</option>
   <option value="9">Grade 9</option>
 </select>
+
 
     <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
         <thead>
@@ -1626,6 +1653,39 @@ button {
     <button onclick="printDefaultersList()" style="margin-top: 15px; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
         <i class="fas fa-print"></i> Print Defaulters List
     </button>
+</div>
+
+<div id="learnerHistoryModal" style="display: none; position: fixed; top: 10%; left: 50%; transform: translateX(-50%);
+     background: white; padding: 20px; width: 70%; max-height: 80%; overflow-y: auto; box-shadow: 0px 4px 20px rgba(0,0,0,0.3); border-radius: 10px; z-index: 9999;">
+  <h3 id="historyTitle">Payment History for [Learner]</h3>
+<!-- Print Button with Font Awesome Icon -->
+<button onclick="printLearnerHistory()" style="margin: 10px 0; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; font-size: 15px;">
+  <i class="fas fa-print" style="margin-right: 5px;"></i> Print History
+</button>
+
+  <!-- History Content -->
+  <div id="learnerHistoryContent"></div>
+
+  <!-- Close Button -->
+  <button onclick="closeLearnerHistory()" style="margin-top: 15px; padding: 8px 15px; background: red; color: white; border: none; border-radius: 5px;">Close</button>
+</div>
+<!-- MPESA Payment Modal -->
+<div id="mpesaModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:9999; width:300px; text-align:center;">
+  <h3 style="margin-bottom:10px;">Simulate MPESA Payment</h3>
+  <input type="text" id="mpesaPhone" placeholder="Enter phone number" style="padding:8px; width:90%; margin-bottom:10px;"><br>
+  <button onclick="simulateMpesaPayment()" 
+    style="padding:10px 15px; background:#388E3C; color:white; border:none; border-radius:5px;">Pay Now</button>
+  <button onclick="closeMpesaModal()" 
+    style="padding:8px 12px; margin-top:10px; background:grey; color:white; border:none; border-radius:5px;">Cancel</button>
+</div>
+<!-- SMS Alert Modal -->
+<div id="smsModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  background:white; padding:20px; width:350px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:9999;">
+  <h3>?? Send SMS Reminder</h3>
+  <p id="smsText"></p>
+  <button onclick="sendSmsNow()" style="background:#4CAF50; color:white; padding:8px 15px; border:none; border-radius:5px;">Send SMS</button>
+  <button onclick="closeSmsModal()" style="background:grey; color:white; padding:8px 15px; border:none; border-radius:5px; margin-left:10px;">Cancel</button>
 </div>
 
 <!-- Collapsible Menu Actions --> 
@@ -1758,6 +1818,18 @@ button {
   <select id="gradeDropdown" onchange="showLearnerNamesOnly()" style="margin-left: 10px;">
     <option value="">-- Select Grade --</option>
   </select>
+<!-- Show Learners by Gender per Grade -->
+<button onclick="displayGenderGroupedCounts()" class="neon-button">
+  <i class="fas fa-chart-pie" style="color: #00bcd4;"></i>
+  Show Learners Count per Grade
+</button>
+
+<!-- Print Gender Report -->
+<button onclick="printGenderSummary()" class="neon-button green">
+  <i class="fas fa-print" style="color: #4CAF50;"></i>
+  Print learner Count
+</button>
+
 
   <button onclick="printLearnersTable()" style="margin-left: 15px; padding: 6px 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
     <i class="fas fa-print"></i> Print
@@ -1783,7 +1855,11 @@ button {
   </div>
 </div>
 
-  
+  <!-- Back Button -->
+<button class="neon-button btn-back" onclick="hideLearnerSections()">
+    <span class="material-icons" style="color: #9b59b6;">arrow_back</span> Back
+</button>
+
     <button class="neon-button btn-red" onclick="viewArchives()">
         <span class="material-icons" style="color: #d32f2f;">archive</span> View Archived Exams
     </button>
@@ -1988,11 +2064,12 @@ button {
     </thead>
     <tbody id="marksList"></tbody>
 </table>
-      <!-- Section for Subject Levels -->
+<!-- Section for Subject Levels -->
 <h2 style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; display: flex; align-items: center; gap: 10px; width: fit-content;">
     <i class="fas fa-chart-bar" style="color: #d32f2f;"></i> Subject Level Summary
 </h2>
 
+<!-- Report Table -->
 <table class="report-table">
     <thead>
         <tr>
@@ -2006,6 +2083,26 @@ button {
     <tbody id="subjectLevels"></tbody>
 </table>
 
+<button
+  onclick="calculateSubjectLevelsByGrade()"
+  style="
+    margin: 20px 0;
+    padding: 12px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  "
+>
+  <i class="fas fa-chart-bar" style="font-size: 20px;"></i>
+  Generate Subject Level Summary by Grade
+</button>
 
 <!-- Simple Print Button -->
 <button onclick="printSubjectLevels()" style="
@@ -2055,7 +2152,6 @@ button {
   <button onclick="showSubjectChampions()" class="neon-button btn-champions"> 
     <i class="fas fa-trophy" style="color: orange;"></i> Learning Areas Star Achievers
   </button>
-
   <button onclick="showSubjectRanking()" class="neon-button btn-ranking">
     <i class="fas fa-chart-line" style="color: #f39c12;"></i> Learning Area Performance Index 
   </button>
@@ -8125,84 +8221,121 @@ document.getElementById("learnerSelect").addEventListener("change", function () 
     };
 });
 
-function calculateSubjectLevels() {
-    let subjects = ["english", "math", "preTech", "kiswahili", "science", "social", "agriculture", "religion", "art"];
-    let subjectLevels = {};
+function calculateSubjectLevelsByGrade() {
+  // 1. Create modal overlay
+  const overlay = document.createElement('div');
+  overlay.style = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); display: flex;
+    align-items: center; justify-content: center; z-index: 9999;
+  `;
 
-    // Initialize level counters for each subject
-    subjects.forEach(subject => {
-        subjectLevels[subject] = { level1: 0, level2: 0, level3: 0, level4: 0 };
+  // 2. Modal container
+  const modal = document.createElement('div');
+  modal.style = `
+    background: #fff; padding: 20px; border-radius: 8px;
+    width: 320px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  `;
+
+  // 3. Title
+  const title = document.createElement('h3');
+  title.innerText = 'Enter Grade';
+  title.style = 'margin-bottom: 15px; font-family: Arial, sans-serif;';
+
+  // 4. Input field
+  const input = document.createElement('input');
+  input.placeholder = 'e.g., Grade 5';
+  input.style = `
+    width: 100%; padding: 8px; margin-bottom: 20px;
+    border: 1px solid #ccc; border-radius: 4px; font-size: 14px;
+  `;
+
+  // 5. Buttons container
+  const btns = document.createElement('div');
+  btns.style = 'display: flex; gap: 10px;';
+
+  // 6. Generate button
+  const generateBtn = document.createElement('button');
+  generateBtn.innerText = 'Generate';
+  generateBtn.style = `
+    flex: 1; padding: 8px; background: #4CAF50; color: #fff;
+    border: none; border-radius: 4px; cursor: pointer;
+    font-size: 14px;
+  `;
+  generateBtn.onclick = () => {
+    const gradeInput = input.value.trim();
+    document.body.removeChild(overlay);
+    if (!gradeInput) return;
+
+    // ---- existing summary logic ----
+    const subjects = ["english","math","preTech","kiswahili","science","social","agriculture","religion","art"];
+    const subjectLevels = {};
+    subjects.forEach(s => subjectLevels[s] = { level1:0, level2:0, level3:0, level4:0 });
+
+    const allRows = Array.from(document.querySelectorAll("#marksList tr"));
+    const marksRows = allRows.filter(row => {
+      const cells = row.querySelectorAll("td");
+      return cells[2]?.innerText.trim() === gradeInput;
     });
 
-    let marksRows = document.querySelectorAll("#marksList tr");
-
-    // If no marks are present, reset the summary table
+    const tbody = document.getElementById("subjectLevels");
     if (marksRows.length === 0) {
-        document.getElementById("subjectLevels").innerHTML = "<tr><td colspan='5'>No data available</td></tr>";
-        return;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center; padding:12px; color:red; font-weight:bold;">
+            No grade here
+          </td>
+        </tr>`;
+      return;
     }
 
-    // Process each row in the marks table
     marksRows.forEach(row => {
-        let cells = row.querySelectorAll("td");
-
-        subjects.forEach((subject, index) => {
-            let levelCellIndex;
-
-            // Fix the column index for Maths and English (adjust their position)
-            if (subject === "english") {
-                levelCellIndex = 4; // "Lev" column for English
-            } else if (subject === "math") {
-                levelCellIndex = 6; // "Lev" column for Math
-            } else {
-                levelCellIndex = (index * 2) + 4; // General calculation for other subjects
-            }
-
-            let levelText = cells[levelCellIndex]?.innerText.trim(); // Extract level text
-
-            if (levelText) {
-                let level = parseInt(levelText, 10); // Convert to a number
-
-                // Count learners for each level
-                if (level === 1) {
-                    subjectLevels[subject].level1++;
-                } else if (level === 2) {
-                    subjectLevels[subject].level2++;
-                } else if (level === 3) {
-                    subjectLevels[subject].level3++;
-                } else if (level === 4) {
-                    subjectLevels[subject].level4++;
-                }
-            }
-        });
+      const cells = row.querySelectorAll("td");
+      subjects.forEach((subject, i) => {
+        let levelIdx;
+        if (subject === "english") levelIdx = 4;
+        else if (subject === "math") levelIdx = 6;
+        else levelIdx = (i * 2) + 4;
+        const lvl = parseInt(cells[levelIdx]?.innerText.trim(), 10);
+        if (lvl >= 1 && lvl <= 4) {
+          subjectLevels[subject][`level${lvl}`]++;
+        }
+      });
     });
 
-    // Update the Subject Level Summary Table
-    let subjectLevelsTable = document.getElementById("subjectLevels");
-    subjectLevelsTable.innerHTML = ""; // Clear existing data
-
+    tbody.innerHTML = '';
     subjects.forEach(subject => {
-        let row = `<tr>
-            <td>${subject.toUpperCase()}</td>
-            <td>${subjectLevels[subject].level1} learners (BE)</td>
-            <td>${subjectLevels[subject].level2} learners (AE)</td>
-            <td>${subjectLevels[subject].level3} learners (ME)</td>
-            <td>${subjectLevels[subject].level4} learners (EE)</td>
+      const L = subjectLevels[subject];
+      tbody.innerHTML += `
+        <tr>
+          <td>${subject.toUpperCase()}</td>
+          <td>${L.level1} learners (BE)</td>
+          <td>${L.level2} learners (AE)</td>
+          <td>${L.level3} learners (ME)</td>
+          <td>${L.level4} learners (EE)</td>
         </tr>`;
-        subjectLevelsTable.innerHTML += row;
     });
+    // ---- end summary logic ----
+  };
+
+  // 7. Cancel button
+  const cancelBtn = document.createElement('button');
+  cancelBtn.innerText = 'Cancel';
+  cancelBtn.style = `
+    flex: 1; padding: 8px; background: #f44336; color: #fff;
+    border: none; border-radius: 4px; cursor: pointer;
+    font-size: 14px;
+  `;
+  cancelBtn.onclick = () => document.body.removeChild(overlay);
+
+  btns.appendChild(generateBtn);
+  btns.appendChild(cancelBtn);
+  modal.appendChild(title);
+  modal.appendChild(input);
+  modal.appendChild(btns);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
 }
-
-// Call function after marks are loaded
-document.addEventListener("DOMContentLoaded", function () {
-    calculateSubjectLevels();
-});
-
-// Attach this function to events like adding/editing marks dynamically
-function refreshLevels() {
-    calculateSubjectLevels();
-}
-
 function printSubjectLevels() {
     const subjectTable = document.getElementById("subjectLevels");
     if (!subjectTable) {
@@ -8709,1572 +8842,7 @@ function toggleMeritList() {
         toggleBtn.innerHTML = `<i class="fas fa-eye"></i> Show Merit List`;
     }
 }
- // Initialize fee details from localStorage
-    let feeDetails = JSON.parse(localStorage.getItem("feeDetails")) || [];
 
-    // Function to determine constant fee based on grade
-    function getConstantFee(grade) {
-      if (["1", "2", "3"].includes(grade)) {
-        return 4000;
-      } else if (["4", "5", "6"].includes(grade)) {
-        return 6000;
-      } else if (["7", "8", "9"].includes(grade)) {
-        return 7000;
-      } else {
-        return 0;
-      }
-    }
-
-    // Handle fee form submission
-    document.getElementById("feeForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const learnerName = document.getElementById("feeLearnerName").value;
-  const learnerGrade = document.getElementById("feeLearnerGrade").value;
-  const securityFee = parseFloat(document.getElementById("securityFee").value);
-  const bomFee = parseFloat(document.getElementById("bomFee").value);
-  const tuitionFee = parseFloat(document.getElementById("tuitionFee").value);
-  const exam1Fee = parseFloat(document.getElementById("exam1Fee").value);
-  const exam2Fee = parseFloat(document.getElementById("exam2Fee").value);
-  const exam3Fee = parseFloat(document.getElementById("exam3Fee").value);
-  const activityFee = parseFloat(document.getElementById("activityFee").value);
-
-  const constantFee = getConstantFee(learnerGrade);
-  const totalPaid = securityFee + bomFee + tuitionFee + exam1Fee + exam2Fee + exam3Fee + activityFee;
-  const balance = constantFee - totalPaid;
-
-  const feeDetail = {
-    id: Date.now(),
-    name: learnerName,
-    grade: learnerGrade,
-    securityFee,
-    bomFee,
-    tuitionFee,
-    exam1Fee,
-    exam2Fee,
-    exam3Fee,
-    activityFee,
-    constantFee,
-    totalPaid,
-    balance
-  };
-
-  feeDetails.push(feeDetail);
-  localStorage.setItem("feeDetails", JSON.stringify(feeDetails));
-  updateFeeSummaryTable();
-  
-  showCustomAlert(); // Show the new colored alert
-  document.getElementById("feeForm").reset();
-});
-
-    // Update fee summary table
-    function updateFeeSummaryTable() {
-      const feeSummaryTableBody = document.getElementById("feeSummaryTableBody");
-      feeSummaryTableBody.innerHTML = "";
-      feeDetails.forEach((detail, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${index + 1}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'name', this.textContent)">${detail.name}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'grade', this.textContent)">${detail.grade}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'securityFee', this.textContent)">${detail.securityFee}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'bomFee', this.textContent)">${detail.bomFee}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'tuitionFee', this.textContent)">${detail.tuitionFee}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'exam1Fee', this.textContent)">${detail.exam1Fee}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'exam2Fee', this.textContent)">${detail.exam2Fee}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'exam3Fee', this.textContent)">${detail.exam3Fee}</td>
-          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'activityFee', this.textContent)">${detail.activityFee}</td>
-          <td>${detail.constantFee}</td>
-          <td>${detail.totalPaid}</td>
-          <td>${detail.balance}</td>
-          <td>
-            <button onclick="generateReceipt(${detail.id})">Generate Receipt</button>
-            <button onclick="deleteDetail(${detail.id})">Delete</button>
-          </td>
-        `;
-        feeSummaryTableBody.appendChild(row);
-      });
-    }
-
-    // Update fee detail on cell blur
-    function updateDetail(id, key, value) {
-      const detail = feeDetails.find(d => d.id === id);
-      if (detail) {
-        detail[key] = parseFloat(value) || value;
-        detail.totalPaid = detail.securityFee + detail.bomFee + detail.tuitionFee + detail.exam1Fee + detail.exam2Fee + detail.exam3Fee + detail.activityFee;
-        detail.balance = detail.constantFee - detail.totalPaid;
-        localStorage.setItem("feeDetails", JSON.stringify(feeDetails));
-        updateFeeSummaryTable();
-      }
-    }
-
-    // Delete fee detail
-    function deleteDetail(id) {
-      feeDetails = feeDetails.filter(d => d.id !== id);
-      localStorage.setItem("feeDetails", JSON.stringify(feeDetails));
-      updateFeeSummaryTable();
-    }
-
-    // Generate receipt for a learner
-    function generateReceipt(id) {
-      const detail = feeDetails.find(d => d.id === id);
-      if (detail) {
-        document.getElementById("receiptNo").innerText = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById("receiptDate").innerText = new Date().toLocaleDateString();
-        document.getElementById("receiptLearner").innerText = detail.name;
-        document.getElementById("receiptGrade").innerText = detail.grade;
-        document.getElementById("receiptTotal").innerText = detail.totalPaid + detail.balance;
-        document.getElementById("receiptPaid").innerText = detail.totalPaid;
-        document.getElementById("receiptBalance").innerText = detail.balance;
-
-        const receiptTableBody = document.getElementById("receiptTableBody");
-        receiptTableBody.innerHTML = `
-          <tr><td>Security Fee</td><td>KSH ${detail.securityFee}</td></tr>
-          <tr><td>BOM Fee</td><td>KSH ${detail.bomFee}</td></tr>
-          <tr><td>Tuition Fee</td><td>KSH ${detail.tuitionFee}</td></tr>
-          <tr><td>Exam 1 Fee</td><td>KSH ${detail.exam1Fee}</td></tr>
-          <tr><td>Exam 2 Fee</td><td>KSH ${detail.exam2Fee}</td></tr>
-          <tr><td>Exam 3 Fee</td><td>KSH ${detail.exam3Fee}</td></tr>
-          <tr><td>Activity Fee</td><td>KSH ${detail.activityFee}</td></tr>
-        `;
-        document.getElementById("receiptContainer").style.display = "block";
-      }
-    }
-
-    // Print receipt (single definition with page reload after printing)
-    function printReceipt() {
-      const receiptContent = document.getElementById("receiptContainer").innerHTML;
-      const originalContent = document.body.innerHTML;
-      document.body.innerHTML = receiptContent;
-      window.print();
-      document.body.innerHTML = originalContent;
-      location.reload();
-    }
-
-    // Download receipt as PDF
-    function downloadReceiptPDF() {
-      const receipt = document.getElementById('receiptContainer');
-      html2pdf(receipt, {
-        margin: 10,
-        filename: 'Fee_Receipt.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      });
-    }
-
-    // Filter fee records by grade
-    function filterFeeRecords() {
-      const selectedGrade = document.getElementById("gradeFilter").value;
-      const table = document.getElementById("feeSummaryTable");
-      const rows = table.getElementsByTagName("tr");
-
-      for (let i = 1; i < rows.length; i++) {
-        const gradeCell = rows[i].getElementsByTagName("td")[2];
-        if (gradeCell) {
-          const grade = gradeCell.textContent || gradeCell.innerText;
-          rows[i].style.display = (selectedGrade === "" || grade === selectedGrade) ? "" : "none";
-        }
-      }
-    }
-
-    // Print filtered fee records
-    function printFilteredFeeRecords() {
-      const selectedGrade = document.getElementById("gradeFilter").value;
-      const currentYear = new Date().getFullYear();
-      document.getElementById("currentYear").innerText = currentYear;
-      document.getElementById("selectedGrade").innerText = selectedGrade ? `Grade ${selectedGrade}` : "All Grades";
-      const feeTableBody = document.getElementById("filteredFeeTableBody");
-      feeTableBody.innerHTML = "";
-
-      const filteredDetails = selectedGrade ? feeDetails.filter(d => d.grade == selectedGrade) : feeDetails;
-      if (filteredDetails.length === 0) {
-        feeTableBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 10px;">No records found</td></tr>`;
-      } else {
-        filteredDetails.forEach((detail, index) => {
-          feeTableBody.innerHTML += `
-            <tr>
-              <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">${detail.name}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.securityFee}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.bomFee}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.tuitionFee}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam1Fee}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam2Fee}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam3Fee}</td>
-              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.activityFee}</td>
-              <td style="border: 1px solid #ddd; padding: 8px; color: green;">KSH ${detail.totalPaid}</td>
-              <td style="border: 1px solid #ddd; padding: 8px; color: red;">KSH ${detail.balance}</td>
-            </tr>
-          `;
-        });
-      }
-      document.getElementById("filteredFeeTableContainer").style.display = "block";
-    }
-
-    // Print filtered fee table
-    function printFilteredFeeTable() {
-      const printContent = document.getElementById('filteredFeeTableContainer').innerHTML;
-      const originalContent = document.body.innerHTML;
-      document.body.innerHTML = printContent;
-      window.print();
-      document.body.innerHTML = originalContent;
-    }
-
-    // Download filtered fee table as PDF
-    function downloadFeeTablePDF() {
-      const table = document.getElementById('filteredFeeTableContainer');
-      html2pdf(table, {
-        margin: 10,
-        filename: 'Filtered_Fee_Records.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      });
-    }
-
-    // Toggle visibility functions
-    function toggleFeeCaptureForm() {
-      const feeForm = document.getElementById("feeCaptureForm");
-      feeForm.style.display = (feeForm.style.display === "none" || feeForm.style.display === "") ? "block" : "none";
-    }
-
-    function toggleFeeSummaryAndReceipt() {
-      const feeSummaryTable = document.getElementById("feeSummaryTableContainer");
-      const receiptContainer = document.getElementById("receiptContainer");
-      if (feeSummaryTable.style.display === "none" || feeSummaryTable.style.display === "") {
-        feeSummaryTable.style.display = "block";
-        receiptContainer.style.display = "block";
-      } else {
-        feeSummaryTable.style.display = "none";
-        receiptContainer.style.display = "none";
-      }
-    }
-
-    function toggleFeeActionsMenu() {
-      const menu = document.getElementById("feeActionsBox");
-      menu.style.display = (menu.style.display === "none" || menu.style.display === "") ? "block" : "none";
-    }
-
-    // Payment Summary generation and toggle
-    function generatePaymentSummary() {
-      const summaryContainer = document.getElementById("paymentSummaryContainer");
-      const summaryBody = document.getElementById("paymentSummaryBody");
-      summaryBody.innerHTML = "";
-      const feeRows = document.querySelectorAll("#feeSummaryTable tbody tr");
-      const gradeSummary = {};
-
-      feeRows.forEach((row) => {
-        const cells = row.getElementsByTagName("td");
-        const grade = cells[2].innerText.trim();
-        const totalPaid = parseFloat(cells[11].innerText) || 0;
-        const constantFee = parseFloat(cells[10].innerText) || 0;
-
-        if (!gradeSummary[grade]) {
-          gradeSummary[grade] = { totalPaid: 0, learnerCount: 0, constantFee: constantFee };
-        }
-        gradeSummary[grade].totalPaid += totalPaid;
-        gradeSummary[grade].learnerCount += 1;
-      });
-
-      for (let grade in gradeSummary) {
-        let expectedTotal = gradeSummary[grade].constantFee * gradeSummary[grade].learnerCount;
-        let balance = expectedTotal - gradeSummary[grade].totalPaid;
-        let status = (balance === 0) ? "Cleared" : (balance > 0) ? `KSH ${balance} Due` : `Overpaid by KSH ${Math.abs(balance)}`;
-        summaryBody.innerHTML += `<tr>
-                                    <td>${grade}</td>
-                                    <td>KSH ${gradeSummary[grade].totalPaid.toLocaleString()}</td>
-                                    <td>KSH ${expectedTotal.toLocaleString()}</td>
-                                    <td>KSH ${balance.toLocaleString()}</td>
-                                    <td>${status}</td>
-                                  </tr>`;
-      }
-      summaryContainer.style.display = "block";
-    }
-
-    function togglePaymentSummary() {
-      const summaryContainer = document.getElementById("paymentSummaryContainer");
-      if (summaryContainer.style.display === "none" || summaryContainer.style.display === "") {
-        generatePaymentSummary();
-        summaryContainer.style.display = "block";
-      } else {
-        summaryContainer.style.display = "none";
-      }
-    }
-
-    function printPaymentSummaryOnly() {
-      const printContent = document.getElementById("summaryTable").outerHTML;
-      const newWindow = window.open("", "", "width=800, height=600");
-      newWindow.document.write("<html><head><title>Payment Summary</title><style>");
-      newWindow.document.write("body { font-family: Arial, sans-serif; text-align: center; }");
-      newWindow.document.write("table { width: 100%; border-collapse: collapse; border: 2px solid black; margin-top: 20px; }");
-      newWindow.document.write("th, td { border: 2px solid black; padding: 10px; text-align: center; }");
-      newWindow.document.write("h2, h3, p { text-align: center; margin: 5px 0; }");
-      newWindow.document.write("</style></head><body>");
-      newWindow.document.write("<h2>NACHU COMPREHENSIVE SCHOOL</h2>");
-      newWindow.document.write("<p>561-00902 Kikuyu Kenya</p>");
-      newWindow.document.write("<p>Phone: +254-700-123456</p>");
-      newWindow.document.write("<p><strong>School Motto:</strong> Excellence Through Knowledge</p>");
-      newWindow.document.write("<h3>Year: 2025</h3>");
-      newWindow.document.write("<h2 style='background: #4CAF50; color: white; padding: 10px;'>Payment Summary Per Grade</h2>");
-      newWindow.document.write(printContent);
-      newWindow.document.write("</body></html>");
-      newWindow.document.close();
-      newWindow.print();
-    }
-function archiveFeesTable() {
-  const feeTable = document.getElementById("feeSummaryTable");
-  if (!feeTable || feeTable.rows.length <= 1) {
-    alert("No fee records to archive.");
-    return;
-  }
-
-  const currentYear = new Date().getFullYear();
-  let savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
-
-  if (savedArchives[currentYear]) {
-    // Show confirmation alert instead of window.confirm()
-    document.getElementById("archiveYear").innerText = currentYear;
-    document.getElementById("archiveConfirmAlert").style.display = "block";
-  } else {
-    // Proceed with archiving if no existing archive
-    saveArchive(currentYear, feeTable);
-  }
-}
-
-// Function to handle archive confirmation
-function confirmArchive(update) {
-  const currentYear = new Date().getFullYear();
-  document.getElementById("archiveConfirmAlert").style.display = "none"; // Hide confirmation alert
-
-  if (update) {
-    // Proceed with updating the archive
-    saveArchive(currentYear, document.getElementById("feeSummaryTable"));
-  }
-}
-
-// Function to save or update the archive
-function saveArchive(year, table) {
-  let savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
-  const timestamp = new Date().toLocaleString();
-  let archiveEntry = `<div class="archived-fees-record">
-                        <h3>Archived for Year: ${year} (Updated on: ${timestamp})</h3>
-                        ${table.outerHTML}
-                      </div>`;
-
-  savedArchives[year] = archiveEntry;
-  localStorage.setItem("archivedFeesHTML", JSON.stringify(savedArchives));
-
-  // Show success message
-  document.getElementById("successYear").innerText = year;
-  document.getElementById("archiveSuccessAlert").style.display = "block";
-
-  // Hide the success alert after 3 seconds
-  setTimeout(() => {
-    document.getElementById("archiveSuccessAlert").style.display = "none";
-  }, 3000);
-
-  viewArchivedFees();
-}
-
-// Display all archived fee records from localStorage
-function viewArchivedFees() {
-  try {
-    const savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
-    const archivedFeesContainer = document.getElementById("archivedFeesContainer");
-    const archivedFeesList = document.getElementById("archivedFeesList");
-
-    if (Object.keys(savedArchives).length === 0) {
-      archivedFeesContainer.style.display = "none";
-      alert("No archived fee records found.");
-      return;
-    }
-
-    let archiveContent = "";
-    for (const year in savedArchives) {
-      archiveContent += `
-        <div class="archive-year" style="border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 10px;">
-          <h3>Archived Fees for ${year}</h3>
-          <button onclick="printArchivedFees('${year}')" style="margin-bottom: 10px; padding: 5px 10px; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 5px;">
-            <i class="fas fa-print"></i> Print This Archive
-          </button>
-          <div id="archivedTable-${year}">
-            ${savedArchives[year]}
-          </div>
-        </div>
-      `;
-    }
-
-    archivedFeesList.innerHTML = archiveContent;
-    archivedFeesContainer.style.display = "block";
-  } catch (error) {
-    console.error("Error retrieving archived fee records:", error);
-    alert("An error occurred while retrieving archived fee records.");
-  }
-}
-
-
-    // Generate learner receipt from archived fees
-    function generateLearnerReceipt(learnerName) {
-      const savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
-      if (Object.keys(savedArchives).length === 0) {
-        alert("No archived fee records available.");
-        return;
-      }
-      const tempDiv = document.createElement("div");
-      for (let year in savedArchives) {
-        tempDiv.innerHTML += savedArchives[year];
-      }
-      const tables = tempDiv.getElementsByTagName("table");
-      for (let table of tables) {
-        for (let row of table.rows) {
-          if (row.cells.length > 0 && row.cells[1].innerText.trim() === learnerName.trim()) {
-            const receiptContent = `
-              <h2>Fee Receipt</h2>
-              <p><strong>Learner:</strong> ${row.cells[1].innerText}</p>
-              <p><strong>Grade:</strong> ${row.cells[2].innerText}</p>
-              <p><strong>Security Fee:</strong> ${row.cells[3].innerText} KSH</p>
-              <p><strong>BOM Fee:</strong> ${row.cells[4].innerText} KSH</p>
-              <p><strong>Tuition Fee:</strong> ${row.cells[5].innerText} KSH</p>
-              <p><strong>Exam 1 Fee:</strong> ${row.cells[6].innerText} KSH</p>
-              <p><strong>Exam 2 Fee:</strong> ${row.cells[7].innerText} KSH</p>
-              <p><strong>Exam 3 Fee:</strong> ${row.cells[8].innerText} KSH</p>
-              <p><strong>Activity Fee:</strong> ${row.cells[9].innerText} KSH</p>
-              <p><strong>Constant Fee:</strong> ${row.cells[10].innerText} KSH</p>
-              <p><strong>Total Paid:</strong> ${row.cells[11].innerText} KSH</p>
-              <p><strong>Balance:</strong> ${row.cells[12].innerText} KSH</p>
-              <hr>
-              <p><em>Thank you for your payment!</em></p>
-            `;
-            const receiptWindow = window.open("", "_blank");
-            receiptWindow.document.write(receiptContent);
-            receiptWindow.document.close();
-            receiptWindow.print();
-            return;
-          }
-        }
-      }
-      alert("Learner not found in archived records.");
-    }
-
-    // Stub for exportToExcel function (implement as needed)
-    function exportToExcel(table, filename) {
-      console.log("Exporting table to Excel as: " + filename);
-    }
-
-    // Initialize fee summary table on page load
-    updateFeeSummaryTable();
-
-    // Optional: onload actions
-    window.onload = function() {
-      const savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
-      if (Object.keys(savedArchives).length > 0) {
-        console.log("Archived fees loaded from storage.");
-      }
-    };
-function togglePrintFilteredRecords() {
-  const container = document.getElementById("filteredFeeTableContainer");
-  const btn = document.getElementById("togglePrintFilteredRecordsBtn");
-  
-  // If container is visible, hide it and update button text
-  if (container.style.display === "block") {
-    container.style.display = "none";
-    btn.innerHTML = '<i class="fas fa-print"></i> Show Filtered Records';
-  } else {
-    // Update the filtered table content first
-    const selectedGrade = document.getElementById("gradeFilter").value;
-    const currentYear = new Date().getFullYear();
-    document.getElementById("currentYear").innerText = currentYear;
-    document.getElementById("selectedGrade").innerText = selectedGrade ? `Grade ${selectedGrade}` : "All Grades";
-    
-    const feeTableBody = document.getElementById("filteredFeeTableBody");
-    feeTableBody.innerHTML = ""; // Clear previous content
-
-    // Filter fee details by grade (if selected) or show all
-    const filteredDetails = selectedGrade ? feeDetails.filter(d => d.grade == selectedGrade) : feeDetails;
-    
-    if (filteredDetails.length === 0) {
-      feeTableBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 10px;">No records found</td></tr>`;
-    } else {
-      filteredDetails.forEach((detail, index) => {
-        feeTableBody.innerHTML += `
-          <tr>
-            <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">${detail.name}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.securityFee}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.bomFee}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.tuitionFee}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam1Fee}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam2Fee}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam3Fee}</td>
-            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.activityFee}</td>
-            <td style="border: 1px solid #ddd; padding: 8px; color: green;">KSH ${detail.totalPaid}</td>
-            <td style="border: 1px solid #ddd; padding: 8px; color: red;">KSH ${detail.balance}</td>
-          </tr>
-        `;
-      });
-    }
-    
-    // Show the filtered records container and update button text
-    container.style.display = "block";
-    btn.innerHTML = '<i class="fas fa-print"></i> Hide Filtered Records';
-  }
-}
-function toggleViewArchivedFees() {
-  const container = document.getElementById("archivedFeesContainer");
-  const btn = document.getElementById("toggleViewArchivedBtn");
-
-  // If container is visible, hide it and update button text
-  if (container.style.display === "block") {
-    container.style.display = "none";
-    btn.innerHTML = '<i class="fas fa-eye"></i> View Archived Fees';
-  } else {
-    // Otherwise, display the container
-    viewArchivedFees(); // Refresh or load the archived fees content
-    container.style.display = "block";
-    btn.innerHTML = '<i class="fas fa-eye"></i> Hide Archived Fees';
-  }
-}
-// Closes all fee action sections
-function closeAllFeeActionSections() {
-  const sections = [
-    "feeCaptureForm", 
-    "feeSummaryTableContainer", 
-    "receiptContainer", 
-    "filteredFeeTableContainer", 
-    "archivedFeesContainer", 
-    "paymentSummaryContainer"
-  ];
-  sections.forEach(id => {
-    const sec = document.getElementById(id);
-    if (sec) sec.style.display = "none";
-  });
-}
-
-// Generic function to toggle a group of sections
-function toggleFeeActionGroup(sectionIds) {
-  // Check if any of the sections in the group is currently visible
-  const isAnyOpen = sectionIds.some(id => {
-    const sec = document.getElementById(id);
-    return sec && sec.style.display === "block";
-  });
-
-  // If any is open, close them; otherwise, close all and then open the group
-  if (isAnyOpen) {
-    sectionIds.forEach(id => {
-      const sec = document.getElementById(id);
-      if (sec) sec.style.display = "none";
-    });
-  } else {
-    closeAllFeeActionSections();
-    sectionIds.forEach(id => {
-      const sec = document.getElementById(id);
-      if (sec) sec.style.display = "block";
-    });
-  }
-}
-function filterArchivedFees() {
-  const input = document.getElementById("archivedGradeFilter").value.toLowerCase();
-  const archiveEntries = document.querySelectorAll("#archivedFeesList .archive-year");
-
-  archiveEntries.forEach(entry => {
-    const tableRows = entry.querySelectorAll("table tbody tr");
-    let found = false;
-
-    tableRows.forEach(row => {
-      const gradeCell = row.cells[2]?.innerText.toLowerCase(); // Assuming Grade is in the 3rd column
-      if (gradeCell && gradeCell.includes(input)) {
-        row.style.display = "";
-        found = true;
-      } else {
-        row.style.display = "none";
-      }
-    });
-
-    // Hide/archive section if no rows match the filter
-    entry.style.display = found ? "block" : "none";
-  });
-}
-
-function printArchivedFees(year) {
-  const archivedTable = document.getElementById(`archivedTable-${year}`);
-
-  if (!archivedTable) {
-    alert("No archived records found for " + year);
-    return;
-  }
-
-  // Clone the table and remove hidden rows (filtered-out rows)
-  const clonedTable = archivedTable.cloneNode(true);
-  const rows = clonedTable.getElementsByTagName("tr");
-
-  for (let i = rows.length - 1; i >= 0; i--) {
-    if (rows[i].style.display === "none") {
-      rows[i].remove(); // Remove hidden rows
-    }
-  }
-
-  const printWindow = window.open("", "", "width=900,height=600");
-  printWindow.document.write(`
-    <html>
-    <head>
-      <title>Archived Fees for ${year}</title>
-      <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .header-container { text-align: center; margin-bottom: 20px; }
-        .header-container img { max-width: 80px; }
-        .header-container h2, .header-container p { margin: 5px 0; }
-
-        /* Table Styling */
-        table { 
-          width: 100%; 
-          border-collapse: collapse; 
-          margin-top: 20px; 
-        }
-        th, td { 
-          border: 2px solid black;  /* Ensures visible black borders */
-          padding: 8px; 
-          text-align: left; 
-        }
-        th { 
-          background: #4CAF50; 
-          color: white; 
-          font-weight: bold; 
-        }
-        tr:nth-child(even) { 
-          background: #f2f2f2; 
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header-container">
-        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
-        <h2>NACHU COMPREHENSIVE SCHOOL</h2>
-        <h3>Archived Fee Records for ${year}</h3>
-        <p><strong>561-00902 Kikuyu KENYA</strong></p>
-        <p><strong>Phone: +254-700-123456</strong></p>
-        <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
-        <p><strong>Year:</strong> ${year}</p>
-        <hr>
-      </div>
-      
-      ${clonedTable.outerHTML}
-
-    </body>
-    </html>
-  `);
-
-  printWindow.document.close();
-  printWindow.print();
-}
-function deleteFeeRecordsTable() {
-  const confirmation = confirm("?? Are you sure you want to delete all fee records? This action cannot be undone.");
-
-  if (confirmation) {
-    // Clear the table body
-    document.getElementById("feeSummaryTableBody").innerHTML = "";
-
-    // Remove fee details from localStorage
-    localStorage.removeItem("feeDetails");
-
-    // Custom alert with a red background
-    showCustomAlert(" All fee records have been deleted successfully!", "red");
-  }
-}
-function showDeleteConfirmation(message) {
-  document.getElementById("deleteMessage").innerText = message;
-  document.getElementById("deleteConfirmModal").style.display = "block";
-}
-
-
-function closeDeleteModal() {
-  document.getElementById("deleteConfirmModal").style.display = "none";
-}
-
-function confirmDeleteFeeRecords() {
-  // Close the modal immediately
-  closeDeleteModal();
-
-  // Clear the table
-  document.getElementById("feeSummaryTableBody").innerHTML = "";
-
-  // Remove fee details from localStorage
-  localStorage.removeItem("feeDetails");
-
-  // Delay the alert slightly to ensure visibility
-  setTimeout(() => {
-    showCustomAlert("? All fee records have been deleted successfully!", "red");
-  }, 300); // 300ms delay to ensure the modal closes first
-}
-
-
-function deleteFeeRecordsTable() {
-  showDeleteConfirmation(" Are you sure you want to delete all fee records? This action cannot be undone.");
-}
-
-function showCustomAlert(message, color) {
-  // Remove any existing alert
-  const existingAlert = document.getElementById("customAlert");
-  if (existingAlert) existingAlert.remove();
-
-  // Create a new alert box
-  const alertBox = document.createElement("div");
-  alertBox.id = "customAlert";
-  alertBox.innerHTML = message;
-  alertBox.style.cssText = `
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: ${color};
-    color: white;
-    padding: 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    z-index: 1000;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-    text-align: center;
-  `;
-
-  document.body.appendChild(alertBox);
-
-  // Remove alert after 3 seconds
-  setTimeout(() => {
-    alertBox.remove();
-  }, 3000);
-}
-
-
-function showCustomAlert(message, color) {
-  // Remove any existing alert
-  const existingAlert = document.getElementById("customAlert");
-  if (existingAlert) existingAlert.remove();
-
-  // Create a new alert box
-  const alertBox = document.createElement("div");
-  alertBox.id = "customAlert";
-  alertBox.innerHTML = message;
-  alertBox.style.cssText = `
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: ${color};
-    color: white;
-    padding: 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    z-index: 1000;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-    text-align: center;
-  `;
-
-  document.body.appendChild(alertBox);
-
-  // Remove alert after 3 seconds
-  setTimeout(() => {
-    alertBox.remove();
-  }, 3000);
-}
-function showCustomAlert() {
-  const alertBox = document.getElementById("customAlert");
-  alertBox.style.display = "block";
-  
-  // Hide the alert after 3 seconds
-  setTimeout(() => {
-    alertBox.style.display = "none";
-  }, 3000);
-}
-
-function showArchiveAlert() {
-  const alertBox = document.getElementById("archiveAlert");
-  alertBox.style.display = "block";
-
-  // Hide the alert after 3 seconds
-  setTimeout(() => {
-    alertBox.style.display = "none";
-  }, 3000);
-}
-
-function displayCategoryCollectionSummary() {
-  const feeTable = document.getElementById("feeSummaryTableBody");
-  if (!feeTable) {
-    alert("Fee summary table not found.");
-    return;
-  }
-
-  const categoryTotals = {};
-
-  feeTable.querySelectorAll("tr").forEach(row => {
-    const cells = row.getElementsByTagName("td");
-    if (cells.length > 1) {
-      const grade = cells[2].textContent.trim();
-      const securityFee = parseFloat(cells[3].textContent) || 0;
-      const bomFee = parseFloat(cells[4].textContent) || 0;
-      const tuitionFee = parseFloat(cells[5].textContent) || 0;
-      const exam1Fee = parseFloat(cells[6].textContent) || 0;
-      const exam2Fee = parseFloat(cells[7].textContent) || 0;
-      const exam3Fee = parseFloat(cells[8].textContent) || 0;
-      const activityFee = parseFloat(cells[9].textContent) || 0;
-      const totalPaid = parseFloat(cells[11].textContent) || 0;
-
-      if (!categoryTotals[grade]) {
-        categoryTotals[grade] = { securityFee: 0, bomFee: 0, tuitionFee: 0, exam1Fee: 0, exam2Fee: 0, exam3Fee: 0, activityFee: 0, totalCollected: 0 };
-      }
-
-      categoryTotals[grade].securityFee += securityFee;
-      categoryTotals[grade].bomFee += bomFee;
-      categoryTotals[grade].tuitionFee += tuitionFee;
-      categoryTotals[grade].exam1Fee += exam1Fee;
-      categoryTotals[grade].exam2Fee += exam2Fee;
-      categoryTotals[grade].exam3Fee += exam3Fee;
-      categoryTotals[grade].activityFee += activityFee;
-      categoryTotals[grade].totalCollected += totalPaid;
-    }
-  });
-
-  let summaryTableHTML = `
-    <h2 style="color: #4CAF50; text-align: center;">Fee Collection Summary Per Grade</h2>
-    <table style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 10px;">
-      <thead>
-        <tr style="background: #4CAF50; color: white;">
-          <th style="border: 1px solid black; padding: 10px;">Grade</th>
-          <th style="border: 1px solid black; padding: 10px;">Security Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">BOM Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">Tuition Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">Exam 1 Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">Exam 2 Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">Exam 3 Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">Activity Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">Total Collected</th>
-        </tr>
-      </thead>
-      <tbody>`;
-
-  for (let grade in categoryTotals) {
-    summaryTableHTML += `
-      <tr style="background: #f9f9f9;">
-        <td style="border: 1px solid black; padding: 10px;">${grade}</td>
-        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].securityFee.toLocaleString()}</td>
-        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].bomFee.toLocaleString()}</td>
-        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].tuitionFee.toLocaleString()}</td>
-        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].exam1Fee.toLocaleString()}</td>
-        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].exam2Fee.toLocaleString()}</td>
-        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].exam3Fee.toLocaleString()}</td>
-        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].activityFee.toLocaleString()}</td>
-        <td style="border: 1px solid black; padding: 10px; font-weight: bold; color: green;">KSH ${categoryTotals[grade].totalCollected.toLocaleString()}</td>
-      </tr>`;
-  }
-
-  summaryTableHTML += `</tbody></table>
-    <div style="text-align: center; margin-top: 15px;">
-      <button onclick="printCategoryCollectionSummary()" style="padding: 10px; background: #0277BD; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        <i class="fas fa-print"></i> Print Summary
-      </button>
-    </div>`;
-
-  document.getElementById("feeSummaryContainer").innerHTML = summaryTableHTML;
-}
-
-function printCategoryCollectionSummary() {
-  const summaryTable = document.getElementById("feeSummaryContainer").innerHTML;
-  const currentYear = new Date().getFullYear(); // Get current year
-
-  // Print content with school header
-  const printWindow = window.open("", "", "width=900,height=600");
-  printWindow.document.write(`
-    <html>
-    <head>
-      <title>Category Collection Summary</title>
-      <style>
-        body { font-family: Arial, sans-serif; text-align: center; color: black; }
-        .header-container { text-align: center; margin-bottom: 20px; color: black; }
-        .header-container img { max-width: 80px; }
-        .header-container h2, .header-container h3, .header-container p { margin: 5px 0; color: black; }
-
-        /* Table Styling */
-        table { 
-          width: 100%; 
-          border-collapse: collapse; 
-          margin-top: 20px; 
-          color: black; /* Ensuring all table text prints in black */
-        }
-        th, td { 
-          border: 2px solid black;  
-          padding: 8px; 
-          text-align: left; 
-          color: black; /* Ensures all text remains black */
-        }
-        th { 
-          background: #ffffff; /* White background to contrast black text */
-          font-weight: bold; 
-        }
-        tr:nth-child(even) { 
-          background: #f2f2f2; 
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header-container">
-        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
-        <h2>NACHU COMPREHENSIVE SCHOOL</h2>
-        <h3>Category Collection Summary</h3>
-        <p><strong>561-00902 Kikuyu KENYA</strong></p>
-        <p><strong>Phone: +254-700-123456</strong></p>
-        <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
-        <p><strong>Year:</strong> ${currentYear}</p>
-        <hr>
-      </div>
-      
-      ${summaryTable}
-
-    </body>
-    </html>
-  `);
-
-  printWindow.document.close();
-  printWindow.print();
-}
-function updateTotalSchoolFeeCollected() {
-  let totalCollected = 0;
-  
-  // Get all rows from the fee summary table
-  const feeTable = document.getElementById("feeSummaryTableBody");
-  if (!feeTable) {
-    console.error("Fee summary table not found.");
-    return;
-  }
-
-  // Loop through all rows and sum the "Total Paid" column (index 11)
-  feeTable.querySelectorAll("tr").forEach(row => {
-    const cells = row.getElementsByTagName("td");
-    if (cells.length > 1) {
-      const totalPaid = parseFloat(cells[11].textContent) || 0;
-      totalCollected += totalPaid;
-    }
-  });
-
-  // Get the container where total collected is displayed
-  let totalContainer = document.getElementById("totalSchoolFeeContainer");
-  
-  // If it doesn't exist, create it and append to the page
-  if (!totalContainer) {
-    totalContainer = document.createElement("div");
-    totalContainer.id = "totalSchoolFeeContainer";
-    totalContainer.style = "margin-top: 20px; text-align: center; font-size: 18px; font-weight: bold; color: #4CAF50;";
-    
-    // Append it below the fee summary table
-    document.getElementById("feeSummaryTableContainer").appendChild(totalContainer);
-  }
-
-  // Update the total collected amount
-  totalContainer.innerHTML = `Total School Fee Collected: <span style="color: black;">KSH ${totalCollected.toLocaleString()}</span>`;
-}
-
-// Call the function initially to show the total on page load
-updateTotalSchoolFeeCollected();
-
-// Update total whenever a new fee entry is added
-document.getElementById("feeForm").addEventListener("submit", function () {
-  setTimeout(updateTotalSchoolFeeCollected, 100); // Delay to ensure data updates first
-});
-function animateCounter(start, end, duration, element) {
-  let startTime = null;
-
-  function updateCounter(currentTime) {
-    if (!startTime) startTime = currentTime;
-    const elapsedTime = currentTime - startTime;
-    const progress = Math.min(elapsedTime / duration, 1);
-    const value = Math.floor(progress * (end - start) + start);
-    element.innerText = `KSH ${value.toLocaleString()}`;
-
-    if (progress < 1) {
-      requestAnimationFrame(updateCounter);
-    }
-  }
-
-  requestAnimationFrame(updateCounter);
-}
-
-function updateTotalSchoolFeeCollected() {
-  let totalCollected = 0;
-  
-  // Get all rows from the fee summary table
-  const feeTable = document.getElementById("feeSummaryTableBody");
-  if (!feeTable) {
-    console.error("Fee summary table not found.");
-    return;
-  }
-
-  // Loop through all rows and sum the "Total Paid" column (index 11)
-  feeTable.querySelectorAll("tr").forEach(row => {
-    const cells = row.getElementsByTagName("td");
-    if (cells.length > 1) {
-      const totalPaid = parseFloat(cells[11].textContent) || 0;
-      totalCollected += totalPaid;
-    }
-  });
-
-  // Get or create the total fee container
-  let totalContainer = document.getElementById("totalSchoolFeeContainer");
-  if (!totalContainer) {
-    totalContainer = document.createElement("div");
-    totalContainer.id = "totalSchoolFeeContainer";
-    totalContainer.style = "margin-top: 20px; text-align: center; font-size: 22px; font-weight: bold; color: #4CAF50;";
-    
-    // Append below the fee summary table
-    document.getElementById("feeSummaryTableContainer").appendChild(totalContainer);
-  }
-
-  // Start animation from the current displayed value to the new total
-  const currentDisplayedValue = parseInt(totalContainer.innerText.replace(/[^\d]/g, "")) || 0;
-  animateCounter(currentDisplayedValue, totalCollected, 1500, totalContainer);
-}
-
-// Call the function initially to show the total on page load
-updateTotalSchoolFeeCollected();
-
-// Update total whenever a new fee entry is added
-document.getElementById("feeForm").addEventListener("submit", function () {
-  setTimeout(updateTotalSchoolFeeCollected, 100); // Slight delay to ensure data updates first
-});
-
-function toggleDefaultersList() {
-    const container = document.getElementById("defaultersTableContainer");
-    
-    if (container.style.display === "none" || container.style.display === "") {
-        generateDefaultersList(); // Generate the list before showing
-        container.style.display = "block";
-    } else {
-        container.style.display = "none";
-    }
-}
-
-function generateDefaultersList() {
-    const selectedGrade = document.getElementById("gradeFilter").value;
-    const defaultersTableBody = document.getElementById("defaultersTableBody");
-    defaultersTableBody.innerHTML = ""; // Clear previous data
-
-    const defaulters = feeDetails.filter(student => student.balance > 0 && (selectedGrade === "" || student.grade == selectedGrade));
-
-    if (defaulters.length === 0) {
-        defaultersTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 10px;">No defaulters found</td></tr>`;
-    } else {
-        defaulters.forEach((student, index) => {
-            const row = `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${student.name}</td>
-                    <td>${student.grade}</td>
-                    <td style="color: red;">KSH ${student.balance}</td>
-                </tr>
-            `;
-            defaultersTableBody.innerHTML += row;
-        });
-    }
-}
-
-function printDefaultersList() {
-    const selectedGrade = document.getElementById("gradeFilter").value;
-    const currentYear = new Date().getFullYear();
-    const gradeText = selectedGrade ? `Grade ${selectedGrade}` : "All Grades";
-
-    const defaultersTable = document.getElementById("defaultersTableContainer").innerHTML;
-
-    const printWindow = window.open("", "", "width=900,height=600");
-    printWindow.document.write(`
-        <html>
-        <head>
-            <title>Defaulters List</title>
-            <style>
-                body { font-family: Arial, sans-serif; text-align: center; color: black; }
-                .header-container { text-align: center; margin-bottom: 20px; color: black; }
-                .header-container img { max-width: 80px; }
-                .header-container h2, .header-container p, .header-container h3 { margin: 5px 0; color: black; }
-                
-                /* Table Styling */
-                table { 
-                    width: 100%; 
-                    border-collapse: collapse; 
-                    margin-top: 20px; 
-                    color: black;
-                }
-                th, td { 
-                    border: 2px solid black;  /* Ensures all table borders are black */
-                    padding: 8px; 
-                    text-align: left; 
-                    color: black; /* Ensures all text is black */
-                }
-                th { 
-                    background: #f2f2f2; /* Light grey for header background */
-                    font-weight: bold; 
-                }
-                tr:nth-child(even) { 
-                    background: #ffffff; /* White background for even rows */
-                }
-            </style>
-        </head>
-        <body>
-            <div class="header-container">
-                <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
-                <h2>NACHU COMPREHENSIVE SCHOOL </h2>
-                <h3>Defaulters List</h3>
-                <p><strong>Po Box 886-01000 Thika, KENYA</strong></p>
-                <p><strong>Phone: +254-700-123456</strong></p>
-                <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
-                <p><strong>Year:</strong> ${currentYear}</p>
-                <p><strong>Grade:</strong> ${gradeText}</p>
-                <hr style="border: 1px solid black;">
-            </div>
-            
-            ${defaultersTable}
-
-        </body>
-        </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.print();
-}
-
-function openOnlyOneSection(sectionId) {
-    // List of all section IDs that can be opened
-    const sections = [
-        "feeCaptureForm",
-        "feeSummaryTableContainer",
-        "receiptContainer",
-        "filteredFeeTableContainer",
-        "archivedFeesContainer",
-        "paymentSummaryContainer",
-        "defaultersTableContainer",
-        "feeSummaryContainer"
-    ];
-
-    // Close all sections
-    sections.forEach(id => {
-        const section = document.getElementById(id);
-        if (section) {
-            section.style.display = "none";
-        }
-    });
-
-    // Open the requested section
-    const selectedSection = document.getElementById(sectionId);
-    if (selectedSection) {
-        selectedSection.style.display = "block";
-    }
-}
-function openOnlyOneSection(sectionId) {
-    // List of all section IDs
-    const sections = [
-        "feeCaptureForm",
-        "feeSummaryTableContainer",
-        "receiptContainer",
-        "filteredFeeTableContainer",
-        "archivedFeesContainer",
-        "paymentSummaryContainer",
-        "defaultersTableContainer",
-        "feeSummaryContainer"
-    ];
-
-    // Close all sections first
-    sections.forEach(id => {
-        const section = document.getElementById(id);
-        if (section) section.style.display = "none";
-    });
-
-    // Run necessary data function before opening the section
-    switch (sectionId) {
-        case "feeSummaryContainer":
-            displayCategoryCollectionSummary();  // Generate Fee Collection Summary
-            break;
-        case "defaultersTableContainer":
-            generateDefaultersList();  // Generate Defaulters List
-            break;
-        case "paymentSummaryContainer":
-            generatePaymentSummary();  // Generate Payment Summary
-            break;
-        case "filteredFeeTableContainer":
-            updateFilteredFeeRecords();  // Load Filtered Fee Records
-            break;
-    }
-
-    // Open the requested section
-    const selectedSection = document.getElementById(sectionId);
-    if (selectedSection) selectedSection.style.display = "block";
-}
-
-// Function to Load Filtered Fee Records
-function updateFilteredFeeRecords() {
-    const selectedGrade = document.getElementById("gradeFilter")?.value || "";
-    const tableBody = document.getElementById("filteredFeeTableBody");
-
-    if (!tableBody) return;
-
-    tableBody.innerHTML = "";  // Clear previous content
-
-    // Filter fee details based on the selected grade
-    const filteredDetails = selectedGrade ? feeDetails.filter(d => d.grade == selectedGrade) : feeDetails;
-
-    if (filteredDetails.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 10px;">No records found</td></tr>`;
-    } else {
-        filteredDetails.forEach((detail, index) => {
-            tableBody.innerHTML += `
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">${detail.name}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.securityFee}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.bomFee}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.tuitionFee}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam1Fee}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam2Fee}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam3Fee}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.activityFee}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; color: green;">KSH ${detail.totalPaid}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; color: red;">KSH ${detail.balance}</td>
-                </tr>`;
-        });
-    }
-}
-
-// Function to create a custom modal
-function showModal(message, type = "info", callback = null) {
-    let modal = document.createElement("div");
-    modal.style.position = "fixed";
-    modal.style.top = "50%";
-    modal.style.left = "50%";
-    modal.style.transform = "translate(-50%, -50%)";
-    modal.style.padding = "20px";
-    modal.style.backgroundColor = "#fff";
-    modal.style.border = "2px solid #333";
-    modal.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
-    modal.style.textAlign = "center";
-    modal.style.zIndex = "10000";
-    modal.style.borderRadius = "10px";
-
-    let color = type === "error" ? "red" : type === "success" ? "green" : "#333";
-    let textColor = type === "error" ? "white" : "black";
-
-    modal.innerHTML = `
-        <p style="color: ${textColor}; font-weight: bold;">${message}</p>
-        <button id="closeModal" style="padding: 8px 15px; margin-top: 10px; background: ${color}; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
-    `;
-
-    document.body.appendChild(modal);
-
-    document.getElementById("closeModal").onclick = () => {
-        document.body.removeChild(modal);
-        if (callback) callback();
-    };
-}
-
-// Function to create a custom prompt
-function showPrompt(message, callback) {
-    let modal = document.createElement("div");
-    modal.style.position = "fixed";
-    modal.style.top = "50%";
-    modal.style.left = "50%";
-    modal.style.transform = "translate(-50%, -50%)";
-    modal.style.padding = "20px";
-    modal.style.backgroundColor = "#fff";
-    modal.style.border = "2px solid #333";
-    modal.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
-    modal.style.textAlign = "center";
-    modal.style.zIndex = "10000";
-    modal.style.borderRadius = "10px";
-
-    modal.innerHTML = `
-        <p style="font-weight: bold;">${message}</p>
-        <input type="text" id="modalInput" style="padding: 8px; margin-bottom: 10px; width: 80%;"><br>
-        <button id="confirmPrompt" style="padding: 8px 15px; background: green; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
-        <button id="cancelPrompt" style="padding: 8px 15px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Cancel</button>
-    `;
-
-    document.body.appendChild(modal);
-
-    document.getElementById("confirmPrompt").onclick = () => {
-        let value = document.getElementById("modalInput").value.trim();
-        document.body.removeChild(modal);
-        callback(value);
-    };
-
-    document.getElementById("cancelPrompt").onclick = () => {
-        document.body.removeChild(modal);
-        callback(null);
-    };
-}
-
-// Function to save the report
-function saveReport() {
-    showPrompt("Enter Grade to Save Report:", (grade) => {
-        if (!grade) {
-            showModal("Grade is required.", "error");
-            return;
-        }
-
-        showPrompt("Enter Exam Number (1-6):", (examNumber) => {
-            if (!examNumber || examNumber < 1 || examNumber > 6) {
-                showModal("Invalid exam number.", "error");
-                return;
-            }
-
-            let table = document.getElementById("pathwaysResultsTable");
-            let rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
-
-            let savedData = JSON.parse(localStorage.getItem(`Career_Report_Grade${grade}`)) || {};
-
-            for (let i = 0; i < rows.length; i++) {
-                let cells = rows[i].getElementsByTagName("td");
-                let learnerName = cells[0].innerText;
-                let bestPathway = cells[cells.length - 1].innerText; 
-
-                if (!savedData[learnerName]) {
-                    savedData[learnerName] = { grade: grade, exams: {}, pathwayCount: {} };
-                }
-
-                savedData[learnerName].exams[`Exam${examNumber}`] = bestPathway;
-
-                savedData[learnerName].pathwayCount[bestPathway] = 
-                    (savedData[learnerName].pathwayCount[bestPathway] || 0) + 1;
-            }
-
-            localStorage.setItem(`Career_Report_Grade${grade}`, JSON.stringify(savedData));
-            showModal(`Report saved successfully for Grade ${grade}, Exam ${examNumber}.`, "success");
-        });
-    });
-}
-
-// Function to view saved reports
-function viewSavedReports() {
-    showPrompt("Enter Grade to View Report:", (selectedGrade) => {
-        if (!selectedGrade) {
-            showModal("Please enter a valid grade.", "error");
-            return;
-        }
-
-        let allKeys = Object.keys(localStorage).filter(key => key.startsWith("Career_Report_Grade"));
-        let savedData = {};
-
-        // Loop through all saved reports and check if they belong to the selected grade
-        allKeys.forEach(key => {
-            let gradeFromKey = key.replace("Career_Report_Grade", ""); // Extract the stored grade (e.g., "7A")
-
-            if (gradeFromKey.startsWith(selectedGrade)) { // Include "7A", "7B", etc.
-                let reportData = JSON.parse(localStorage.getItem(key));
-                Object.assign(savedData, reportData); // Merge data from matching grades
-            }
-        });
-
-        if (Object.keys(savedData).length === 0) {
-            showModal(`No saved reports found for Grade ${selectedGrade}.`, "error");
-            return;
-        }
-
-        let savedReportsTable = document.getElementById("savedReportsTable");
-        let savedReportsSection = document.getElementById("savedReportsSection");
-        savedReportsSection.style.display = "block";
-
-        savedReportsTable.getElementsByTagName("thead")[0].innerHTML = "";
-        savedReportsTable.getElementsByTagName("tbody")[0].innerHTML = "";
-
-        let theadContent = `<tr>
-            <th>No.</th>
-            <th>Learner Name</th>
-            <th>Grade</th>
-            <th>Exam 1</th>
-            <th>Exam 2</th>
-            <th>Exam 3</th>
-            <th>Exam 4</th>
-            <th>Exam 5</th>
-            <th>Exam 6</th>
-            <th>Best Career Pathway</th>
-        </tr>`;
-        savedReportsTable.getElementsByTagName("thead")[0].innerHTML = theadContent;
-
-        let tbodyContent = "";
-        let counter = 1;
-
-        for (let learner in savedData) {
-            let exams = savedData[learner].exams;
-            let pathwayCount = savedData[learner].pathwayCount;
-
-            let bestPathway = Object.keys(pathwayCount).reduce((a, b) => pathwayCount[a] > pathwayCount[b] ? a : b, "");
-
-            tbodyContent += `<tr>
-                <td>${counter++}</td>
-                <td>${learner}</td>
-                <td>${savedData[learner].grade}</td>
-                <td>${exams.Exam1 || "-"}</td>
-                <td>${exams.Exam2 || "-"}</td>
-                <td>${exams.Exam3 || "-"}</td>
-                <td>${exams.Exam4 || "-"}</td>
-                <td>${exams.Exam5 || "-"}</td>
-                <td>${exams.Exam6 || "-"}</td>
-                <td><strong>${bestPathway}</strong></td>
-            </tr>`;
-        }
-
-        savedReportsTable.getElementsByTagName("tbody")[0].innerHTML = tbodyContent;
-        document.getElementById("printButton").style.display = "block";
-    });
-}
-
-
-function printReport() {
-    let reportContent = document.getElementById("savedReportsSection").innerHTML;
-
-    let originalContent = document.body.innerHTML; // Store original page content
-
-    document.body.innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img src="school_logo_url_here" alt="School Logo" style="width: 100px; height: auto;"><br>
-            <h2>Nachu Junior School  Compiled Pathway Report</h2>
-            <p>561-00902 Kikuyu KENYA</p>
-            <p>Phone: +254-700-123456</p>
-            <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
-            <p><strong>Year:</strong> 2025</p>
-        </div>
-
-        ${reportContent}
-    `;
-
-    window.print(); // Print the page
-
-    document.body.innerHTML = originalContent; // Restore original content after printing
-    location.reload(); // Reload page to prevent display issues
-}
-function searchLearnerFee() {
-    var input = document.getElementById("searchLearnerFee");
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("feeSummaryTable");
-    var tr = table.getElementsByTagName("tr");
-
-    for (var i = 1; i < tr.length; i++) { // Skip the header row
-        var td = tr[i].getElementsByTagName("td")[1]; // Learner Name Column
-        if (td) {
-            var txtValue = td.textContent || td.innerText;
-            tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
-        }
-    }
-}
-
-function searchDefaulter() {
-    var input = document.getElementById("searchDefaulter");
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("defaultersTableContainer").getElementsByTagName("table")[0];
-    var tr = table.getElementsByTagName("tr");
-
-    for (var i = 1; i < tr.length; i++) { // Skip the header row
-        var td = tr[i].getElementsByTagName("td")[1]; // Learner Name Column
-        if (td) {
-            var txtValue = td.textContent || td.innerText;
-            tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
-        }
-    }
-}
-const fields = [
-    { id: "learnerName", prompt: "Name", delay: 1500 },
-    { id: "learnerGender", prompt: "Gender", delay: 1500 },
-    { id: "learnerGrade", prompt: "Grade", delay: 1500 },
-    { id: "learnerAge", prompt: "Age", delay: 1500 },
-    { id: "parentName", prompt: "Parent Name", delay: 2000 },
-    { id: "learnerPhone", prompt: "Parent Phone Number", delay: 3000 },
-    { id: "birthCertificate", prompt: "Birth Certificate Number", delay: 3500, isNumber: true }, // Added Fix
-    { id: "admissionNumber", prompt: "Admission Number", delay: 3000, isNumber: true } // Ensured number input
-];
-
-let currentFieldIndex = 0;
-let recognition;
-
-// Function to start voice input for each field one by one
-function startVoiceInput() {
-    if (!('webkitSpeechRecognition' in window)) {
-        alert("Your browser does not support speech recognition. Please use Chrome.");
-        return;
-    }
-
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-
-    recognition.onresult = function(event) {
-        let transcript = event.results[0][0].transcript.trim();
-        console.log("Captured Speech:", transcript);
-
-        // Handle number inputs (convert to proper format)
-        if (fields[currentFieldIndex].isNumber) {
-            transcript = transcript.replace(/\D/g, ""); // Remove non-numeric characters
-            transcript = parseInt(transcript, 10) || ""; // Convert to number safely
-        }
-
-        // Fill the current field
-        document.getElementById(fields[currentFieldIndex].id).value = transcript;
-
-        // Move to the next field
-        currentFieldIndex++;
-
-        // If more fields remain, prompt the user for the next one with appropriate delay
-        if (currentFieldIndex < fields.length) {
-            showVoicePrompt(fields[currentFieldIndex].prompt);
-            setTimeout(() => recognition.start(), fields[currentFieldIndex].delay);
-        } else {
-            hideVoicePrompt();
-            alert("All details recorded successfully!");
-        }
-    };
-
-    recognition.onerror = function(event) {
-        console.error("Speech recognition error:", event.error);
-    };
-
-    recognition.onend = function() {
-        console.log("Speech recognition ended.");
-    };
-
-    // Start with the first prompt
-    currentFieldIndex = 0;
-    showVoicePrompt(fields[currentFieldIndex].prompt);
-    setTimeout(() => recognition.start(), fields[currentFieldIndex].delay);
-}
-
-// Function to show custom voice input prompt
-function showVoicePrompt(text) {
-    const promptBox = document.getElementById("voicePrompt");
-    document.getElementById("promptText").innerText = `Say: ${text}`;
-    promptBox.style.display = "block";
-}
-
-// Function to hide custom prompt
-function hideVoicePrompt() {
-    document.getElementById("voicePrompt").style.display = "none";
-}
-
-// Function to preview uploaded photo
-function previewPhoto(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById("photoPreview").src = e.target.result;
-            document.getElementById("photoPreview").style.display = "block";
-        };
-        reader.readAsDataURL(file);
-    }
-}   
-function filterDefaulters() {
-  const selectedGrade = document.getElementById("defaultersGradeFilter").value;
-  const table = document.getElementById("defaultersTableBody");
-  const rows = table.getElementsByTagName("tr");
-
-  for (let i = 0; i < rows.length; i++) {
-    const gradeCell = rows[i].getElementsByTagName("td")[2]; // Grade column
-    if (gradeCell) {
-      const grade = gradeCell.textContent || gradeCell.innerText;
-      rows[i].style.display = (selectedGrade === "" || grade === selectedGrade) ? "" : "none";
-    }
-  }
-}
 function toggleLearnersCount() {
     const container = document.getElementById('learnerCountContainer');
     const toggleButton = document.getElementById('toggleLearnersCountButton');
@@ -11132,17 +9700,16 @@ document.addEventListener("DOMContentLoaded", function () {
     populateMarksGradeDropdown();
 });
 
-
-
 function filterMarksByGrade() {
     const selectedGrade = document.getElementById("gradeSelect").value;
     const rows = Array.from(document.querySelectorAll("#marksList tr"));
-    
-    let subjectTotals = Array(9).fill(0);
+
+    let subjectTotals = Array(10).fill(0); // 10 subjects (skip Lev columns)
     let visibleRowCount = 0;
     let totalMarksSum = 0;
+    let currentNumber = 1;
 
-    // Remove existing totals/averages if present
+    // Remove existing summary rows
     document.querySelectorAll("#marksList .summary-row").forEach(row => row.remove());
 
     rows.forEach(row => {
@@ -11152,8 +9719,11 @@ function filterMarksByGrade() {
         row.style.display = isVisible ? "" : "none";
 
         if (isVisible) {
+            row.cells[0].textContent = currentNumber++; // Re-number
             visibleRowCount++;
-            for (let i = 3, subjIdx = 0; subjIdx < 9; i += 2, subjIdx++) {
+
+            // Only collect subject scores, skip Lev columns
+            for (let i = 3, subjIdx = 0; subjIdx < 10; i += 2, subjIdx++) {
                 const score = parseFloat(row.cells[i]?.textContent.trim()) || 0;
                 subjectTotals[subjIdx] += score;
             }
@@ -11167,29 +9737,24 @@ function filterMarksByGrade() {
 
     const marksList = document.getElementById("marksList");
 
-    // Total row
-    const totalRow = document.createElement("tr");
-    totalRow.classList.add("summary-row");
-    totalRow.innerHTML = `
-        <td colspan="3" style="font-weight:bold;"> Total</td>
-        ${subjectTotals.map(t => `<td style="font-weight:bold;">${t}</td><td></td>`).join('')}
-        <td style="font-weight:bold;">${totalMarksSum}</td>
-        <td></td>
-    `;
+    // Helper to build summary row ending at "Performance Level" column
+    const buildSummaryRow = (label, values) => {
+        let rowHTML = `<td colspan="3" style="font-weight:bold;">${label}</td>`;
+        values.forEach(val => {
+            rowHTML += `<td style="font-weight:bold;">${val}</td>`; // Subject mark
+            rowHTML += `<td></td>`; // Blank Lev column
+        });
+        return `<tr class="summary-row">${rowHTML}</tr>`;
+    };
 
-    // Average row
-    const averageRow = document.createElement("tr");
-    averageRow.classList.add("summary-row");
-    averageRow.innerHTML = `
-        <td colspan="3" style="font-weight:bold;"> Average</td>
-        ${subjectTotals.map(t => `<td style="font-weight:bold;">${(t / visibleRowCount).toFixed(2)}</td><td></td>`).join('')}
-        <td style="font-weight:bold;">${(totalMarksSum / visibleRowCount).toFixed(2)}</td>
-        <td></td>
-    `;
+    const totalRowHTML = buildSummaryRow("Total", subjectTotals.map(t => t.toFixed(2)));
+    const averageRowHTML = buildSummaryRow("Average", subjectTotals.map(t => (t / visibleRowCount).toFixed(2)));
 
-    marksList.appendChild(totalRow);
-    marksList.appendChild(averageRow);
+    marksList.insertAdjacentHTML("beforeend", totalRowHTML);
+    marksList.insertAdjacentHTML("beforeend", averageRowHTML);
 }
+
+
 
 function printFilteredGrades() {
   const selectedGrade = document.getElementById("gradeSelect").value;
@@ -11722,6 +10287,2051 @@ function printLearnerCountTable() {
 
   printWindow.document.close();
   printWindow.print();
+}
+  // Optional lazy load stub
+    function lazyLoadSections() {
+      // Add lazy load functionality if needed
+    }
+
+    // Initialize fee details from localStorage
+    let feeDetails = JSON.parse(localStorage.getItem("feeDetails")) || [];
+
+    // Function to determine constant fee based on grade
+    function getConstantFee(grade) {
+      if (["1", "2", "3"].includes(grade)) {
+        return 4000;
+      } else if (["4", "5", "6"].includes(grade)) {
+        return 6000;
+      } else if (["7", "8", "9"].includes(grade)) {
+        return 7000;
+      } else {
+        return 0;
+      }
+    }
+
+    // Handle fee form submission
+    document.getElementById("feeForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const learnerName = document.getElementById("feeLearnerName").value;
+  const learnerGrade = document.getElementById("feeLearnerGrade").value;
+  const securityFee = parseFloat(document.getElementById("securityFee").value);
+  const bomFee = parseFloat(document.getElementById("bomFee").value);
+  const tuitionFee = parseFloat(document.getElementById("tuitionFee").value);
+  const exam1Fee = parseFloat(document.getElementById("exam1Fee").value);
+  const exam2Fee = parseFloat(document.getElementById("exam2Fee").value);
+  const exam3Fee = parseFloat(document.getElementById("exam3Fee").value);
+  const activityFee = parseFloat(document.getElementById("activityFee").value);
+
+  const constantFee = getConstantFee(learnerGrade);
+  const totalPaid = securityFee + bomFee + tuitionFee + exam1Fee + exam2Fee + exam3Fee + activityFee;
+  const balance = constantFee - totalPaid;
+
+const selectedTerm = document.getElementById("feeTerm").value;
+const currentYear = new Date().getFullYear();
+const currentDate = new Date().toLocaleDateString();
+const phone = document.getElementById("feePhone").value.trim();
+
+const feeDetail = {
+  id: Date.now(),
+  name: learnerName,
+  grade: learnerGrade,
+  term: selectedTerm,
+  year: currentYear,
+  date: currentDate,
+  securityFee,
+  bomFee,
+  tuitionFee,
+  exam1Fee,
+  exam2Fee,
+  exam3Fee,
+  activityFee,
+  constantFee,
+  totalPaid,
+  balance,
+  paymentMethod: currentPaymentMethod, // ? NEW
+  phone: currentPaymentPhone,           // ? NEW
+  mpesaCode: currentMpesaCode           // ? NEW
+};
+
+
+  feeDetails.push(feeDetail);
+  localStorage.setItem("feeDetails", JSON.stringify(feeDetails));
+  updateFeeSummaryTable();
+  
+  showCustomAlert(); // Show the new colored alert
+  document.getElementById("feeForm").reset();
+});
+
+    // Update fee summary table
+    function updateFeeSummaryTable() {
+      const feeSummaryTableBody = document.getElementById("feeSummaryTableBody");
+      feeSummaryTableBody.innerHTML = "";
+      feeDetails.forEach((detail, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+      <td>
+  <span style="cursor:pointer; color:blue; text-decoration:underline;" 
+        onclick="showLearnerHistory('${detail.name}')">
+    ${detail.name}
+  </span>
+</td>
+
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'grade', this.textContent)">${detail.grade}</td>
+<td contenteditable="true" onblur="updateDetail(${detail.id}, 'phone', this.textContent)">${detail.phone || ''}</td>
+
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'securityFee', this.textContent)">${detail.securityFee}</td>
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'bomFee', this.textContent)">${detail.bomFee}</td>
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'tuitionFee', this.textContent)">${detail.tuitionFee}</td>
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'exam1Fee', this.textContent)">${detail.exam1Fee}</td>
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'exam2Fee', this.textContent)">${detail.exam2Fee}</td>
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'exam3Fee', this.textContent)">${detail.exam3Fee}</td>
+          <td contenteditable="true" onblur="updateDetail(${detail.id}, 'activityFee', this.textContent)">${detail.activityFee}</td>
+          <td>${detail.constantFee}</td>
+          <td>${detail.totalPaid}</td>
+          <td>${detail.balance}</td>
+          <td>
+          <button onclick="generateReceipt(${detail.id})" style="margin-right: 5px;">
+    <i class="fas fa-receipt"></i> Generate Receipt
+</button>
+
+<button onclick="deleteDetail(${detail.id})" style="margin-right: 5px; color: red;">
+    <i class="fas fa-trash-alt"></i> Delete
+</button>
+
+<button onclick="openSmsModal('${detail.name}', '${detail.phone}', ${detail.balance})">
+    <i class="fas fa-sms"></i> Send SMS
+</button>
+
+          </td>
+        `;
+        feeSummaryTableBody.appendChild(row);
+      });
+    }
+
+    // Update fee detail on cell blur
+    function updateDetail(id, key, value) {
+      const detail = feeDetails.find(d => d.id === id);
+      if (detail) {
+        detail[key] = parseFloat(value) || value;
+        detail.totalPaid = detail.securityFee + detail.bomFee + detail.tuitionFee + detail.exam1Fee + detail.exam2Fee + detail.exam3Fee + detail.activityFee;
+        detail.balance = detail.constantFee - detail.totalPaid;
+        localStorage.setItem("feeDetails", JSON.stringify(feeDetails));
+        updateFeeSummaryTable();
+      }
+    }
+
+    // Delete fee detail
+    function deleteDetail(id) {
+      feeDetails = feeDetails.filter(d => d.id !== id);
+      localStorage.setItem("feeDetails", JSON.stringify(feeDetails));
+      updateFeeSummaryTable();
+    }
+
+// Generate receipt for a learner
+function generateReceipt(id) {
+  const detail = feeDetails.find(d => d.id === id);
+  if (detail) {
+    document.getElementById("receiptNo").innerText = Math.floor(1000 + Math.random() * 9000);
+    document.getElementById("receiptDate").innerText = new Date().toLocaleDateString();
+    document.getElementById("receiptLearner").innerText = detail.name;
+    document.getElementById("receiptGrade").innerText = detail.grade;
+    document.getElementById("receiptTotal").innerText = detail.totalPaid + detail.balance;
+    document.getElementById("receiptPaid").innerText = detail.totalPaid;
+    document.getElementById("receiptBalance").innerText = detail.balance;
+
+    const receiptTableBody = document.getElementById("receiptTableBody");
+    receiptTableBody.innerHTML = `
+      <tr><td>Security Fee</td><td>KSH ${detail.securityFee}</td></tr>
+      <tr><td>BOM Fee</td><td>KSH ${detail.bomFee}</td></tr>
+      <tr><td>Tuition Fee</td><td>KSH ${detail.tuitionFee}</td></tr>
+      <tr><td>Exam 1 Fee</td><td>KSH ${detail.exam1Fee}</td></tr>
+      <tr><td>Exam 2 Fee</td><td>KSH ${detail.exam2Fee}</td></tr>
+      <tr><td>Exam 3 Fee</td><td>KSH ${detail.exam3Fee}</td></tr>
+      <tr><td>Activity Fee</td><td>KSH ${detail.activityFee}</td></tr>
+    `;
+
+    // ?? Add MPESA Payment Info
+    const container = document.getElementById("receiptContainer");
+
+    let paymentDetails = `<p><strong>Payment Method:</strong> ${detail.paymentMethod || "Cash"}</p>`;
+
+    if (detail.paymentMethod === "MPESA") {
+      paymentDetails += `
+        <p><strong>Phone:</strong> ${detail.phone || "N/A"}</p>
+        <p><strong>MPESA Code:</strong> ${detail.mpesaCode || "N/A"}</p>
+      `;
+    }
+
+    // Inject into container (create or update)
+    let mpesaDiv = document.getElementById("mpesaPaymentDetails");
+    if (!mpesaDiv) {
+      mpesaDiv = document.createElement("div");
+      mpesaDiv.id = "mpesaPaymentDetails";
+      mpesaDiv.style.marginTop = "15px";
+      container.appendChild(mpesaDiv);
+    }
+    mpesaDiv.innerHTML = paymentDetails;
+
+    document.getElementById("receiptContainer").style.display = "block";
+  }
+}
+
+
+    // Print receipt (single definition with page reload after printing)
+    function printReceipt() {
+      const receiptContent = document.getElementById("receiptContainer").innerHTML;
+      const originalContent = document.body.innerHTML;
+      document.body.innerHTML = receiptContent;
+      window.print();
+      document.body.innerHTML = originalContent;
+      location.reload();
+    }
+
+    // Download receipt as PDF
+    function downloadReceiptPDF() {
+      const receipt = document.getElementById('receiptContainer');
+      html2pdf(receipt, {
+        margin: 10,
+        filename: 'Fee_Receipt.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      });
+    }
+
+    // Filter fee records by grade
+    function filterFeeRecords() {
+      const selectedGrade = document.getElementById("gradeFilter").value;
+      const table = document.getElementById("feeSummaryTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        const gradeCell = rows[i].getElementsByTagName("td")[2];
+        if (gradeCell) {
+          const grade = gradeCell.textContent || gradeCell.innerText;
+          rows[i].style.display = (selectedGrade === "" || grade === selectedGrade) ? "" : "none";
+        }
+      }
+    }
+
+    // Print filtered fee records
+    function printFilteredFeeRecords() {
+      const selectedGrade = document.getElementById("gradeFilter").value;
+      const currentYear = new Date().getFullYear();
+      document.getElementById("currentYear").innerText = currentYear;
+      document.getElementById("selectedGrade").innerText = selectedGrade ? `Grade ${selectedGrade}` : "All Grades";
+      const feeTableBody = document.getElementById("filteredFeeTableBody");
+      feeTableBody.innerHTML = "";
+
+      const filteredDetails = selectedGrade ? feeDetails.filter(d => d.grade == selectedGrade) : feeDetails;
+      if (filteredDetails.length === 0) {
+        feeTableBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 10px;">No records found</td></tr>`;
+      } else {
+        filteredDetails.forEach((detail, index) => {
+          feeTableBody.innerHTML += `
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">${detail.name}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.securityFee}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.bomFee}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.tuitionFee}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam1Fee}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam2Fee}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam3Fee}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.activityFee}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; color: green;">KSH ${detail.totalPaid}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; color: red;">KSH ${detail.balance}</td>
+            </tr>
+          `;
+        });
+      }
+      document.getElementById("filteredFeeTableContainer").style.display = "block";
+    }
+
+    // Print filtered fee table
+    function printFilteredFeeTable() {
+      const printContent = document.getElementById('filteredFeeTableContainer').innerHTML;
+      const originalContent = document.body.innerHTML;
+      document.body.innerHTML = printContent;
+      window.print();
+      document.body.innerHTML = originalContent;
+    }
+
+    // Download filtered fee table as PDF
+    function downloadFeeTablePDF() {
+      const table = document.getElementById('filteredFeeTableContainer');
+      html2pdf(table, {
+        margin: 10,
+        filename: 'Filtered_Fee_Records.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      });
+    }
+
+    // Toggle visibility functions
+    function toggleFeeCaptureForm() {
+      const feeForm = document.getElementById("feeCaptureForm");
+      feeForm.style.display = (feeForm.style.display === "none" || feeForm.style.display === "") ? "block" : "none";
+    }
+
+    function toggleFeeSummaryAndReceipt() {
+      const feeSummaryTable = document.getElementById("feeSummaryTableContainer");
+      const receiptContainer = document.getElementById("receiptContainer");
+      if (feeSummaryTable.style.display === "none" || feeSummaryTable.style.display === "") {
+        feeSummaryTable.style.display = "block";
+        receiptContainer.style.display = "block";
+      } else {
+        feeSummaryTable.style.display = "none";
+        receiptContainer.style.display = "none";
+      }
+    }
+
+    function toggleFeeActionsMenu() {
+      const menu = document.getElementById("feeActionsBox");
+      menu.style.display = (menu.style.display === "none" || menu.style.display === "") ? "block" : "none";
+    }
+
+    // Payment Summary generation and toggle
+    function generatePaymentSummary() {
+      const summaryContainer = document.getElementById("paymentSummaryContainer");
+      const summaryBody = document.getElementById("paymentSummaryBody");
+      summaryBody.innerHTML = "";
+      const feeRows = document.querySelectorAll("#feeSummaryTable tbody tr");
+      const gradeSummary = {};
+
+      feeRows.forEach((row) => {
+        const cells = row.getElementsByTagName("td");
+        const grade = cells[2].innerText.trim();
+        const totalPaid = parseFloat(cells[11].innerText) || 0;
+        const constantFee = parseFloat(cells[10].innerText) || 0;
+
+        if (!gradeSummary[grade]) {
+          gradeSummary[grade] = { totalPaid: 0, learnerCount: 0, constantFee: constantFee };
+        }
+        gradeSummary[grade].totalPaid += totalPaid;
+        gradeSummary[grade].learnerCount += 1;
+      });
+
+      for (let grade in gradeSummary) {
+        let expectedTotal = gradeSummary[grade].constantFee * gradeSummary[grade].learnerCount;
+        let balance = expectedTotal - gradeSummary[grade].totalPaid;
+        let status = (balance === 0) ? "Cleared" : (balance > 0) ? `KSH ${balance} Due` : `Overpaid by KSH ${Math.abs(balance)}`;
+        summaryBody.innerHTML += `<tr>
+                                    <td>${grade}</td>
+                                    <td>KSH ${gradeSummary[grade].totalPaid.toLocaleString()}</td>
+                                    <td>KSH ${expectedTotal.toLocaleString()}</td>
+                                    <td>KSH ${balance.toLocaleString()}</td>
+                                    <td>${status}</td>
+                                  </tr>`;
+      }
+      summaryContainer.style.display = "block";
+    }
+
+    function togglePaymentSummary() {
+      const summaryContainer = document.getElementById("paymentSummaryContainer");
+      if (summaryContainer.style.display === "none" || summaryContainer.style.display === "") {
+        generatePaymentSummary();
+        summaryContainer.style.display = "block";
+      } else {
+        summaryContainer.style.display = "none";
+      }
+    }
+
+    function printPaymentSummaryOnly() {
+      const printContent = document.getElementById("summaryTable").outerHTML;
+      const newWindow = window.open("", "", "width=800, height=600");
+      newWindow.document.write("<html><head><title>Payment Summary</title><style>");
+      newWindow.document.write("body { font-family: Arial, sans-serif; text-align: center; }");
+      newWindow.document.write("table { width: 100%; border-collapse: collapse; border: 2px solid black; margin-top: 20px; }");
+      newWindow.document.write("th, td { border: 2px solid black; padding: 10px; text-align: center; }");
+      newWindow.document.write("h2, h3, p { text-align: center; margin: 5px 0; }");
+      newWindow.document.write("</style></head><body>");
+      newWindow.document.write("<h2>Nachu Junior School</h2>");
+      newWindow.document.write("<p>P.O BOX 123, Nairobi, Kenya</p>");
+      newWindow.document.write("<p>Phone: +254-700-123456</p>");
+      newWindow.document.write("<p><strong>School Motto:</strong> Excellence Through Knowledge</p>");
+      newWindow.document.write("<h3>Year: 2025</h3>");
+      newWindow.document.write("<h2 style='background: #4CAF50; color: white; padding: 10px;'>Payment Summary Per Grade</h2>");
+      newWindow.document.write(printContent);
+      newWindow.document.write("</body></html>");
+      newWindow.document.close();
+      newWindow.print();
+    }
+function archiveFeesTable() {
+  const feeTable = document.getElementById("feeSummaryTable");
+  if (!feeTable || feeTable.rows.length <= 1) {
+    showCustomAlert(" No fee records to archive.", "#f44336"); // red color for warning
+    return;
+  }
+
+  const currentYear = new Date().getFullYear();
+  let savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
+
+  if (savedArchives[currentYear]) {
+    // Show confirmation alert instead of window.confirm()
+    document.getElementById("archiveYear").innerText = currentYear;
+    document.getElementById("archiveConfirmAlert").style.display = "block";
+  } else {
+    // Proceed with archiving if no existing archive
+    saveArchive(currentYear, feeTable);
+  }
+}
+
+// Function to handle archive confirmation
+function confirmArchive(update) {
+  const currentYear = new Date().getFullYear();
+  document.getElementById("archiveConfirmAlert").style.display = "none"; // Hide confirmation alert
+
+  if (update) {
+    // Proceed with updating the archive
+    saveArchive(currentYear, document.getElementById("feeSummaryTable"));
+  }
+}
+
+// Function to save or update the archive
+function saveArchive(year, table) {
+  let savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
+  const timestamp = new Date().toLocaleString();
+  let archiveEntry = `<div class="archived-fees-record">
+                        <h3>Archived for Year: ${year} (Updated on: ${timestamp})</h3>
+                        ${table.outerHTML}
+                      </div>`;
+
+  savedArchives[year] = archiveEntry;
+  localStorage.setItem("archivedFeesHTML", JSON.stringify(savedArchives));
+
+  // Show success message
+  document.getElementById("successYear").innerText = year;
+  document.getElementById("archiveSuccessAlert").style.display = "block";
+
+  // Hide the success alert after 3 seconds
+  setTimeout(() => {
+    document.getElementById("archiveSuccessAlert").style.display = "none";
+  }, 3000);
+
+  viewArchivedFees();
+}
+
+// Display all archived fee records from localStorage
+function viewArchivedFees() {
+  try {
+    const savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
+    const archivedFeesContainer = document.getElementById("archivedFeesContainer");
+    const archivedFeesList = document.getElementById("archivedFeesList");
+
+    if (Object.keys(savedArchives).length === 0) {
+      archivedFeesContainer.style.display = "none";
+      alert("No archived fee records found.");
+      return;
+    }
+
+    let archiveContent = "";
+    for (const year in savedArchives) {
+      archiveContent += `
+        <div class="archive-year" style="border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 10px;">
+          <h3>Archived Fees for ${year}</h3>
+          <button onclick="printArchivedFees('${year}')" style="margin-bottom: 10px; padding: 5px 10px; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 5px;">
+            <i class="fas fa-print"></i> Print This Archive
+          </button>
+          <div id="archivedTable-${year}">
+            ${savedArchives[year]}
+          </div>
+        </div>
+      `;
+    }
+
+    archivedFeesList.innerHTML = archiveContent;
+    archivedFeesContainer.style.display = "block";
+  } catch (error) {
+    console.error("Error retrieving archived fee records:", error);
+    alert("An error occurred while retrieving archived fee records.");
+  }
+}
+
+
+    // Generate learner receipt from archived fees
+    function generateLearnerReceipt(learnerName) {
+      const savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
+      if (Object.keys(savedArchives).length === 0) {
+        alert("No archived fee records available.");
+        return;
+      }
+      const tempDiv = document.createElement("div");
+      for (let year in savedArchives) {
+        tempDiv.innerHTML += savedArchives[year];
+      }
+      const tables = tempDiv.getElementsByTagName("table");
+      for (let table of tables) {
+        for (let row of table.rows) {
+          if (row.cells.length > 0 && row.cells[1].innerText.trim() === learnerName.trim()) {
+            const receiptContent = `
+              <h2>Fee Receipt</h2>
+              <p><strong>Learner:</strong> ${row.cells[1].innerText}</p>
+              <p><strong>Grade:</strong> ${row.cells[2].innerText}</p>
+              <p><strong>Security Fee:</strong> ${row.cells[3].innerText} KSH</p>
+              <p><strong>BOM Fee:</strong> ${row.cells[4].innerText} KSH</p>
+              <p><strong>Tuition Fee:</strong> ${row.cells[5].innerText} KSH</p>
+              <p><strong>Exam 1 Fee:</strong> ${row.cells[6].innerText} KSH</p>
+              <p><strong>Exam 2 Fee:</strong> ${row.cells[7].innerText} KSH</p>
+              <p><strong>Exam 3 Fee:</strong> ${row.cells[8].innerText} KSH</p>
+              <p><strong>Activity Fee:</strong> ${row.cells[9].innerText} KSH</p>
+              <p><strong>Constant Fee:</strong> ${row.cells[10].innerText} KSH</p>
+              <p><strong>Total Paid:</strong> ${row.cells[11].innerText} KSH</p>
+              <p><strong>Balance:</strong> ${row.cells[12].innerText} KSH</p>
+              <hr>
+              <p><em>Thank you for your payment!</em></p>
+            `;
+            const receiptWindow = window.open("", "_blank");
+            receiptWindow.document.write(receiptContent);
+            receiptWindow.document.close();
+            receiptWindow.print();
+            return;
+          }
+        }
+      }
+      alert("Learner not found in archived records.");
+    }
+
+    // Stub for exportToExcel function (implement as needed)
+    function exportToExcel(table, filename) {
+      console.log("Exporting table to Excel as: " + filename);
+    }
+
+    // Initialize fee summary table on page load
+    updateFeeSummaryTable();
+
+    // Optional: onload actions
+    window.onload = function() {
+      const savedArchives = JSON.parse(localStorage.getItem("archivedFeesHTML")) || {};
+      if (Object.keys(savedArchives).length > 0) {
+        console.log("Archived fees loaded from storage.");
+      }
+    };
+function togglePrintFilteredRecords() {
+  const container = document.getElementById("filteredFeeTableContainer");
+  const btn = document.getElementById("togglePrintFilteredRecordsBtn");
+  
+  // If container is visible, hide it and update button text
+  if (container.style.display === "block") {
+    container.style.display = "none";
+    btn.innerHTML = '<i class="fas fa-print"></i> Show Filtered Records';
+  } else {
+    // Update the filtered table content first
+    const selectedGrade = document.getElementById("gradeFilter").value;
+    const currentYear = new Date().getFullYear();
+    document.getElementById("currentYear").innerText = currentYear;
+    document.getElementById("selectedGrade").innerText = selectedGrade ? `Grade ${selectedGrade}` : "All Grades";
+    
+    const feeTableBody = document.getElementById("filteredFeeTableBody");
+    feeTableBody.innerHTML = ""; // Clear previous content
+
+    // Filter fee details by grade (if selected) or show all
+    const filteredDetails = selectedGrade ? feeDetails.filter(d => d.grade == selectedGrade) : feeDetails;
+    
+    if (filteredDetails.length === 0) {
+      feeTableBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 10px;">No records found</td></tr>`;
+    } else {
+      filteredDetails.forEach((detail, index) => {
+        feeTableBody.innerHTML += `
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${detail.name}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.securityFee}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.bomFee}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.tuitionFee}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam1Fee}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam2Fee}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam3Fee}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.activityFee}</td>
+            <td style="border: 1px solid #ddd; padding: 8px; color: green;">KSH ${detail.totalPaid}</td>
+            <td style="border: 1px solid #ddd; padding: 8px; color: red;">KSH ${detail.balance}</td>
+          </tr>
+        `;
+      });
+    }
+    
+    // Show the filtered records container and update button text
+    container.style.display = "block";
+    btn.innerHTML = '<i class="fas fa-print"></i> Hide Filtered Records';
+  }
+}
+function toggleViewArchivedFees() {
+  const container = document.getElementById("archivedFeesContainer");
+  const btn = document.getElementById("toggleViewArchivedBtn");
+
+  // If container is visible, hide it and update button text
+  if (container.style.display === "block") {
+    container.style.display = "none";
+    btn.innerHTML = '<i class="fas fa-eye"></i> View Archived Fees';
+  } else {
+    // Otherwise, display the container
+    viewArchivedFees(); // Refresh or load the archived fees content
+    container.style.display = "block";
+    btn.innerHTML = '<i class="fas fa-eye"></i> Hide Archived Fees';
+  }
+}
+// Closes all fee action sections
+function closeAllFeeActionSections() {
+  const sections = [
+    "feeCaptureForm", 
+    "feeSummaryTableContainer", 
+    "receiptContainer", 
+    "filteredFeeTableContainer", 
+    "archivedFeesContainer", 
+    "paymentSummaryContainer"
+  ];
+  sections.forEach(id => {
+    const sec = document.getElementById(id);
+    if (sec) sec.style.display = "none";
+  });
+}
+
+// Generic function to toggle a group of sections
+function toggleFeeActionGroup(sectionIds) {
+  // Check if any of the sections in the group is currently visible
+  const isAnyOpen = sectionIds.some(id => {
+    const sec = document.getElementById(id);
+    return sec && sec.style.display === "block";
+  });
+
+  // If any is open, close them; otherwise, close all and then open the group
+  if (isAnyOpen) {
+    sectionIds.forEach(id => {
+      const sec = document.getElementById(id);
+      if (sec) sec.style.display = "none";
+    });
+  } else {
+    closeAllFeeActionSections();
+    sectionIds.forEach(id => {
+      const sec = document.getElementById(id);
+      if (sec) sec.style.display = "block";
+    });
+  }
+}
+function filterArchivedFees() {
+  const input = document.getElementById("archivedGradeFilter").value.toLowerCase();
+  const archiveEntries = document.querySelectorAll("#archivedFeesList .archive-year");
+
+  archiveEntries.forEach(entry => {
+    const tableRows = entry.querySelectorAll("table tbody tr");
+    let found = false;
+
+    tableRows.forEach(row => {
+      const gradeCell = row.cells[2]?.innerText.toLowerCase(); // Assuming Grade is in the 3rd column
+      if (gradeCell && gradeCell.includes(input)) {
+        row.style.display = "";
+        found = true;
+      } else {
+        row.style.display = "none";
+      }
+    });
+
+    // Hide/archive section if no rows match the filter
+    entry.style.display = found ? "block" : "none";
+  });
+}
+
+function printArchivedFees(year) {
+  const archivedTable = document.getElementById(`archivedTable-${year}`);
+
+  if (!archivedTable) {
+    alert("No archived records found for " + year);
+    return;
+  }
+
+  // Clone the table and remove hidden rows (filtered-out rows)
+  const clonedTable = archivedTable.cloneNode(true);
+  const rows = clonedTable.getElementsByTagName("tr");
+
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (rows[i].style.display === "none") {
+      rows[i].remove(); // Remove hidden rows
+    }
+  }
+
+  const printWindow = window.open("", "", "width=900,height=600");
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>Archived Fees for ${year}</title>
+      <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .header-container { text-align: center; margin-bottom: 20px; }
+        .header-container img { max-width: 80px; }
+        .header-container h2, .header-container p { margin: 5px 0; }
+
+        /* Table Styling */
+        table { 
+          width: 100%; 
+          border-collapse: collapse; 
+          margin-top: 20px; 
+        }
+        th, td { 
+          border: 2px solid black;  /* Ensures visible black borders */
+          padding: 8px; 
+          text-align: left; 
+        }
+        th { 
+          background: #4CAF50; 
+          color: white; 
+          font-weight: bold; 
+        }
+        tr:nth-child(even) { 
+          background: #f2f2f2; 
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header-container">
+        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
+        <h2>Nachu Junior School</h2>
+        <h3>Archived Fee Records for ${year}</h3>
+        <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+        <p><strong>Phone: +254-700-123456</strong></p>
+        <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
+        <p><strong>Year:</strong> ${year}</p>
+        <hr>
+      </div>
+      
+      ${clonedTable.outerHTML}
+
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.print();
+}
+function deleteFeeRecordsTable() {
+  const confirmation = confirm("?? Are you sure you want to delete all fee records? This action cannot be undone.");
+
+  if (confirmation) {
+    // Clear the table body
+    document.getElementById("feeSummaryTableBody").innerHTML = "";
+
+    // Remove fee details from localStorage
+    localStorage.removeItem("feeDetails");
+
+    // Custom alert with a red background
+    showCustomAlert(" All fee records have been deleted successfully!", "red");
+  }
+}
+function showDeleteConfirmation(message) {
+  document.getElementById("deleteMessage").innerText = message;
+  document.getElementById("deleteConfirmModal").style.display = "block";
+}
+
+
+function closeDeleteModal() {
+  document.getElementById("deleteConfirmModal").style.display = "none";
+}
+
+function confirmDeleteFeeRecords() {
+  // Close the modal immediately
+  closeDeleteModal();
+
+  // Clear the table
+  document.getElementById("feeSummaryTableBody").innerHTML = "";
+
+  // Remove fee details from localStorage
+  localStorage.removeItem("feeDetails");
+
+  // Delay the alert slightly to ensure visibility
+  setTimeout(() => {
+    showCustomAlert(" All fee records have been deleted successfully!", "red");
+  }, 300); // 300ms delay to ensure the modal closes first
+}
+
+
+function deleteFeeRecordsTable() {
+  showDeleteConfirmation(" Are you sure you want to delete all fee records? This action cannot be undone.");
+}
+
+function showCustomAlert(message, color) {
+  // Remove any existing alert
+  const existingAlert = document.getElementById("customAlert");
+  if (existingAlert) existingAlert.remove();
+
+  // Create a new alert box
+  const alertBox = document.createElement("div");
+  alertBox.id = "customAlert";
+  alertBox.innerHTML = message;
+  alertBox.style.cssText = `
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${color};
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    text-align: center;
+  `;
+
+  document.body.appendChild(alertBox);
+
+  // Remove alert after 3 seconds
+  setTimeout(() => {
+    alertBox.remove();
+  }, 3000);
+}
+
+
+function showCustomAlert(message, color) {
+  // Remove any existing alert
+  const existingAlert = document.getElementById("customAlert");
+  if (existingAlert) existingAlert.remove();
+
+  // Create a new alert box
+  const alertBox = document.createElement("div");
+  alertBox.id = "customAlert";
+  alertBox.innerHTML = message;
+  alertBox.style.cssText = `
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${color};
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    text-align: center;
+  `;
+
+  document.body.appendChild(alertBox);
+
+  // Remove alert after 3 seconds
+  setTimeout(() => {
+    alertBox.remove();
+  }, 3000);
+}
+function showCustomAlert() {
+  const alertBox = document.getElementById("customAlert");
+  alertBox.style.display = "block";
+  
+  // Hide the alert after 3 seconds
+  setTimeout(() => {
+    alertBox.style.display = "none";
+  }, 3000);
+}
+
+function showArchiveAlert() {
+  const alertBox = document.getElementById("archiveAlert");
+  alertBox.style.display = "block";
+
+  // Hide the alert after 3 seconds
+  setTimeout(() => {
+    alertBox.style.display = "none";
+  }, 3000);
+}
+
+function displayCategoryCollectionSummary() {
+  const feeTable = document.getElementById("feeSummaryTableBody");
+  if (!feeTable) {
+    alert("Fee summary table not found.");
+    return;
+  }
+
+  const categoryTotals = {};
+
+  feeTable.querySelectorAll("tr").forEach(row => {
+    const cells = row.getElementsByTagName("td");
+    if (cells.length > 1) {
+      const grade = cells[2].textContent.trim();
+      const securityFee = parseFloat(cells[3].textContent) || 0;
+      const bomFee = parseFloat(cells[4].textContent) || 0;
+      const tuitionFee = parseFloat(cells[5].textContent) || 0;
+      const exam1Fee = parseFloat(cells[6].textContent) || 0;
+      const exam2Fee = parseFloat(cells[7].textContent) || 0;
+      const exam3Fee = parseFloat(cells[8].textContent) || 0;
+      const activityFee = parseFloat(cells[9].textContent) || 0;
+      const totalPaid = parseFloat(cells[11].textContent) || 0;
+
+      if (!categoryTotals[grade]) {
+        categoryTotals[grade] = { securityFee: 0, bomFee: 0, tuitionFee: 0, exam1Fee: 0, exam2Fee: 0, exam3Fee: 0, activityFee: 0, totalCollected: 0 };
+      }
+
+      categoryTotals[grade].securityFee += securityFee;
+      categoryTotals[grade].bomFee += bomFee;
+      categoryTotals[grade].tuitionFee += tuitionFee;
+      categoryTotals[grade].exam1Fee += exam1Fee;
+      categoryTotals[grade].exam2Fee += exam2Fee;
+      categoryTotals[grade].exam3Fee += exam3Fee;
+      categoryTotals[grade].activityFee += activityFee;
+      categoryTotals[grade].totalCollected += totalPaid;
+    }
+  });
+
+  let summaryTableHTML = `
+    <h2 style="color: #4CAF50; text-align: center;">Fee Collection Summary Per Grade</h2>
+    <table style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 10px;">
+      <thead>
+        <tr style="background: #4CAF50; color: white;">
+          <th style="border: 1px solid black; padding: 10px;">Grade</th>
+          <th style="border: 1px solid black; padding: 10px;">Security Fee</th>
+          <th style="border: 1px solid black; padding: 10px;">BOM Fee</th>
+          <th style="border: 1px solid black; padding: 10px;">Tuition Fee</th>
+          <th style="border: 1px solid black; padding: 10px;">Exam 1 Fee</th>
+          <th style="border: 1px solid black; padding: 10px;">Exam 2 Fee</th>
+          <th style="border: 1px solid black; padding: 10px;">Exam 3 Fee</th>
+          <th style="border: 1px solid black; padding: 10px;">Activity Fee</th>
+          <th style="border: 1px solid black; padding: 10px;">Total Collected</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  for (let grade in categoryTotals) {
+    summaryTableHTML += `
+      <tr style="background: #f9f9f9;">
+        <td style="border: 1px solid black; padding: 10px;">${grade}</td>
+        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].securityFee.toLocaleString()}</td>
+        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].bomFee.toLocaleString()}</td>
+        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].tuitionFee.toLocaleString()}</td>
+        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].exam1Fee.toLocaleString()}</td>
+        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].exam2Fee.toLocaleString()}</td>
+        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].exam3Fee.toLocaleString()}</td>
+        <td style="border: 1px solid black; padding: 10px;">KSH ${categoryTotals[grade].activityFee.toLocaleString()}</td>
+        <td style="border: 1px solid black; padding: 10px; font-weight: bold; color: green;">KSH ${categoryTotals[grade].totalCollected.toLocaleString()}</td>
+      </tr>`;
+  }
+
+  summaryTableHTML += `</tbody></table>
+    <div style="text-align: center; margin-top: 15px;">
+      <button onclick="printCategoryCollectionSummary()" style="padding: 10px; background: #0277BD; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <i class="fas fa-print"></i> Print Summary
+      </button>
+    </div>`;
+
+  document.getElementById("feeSummaryContainer").innerHTML = summaryTableHTML;
+}
+
+function printCategoryCollectionSummary() {
+  const summaryTable = document.getElementById("feeSummaryContainer").innerHTML;
+  const currentYear = new Date().getFullYear(); // Get current year
+
+  // Print content with school header
+  const printWindow = window.open("", "", "width=900,height=600");
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>Category Collection Summary</title>
+      <style>
+        body { font-family: Arial, sans-serif; text-align: center; color: black; }
+        .header-container { text-align: center; margin-bottom: 20px; color: black; }
+        .header-container img { max-width: 80px; }
+        .header-container h2, .header-container h3, .header-container p { margin: 5px 0; color: black; }
+
+        /* Table Styling */
+        table { 
+          width: 100%; 
+          border-collapse: collapse; 
+          margin-top: 20px; 
+          color: black; /* Ensuring all table text prints in black */
+        }
+        th, td { 
+          border: 2px solid black;  
+          padding: 8px; 
+          text-align: left; 
+          color: black; /* Ensures all text remains black */
+        }
+        th { 
+          background: #ffffff; /* White background to contrast black text */
+          font-weight: bold; 
+        }
+        tr:nth-child(even) { 
+          background: #f2f2f2; 
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header-container">
+        <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
+        <h2>Nachu Junior School</h2>
+        <h3>Category Collection Summary</h3>
+        <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+        <p><strong>Phone: +254-700-123456</strong></p>
+        <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
+        <p><strong>Year:</strong> ${currentYear}</p>
+        <hr>
+      </div>
+      
+      ${summaryTable}
+
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.print();
+}
+function updateTotalSchoolFeeCollected() {
+  let totalCollected = 0;
+  
+  // Get all rows from the fee summary table
+  const feeTable = document.getElementById("feeSummaryTableBody");
+  if (!feeTable) {
+    console.error("Fee summary table not found.");
+    return;
+  }
+
+  // Loop through all rows and sum the "Total Paid" column (index 11)
+  feeTable.querySelectorAll("tr").forEach(row => {
+    const cells = row.getElementsByTagName("td");
+    if (cells.length > 1) {
+      const totalPaid = parseFloat(cells[11].textContent) || 0;
+      totalCollected += totalPaid;
+    }
+  });
+
+  // Get the container where total collected is displayed
+  let totalContainer = document.getElementById("totalSchoolFeeContainer");
+  
+  // If it doesn't exist, create it and append to the page
+  if (!totalContainer) {
+    totalContainer = document.createElement("div");
+    totalContainer.id = "totalSchoolFeeContainer";
+    totalContainer.style = "margin-top: 20px; text-align: center; font-size: 18px; font-weight: bold; color: #4CAF50;";
+    
+    // Append it below the fee summary table
+    document.getElementById("feeSummaryTableContainer").appendChild(totalContainer);
+  }
+
+  // Update the total collected amount
+  totalContainer.innerHTML = `Total School Fee Collected: <span style="color: black;">KSH ${totalCollected.toLocaleString()}</span>`;
+}
+
+// Call the function initially to show the total on page load
+updateTotalSchoolFeeCollected();
+
+// Update total whenever a new fee entry is added
+document.getElementById("feeForm").addEventListener("submit", function () {
+  setTimeout(updateTotalSchoolFeeCollected, 100); // Delay to ensure data updates first
+});
+function animateCounter(start, end, duration, element) {
+  let startTime = null;
+
+  function updateCounter(currentTime) {
+    if (!startTime) startTime = currentTime;
+    const elapsedTime = currentTime - startTime;
+    const progress = Math.min(elapsedTime / duration, 1);
+    const value = Math.floor(progress * (end - start) + start);
+    element.innerText = `KSH ${value.toLocaleString()}`;
+
+    if (progress < 1) {
+      requestAnimationFrame(updateCounter);
+    }
+  }
+
+  requestAnimationFrame(updateCounter);
+}
+
+function updateTotalSchoolFeeCollected() {
+  let totalCollected = 0;
+  
+  // Get all rows from the fee summary table
+  const feeTable = document.getElementById("feeSummaryTableBody");
+  if (!feeTable) {
+    console.error("Fee summary table not found.");
+    return;
+  }
+
+  // Loop through all rows and sum the "Total Paid" column (index 11)
+  feeTable.querySelectorAll("tr").forEach(row => {
+    const cells = row.getElementsByTagName("td");
+    if (cells.length > 1) {
+      const totalPaid = parseFloat(cells[11].textContent) || 0;
+      totalCollected += totalPaid;
+    }
+  });
+
+  // Get or create the total fee container
+  let totalContainer = document.getElementById("totalSchoolFeeContainer");
+  if (!totalContainer) {
+    totalContainer = document.createElement("div");
+    totalContainer.id = "totalSchoolFeeContainer";
+    totalContainer.style = "margin-top: 20px; text-align: center; font-size: 22px; font-weight: bold; color: #4CAF50;";
+    
+    // Append below the fee summary table
+    document.getElementById("feeSummaryTableContainer").appendChild(totalContainer);
+  }
+
+  // Start animation from the current displayed value to the new total
+  const currentDisplayedValue = parseInt(totalContainer.innerText.replace(/[^\d]/g, "")) || 0;
+  animateCounter(currentDisplayedValue, totalCollected, 1500, totalContainer);
+}
+
+// Call the function initially to show the total on page load
+updateTotalSchoolFeeCollected();
+
+// Update total whenever a new fee entry is added
+document.getElementById("feeForm").addEventListener("submit", function () {
+  setTimeout(updateTotalSchoolFeeCollected, 100); // Slight delay to ensure data updates first
+});
+
+function toggleDefaultersList() {
+    const container = document.getElementById("defaultersTableContainer");
+    
+    if (container.style.display === "none" || container.style.display === "") {
+        generateDefaultersList(); // Generate the list before showing
+        container.style.display = "block";
+    } else {
+        container.style.display = "none";
+    }
+}
+
+function generateDefaultersList() {
+    const selectedGrade = document.getElementById("gradeFilter").value;
+    const defaultersTableBody = document.getElementById("defaultersTableBody");
+    defaultersTableBody.innerHTML = ""; // Clear previous data
+
+    const defaulters = feeDetails.filter(student => student.balance > 0 && (selectedGrade === "" || student.grade == selectedGrade));
+
+    if (defaulters.length === 0) {
+        defaultersTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 10px;">No defaulters found</td></tr>`;
+    } else {
+        defaulters.forEach((student, index) => {
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${student.name}</td>
+                    <td>${student.grade}</td>
+                    <td style="color: red;">KSH ${student.balance}</td>
+                </tr>
+            `;
+            defaultersTableBody.innerHTML += row;
+        });
+    }
+}
+
+function printDefaultersList() {
+    const selectedGrade = document.getElementById("gradeFilter").value;
+    const currentYear = new Date().getFullYear();
+    const gradeText = selectedGrade ? `Grade ${selectedGrade}` : "All Grades";
+
+    const defaultersTable = document.getElementById("defaultersTableContainer").innerHTML;
+
+    const printWindow = window.open("", "", "width=900,height=600");
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Defaulters List</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; color: black; }
+                .header-container { text-align: center; margin-bottom: 20px; color: black; }
+                .header-container img { max-width: 80px; }
+                .header-container h2, .header-container p, .header-container h3 { margin: 5px 0; color: black; }
+                
+                /* Table Styling */
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin-top: 20px; 
+                    color: black;
+                }
+                th, td { 
+                    border: 2px solid black;  /* Ensures all table borders are black */
+                    padding: 8px; 
+                    text-align: left; 
+                    color: black; /* Ensures all text is black */
+                }
+                th { 
+                    background: #f2f2f2; /* Light grey for header background */
+                    font-weight: bold; 
+                }
+                tr:nth-child(even) { 
+                    background: #ffffff; /* White background for even rows */
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header-container">
+                <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo">
+                <h2>Nachu Junior School</h2>
+                <h3>Defaulters List</h3>
+                <p><strong>P.O BOX 561-00902, KIKUYU, KENYA</strong></p>
+                <p><strong>Phone: +254-700-123456</strong></p>
+                <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
+                <p><strong>Year:</strong> ${currentYear}</p>
+                <p><strong>Grade:</strong> ${gradeText}</p>
+                <hr style="border: 1px solid black;">
+            </div>
+            
+            ${defaultersTable}
+
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function openOnlyOneSection(sectionId) {
+    // List of all section IDs that can be opened
+    const sections = [
+        "feeCaptureForm",
+        "feeSummaryTableContainer",
+        "receiptContainer",
+        "filteredFeeTableContainer",
+        "archivedFeesContainer",
+        "paymentSummaryContainer",
+        "defaultersTableContainer",
+        "feeSummaryContainer"
+    ];
+
+    // Close all sections
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) {
+            section.style.display = "none";
+        }
+    });
+
+    // Open the requested section
+    const selectedSection = document.getElementById(sectionId);
+    if (selectedSection) {
+        selectedSection.style.display = "block";
+    }
+}
+function openOnlyOneSection(sectionId) {
+    // List of all section IDs
+    const sections = [
+        "feeCaptureForm",
+        "feeSummaryTableContainer",
+        "receiptContainer",
+        "filteredFeeTableContainer",
+        "archivedFeesContainer",
+        "paymentSummaryContainer",
+        "defaultersTableContainer",
+        "feeSummaryContainer"
+    ];
+
+    // Close all sections first
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) section.style.display = "none";
+    });
+
+    // Run necessary data function before opening the section
+    switch (sectionId) {
+        case "feeSummaryContainer":
+            displayCategoryCollectionSummary();  // Generate Fee Collection Summary
+            break;
+        case "defaultersTableContainer":
+            generateDefaultersList();  // Generate Defaulters List
+            break;
+        case "paymentSummaryContainer":
+            generatePaymentSummary();  // Generate Payment Summary
+            break;
+        case "filteredFeeTableContainer":
+            updateFilteredFeeRecords();  // Load Filtered Fee Records
+            break;
+    }
+
+    // Open the requested section
+    const selectedSection = document.getElementById(sectionId);
+    if (selectedSection) selectedSection.style.display = "block";
+}
+
+// Function to Load Filtered Fee Records
+function updateFilteredFeeRecords() {
+    const selectedGrade = document.getElementById("gradeFilter")?.value || "";
+    const tableBody = document.getElementById("filteredFeeTableBody");
+
+    if (!tableBody) return;
+
+    tableBody.innerHTML = "";  // Clear previous content
+
+    // Filter fee details based on the selected grade
+    const filteredDetails = selectedGrade ? feeDetails.filter(d => d.grade == selectedGrade) : feeDetails;
+
+    if (filteredDetails.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 10px;">No records found</td></tr>`;
+    } else {
+        filteredDetails.forEach((detail, index) => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${detail.name}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.securityFee}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.bomFee}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.tuitionFee}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam1Fee}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam2Fee}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.exam3Fee}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">KSH ${detail.activityFee}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; color: green;">KSH ${detail.totalPaid}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; color: red;">KSH ${detail.balance}</td>
+                </tr>`;
+        });
+    }
+}
+function filterDefaulters() {
+  const selectedGrade = document.getElementById("defaultersGradeFilter").value;
+  const table = document.getElementById("defaultersTableBody");
+  const rows = table.getElementsByTagName("tr");
+
+  for (let i = 0; i < rows.length; i++) {
+    const gradeCell = rows[i].getElementsByTagName("td")[2]; // Grade column
+    if (gradeCell) {
+      const grade = gradeCell.textContent || gradeCell.innerText;
+      rows[i].style.display = (selectedGrade === "" || grade === selectedGrade) ? "" : "none";
+    }
+  }
+}
+function displayLearnerCountTable() {
+  const gradeCounts = {};
+
+  // Count learners per grade
+  feeDetails.forEach(detail => {
+    const grade = detail.grade;
+    gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
+  });
+
+  // Create the table HTML
+  let tableHTML = `
+    <h2 style="color: #4CAF50; text-align: center;">Total Learners Per Grade</h2>
+    <table style="width: 50%; margin: 0 auto; border-collapse: collapse; text-align: center;">
+      <thead>
+        <tr style="background: #1976D2; color: white;">
+          <th style="border: 1px solid #ccc; padding: 10px;">Grade</th>
+          <th style="border: 1px solid #ccc; padding: 10px;">Number of Learners</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  Object.keys(gradeCounts).sort((a, b) => a - b).forEach(grade => {
+    tableHTML += `
+      <tr style="background: #f9f9f9;">
+        <td style="border: 1px solid #ccc; padding: 10px;">${grade}</td>
+        <td style="border: 1px solid #ccc; padding: 10px;">${gradeCounts[grade]}</td>
+      </tr>
+    `;
+  });
+
+  tableHTML += `</tbody></table>`;
+
+  // Display the table in the container
+  const container = document.getElementById("feeSummaryContainer");
+  container.innerHTML = tableHTML;
+  container.style.display = "block";
+}
+
+function printLearnerHistory() {
+  const modalContent = document.getElementById("learnerHistoryContent").innerHTML;
+  const learnerName = document.getElementById("historyTitle").innerText;
+  const printWindow = window.open("", "", "width=800,height=600");
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>${learnerName}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+          th { background: #4CAF50; color: white; }
+          tr:nth-child(even) { background: #f9f9f9; }
+          summary { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+        </style>
+      </head>
+      <body>
+        <h2>${learnerName}</h2>
+        ${modalContent}
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.print();
+}
+function showLearnerHistory(name) {
+  const historyModal = document.getElementById("learnerHistoryModal");
+  const historyContent = document.getElementById("learnerHistoryContent");
+  const title = document.getElementById("historyTitle");
+
+  const allDetails = JSON.parse(localStorage.getItem("feeDetails")) || [];
+  const learnerRecords = allDetails.filter(d => d.name === name);
+
+  if (learnerRecords.length === 0) {
+    historyContent.innerHTML = `<p>No payment history found for ${name}</p>`;
+  } else {
+    // Group records by Term + Year
+    const grouped = {};
+    learnerRecords.forEach(record => {
+      const term = record.term || "Unknown Term";
+      const year = record.year || "Unknown Year";
+      const groupKey = `${term} - ${year}`;
+      if (!grouped[groupKey]) grouped[groupKey] = [];
+      grouped[groupKey].push(record);
+    });
+
+    let html = ``;
+
+    for (let group in grouped) {
+      html += `
+        <details open style="margin-bottom: 10px;">
+          <summary style="font-weight: bold; font-size: 16px;">${group}</summary>
+          <table style="width:100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+              <tr style="background:#4CAF50; color:white;">
+                <th>Date</th>
+                <th>Total Paid</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Receipt</th>
+              </tr>
+            </thead>
+            <tbody>`;
+
+      grouped[group].forEach(record => {
+        const paid = parseFloat(record.totalPaid) || 0;
+        const total = parseFloat(record.constantFee) || 1;
+        const balance = parseFloat(record.balance) || 0;
+        const percent = Math.min(100, Math.round((paid / total) * 100));
+        const progressColor = percent >= 100 ? 'green' : percent >= 50 ? 'orange' : 'red';
+
+        html += `
+          <tr style="background:#f9f9f9;">
+            <td>${record.date || "—"}</td>
+            <td>KSH ${paid.toLocaleString()}</td>
+            <td style="color:${balance > 0 ? 'red' : 'green'}">KSH ${balance.toLocaleString()}</td>
+            <td>
+              <div style="background: #ddd; width: 100px; height: 12px; border-radius: 5px;">
+                <div style="height: 100%; width: ${percent}%; background: ${progressColor}; border-radius: 5px;"></div>
+              </div>
+              <small>${percent}% Paid</small>
+            </td>
+            <td><button onclick="generateReceipt(${record.id})">Receipt</button></td>
+          </tr>`;
+      });
+
+      html += `</tbody></table></details>`;
+    }
+
+    historyContent.innerHTML = html;
+  }
+
+  title.innerText = `Payment History for ${name}`;
+  historyModal.style.display = "block";
+}
+function closeLearnerHistory() {
+  const modal = document.getElementById("learnerHistoryModal");
+  const content = document.getElementById("learnerHistoryContent");
+
+  modal.style.display = "none";
+  content.innerHTML = ""; // Clear content so it doesn't stack
+}
+function openMpesaModal() {
+  document.getElementById("mpesaModal").style.display = "block";
+}
+
+function closeMpesaModal() {
+  document.getElementById("mpesaModal").style.display = "none";
+  document.getElementById("mpesaPhone").value = "";
+}
+function simulateMpesaPayment() {
+  const phone = document.getElementById("mpesaPhone").value;
+  if (!phone || phone.length < 10) {
+    showCustomAlert(" Please enter a valid phone number.", "#d32f2f");
+    return;
+  }
+
+  // Simulate unique MPESA code
+  const code = "MP" + Math.random().toString(36).substring(2, 9).toUpperCase();
+
+  showCustomAlert(`? MPESA payment successful!<br><strong>MPESA Code:</strong> ${code}`, "#388e3c");
+
+  // Set payment details globally
+  currentPaymentMethod = "MPESA";
+  currentPaymentPhone = phone;
+  currentMpesaCode = code;
+
+  document.getElementById("feeForm").requestSubmit(); // Trigger form submission
+  closeMpesaModal();
+
+  // Simulated SMS confirmation
+  showCustomAlert(`?? SMS sent to ${phone} confirming payment (MPESA code: ${code})`, "#0288d1");
+}
+function showCustomAlert(message, borderColor = "#007BFF") {
+  // Remove any existing alert
+  const existing = document.getElementById("custom-alert");
+  if (existing) existing.remove();
+
+  // Create alert box
+  const alertBox = document.createElement("div");
+  alertBox.id = "custom-alert";
+  alertBox.innerHTML = `<div style="
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fefefe;
+    color: #333;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    z-index: 9999;
+    max-width: 90%;
+    border-left: 6px solid ${borderColor};
+    text-align: center;
+  ">${message}</div>`;
+
+  document.body.appendChild(alertBox);
+
+  // Auto-remove after 4 seconds
+  setTimeout(() => {
+    alertBox.remove();
+  }, 4000);
+}
+
+function openSmsModal(name, phone, balance) {
+  // Remove existing modal if it exists
+  const existingModal = document.getElementById("smsModal");
+  if (existingModal) existingModal.remove();
+
+  // Create modal container
+  const modal = document.createElement("div");
+  modal.id = "smsModal";
+  modal.style = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  `;
+
+  // Format message
+  const message = balance > 0
+    ? `Hi, this is a reminder that ${name} has a fee balance of KSH ${parseFloat(balance).toLocaleString()}. Kindly clear it.`
+    : `Hi, thank you! ${name}'s fees have been received in full.`;
+
+  // Create modal content
+  const content = document.createElement("div");
+  content.style = `
+    background: #fff;
+    padding: 24px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    position: relative;
+  `;
+
+  // Add message content
+  const messageBox = document.createElement("p");
+  messageBox.id = "smsText";
+  messageBox.innerText = message;
+  messageBox.style = `
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  `;
+
+  // Add close button
+  const closeButton = document.createElement("button");
+  closeButton.innerText = "Close";
+  closeButton.style = `
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  `;
+  closeButton.onclick = () => modal.remove();
+
+  // Add phone/message data attributes
+  modal.dataset.phone = phone;
+  modal.dataset.message = message;
+
+  // Append all
+  content.appendChild(messageBox);
+  content.appendChild(closeButton);
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+}
+
+
+function sendSmsNow() {
+  const phone = document.getElementById("smsModal").dataset.phone;
+  const message = document.getElementById("smsModal").dataset.message;
+
+  alert(`? SMS sent to ${phone}\n\n"${message}"`);
+
+  closeSmsModal();
+}
+
+function closeSmsModal() {
+  document.getElementById("smsModal").style.display = "none";
+}
+
+function sendSmsToAllDefaulters() {
+  const defaulters = feeDetails.filter(d => parseFloat(d.balance) > 0 && d.phone);
+
+  if (defaulters.length === 0) {
+    showCustomAlert(" No defaulters found!");
+    return;
+  }
+
+  let count = 0;
+  defaulters.forEach(defaulter => {
+    const message = `Hi, this is a reminder that ${defaulter.name} has a fee balance of KSH ${parseFloat(defaulter.balance).toLocaleString()}. Kindly clear it.`;
+    simulateSmsSend(defaulter.phone, message);
+    count++;
+  });
+
+  showCustomAlert(` ${count} SMS reminder(s) sent to defaulters.`);
+}
+
+function showCustomAlert(message) {
+  // Remove any existing alert
+  const existing = document.getElementById("custom-alert");
+  if (existing) existing.remove();
+
+  // Create alert box
+  const alertBox = document.createElement("div");
+  alertBox.id = "custom-alert";
+  alertBox.innerHTML = `<div style="
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fefefe;
+    color: #333;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    z-index: 9999;
+    max-width: 80%;
+    text-align: center;
+    border-left: 6px solid #007BFF;
+  ">${message}</div>`;
+
+  document.body.appendChild(alertBox);
+
+  // Auto-remove after 4 seconds
+  setTimeout(() => {
+    alertBox.remove();
+  }, 4000);
+}
+
+
+function simulateSmsSend(phone, message) {
+  console.log(`?? SMS to ${phone}: "${message}"`);
+  // You can replace this with a real SMS API call
+}
+
+
+  function searchLearnerByName() {
+    const input = document.getElementById("searchLearnerInput");
+    const filter = input.value.toLowerCase();
+    const tableBody = document.getElementById("feeSummaryTableBody");
+    const rows = tableBody.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+      const nameCell = rows[i].getElementsByTagName("td")[1]; // Learner Name
+      if (nameCell) {
+        const nameText = nameCell.textContent || nameCell.innerText;
+        rows[i].style.display = nameText.toLowerCase().includes(filter) ? "" : "none";
+      }
+    }
+  }
+function displayGenderGroupedCounts() {
+    const rows = document.querySelectorAll("#learnersList tr");
+    const gradeCounts = {};
+
+    rows.forEach(row => {
+      const gender = row.cells[3]?.textContent?.trim().toLowerCase();
+      const grade = row.cells[4]?.textContent?.trim();
+
+      if (!grade) return;
+
+      if (!gradeCounts[grade]) {
+        gradeCounts[grade] = { boys: 0, girls: 0 };
+      }
+
+      if (gender === "boy" || gender === "male") {
+        gradeCounts[grade].boys++;
+      } else if (gender === "girl" || gender === "female") {
+        gradeCounts[grade].girls++;
+      }
+    });
+
+    let tableHtml = `
+      <table style="border-collapse: collapse; width: 100%; margin-top: 15px;">
+        <thead>
+          <tr style="background-color: #f2f2f2;">
+            <th style="padding: 8px; border: 1px solid #ccc;">Grade</th>
+            <th style="padding: 8px; border: 1px solid #ccc;">Girls</th>
+            <th style="padding: 8px; border: 1px solid #ccc;">Boys</th>
+            <th style="padding: 8px; border: 1px solid #ccc;">Total</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    Object.keys(gradeCounts).forEach(grade => {
+      const girls = gradeCounts[grade].girls;
+      const boys = gradeCounts[grade].boys;
+      const total = girls + boys;
+
+      tableHtml += `
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ccc;">${grade}</td>
+          <td style="padding: 8px; border: 1px solid #ccc;">${girls}</td>
+          <td style="padding: 8px; border: 1px solid #ccc;">${boys}</td>
+          <td style="padding: 8px; border: 1px solid #ccc; font-weight: bold;">${total}</td>
+        </tr>`;
+    });
+
+    tableHtml += `</tbody></table>`;
+
+    document.getElementById("groupedByGender").innerHTML = tableHtml;
+  }
+function printGenderSummary() {
+  const content = document.getElementById("groupedByGender").innerHTML;
+
+  const printWindow = window.open('', '', 'height=800,width=1000');
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>LEARNERS COUNT</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; }
+          h2, h4 { text-align: center; margin: 5px 0; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 20px; }
+          th, td { 
+            border: 3px solid black; 
+            padding: 12px; 
+            text-align: center; 
+            font-size: 20px; 
+          }
+          th { 
+            background-color: #f2f2f2; 
+            font-weight: bold; 
+          }
+          .logo-header { text-align: center; margin-bottom: 10px; }
+          .logo-header img { height: 80px; }
+          .stamp {
+            border: 2px solid blue;
+            color: blue;
+            text-align: center;
+            width: 200px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            font-weight: bold;
+          }
+          footer {
+            text-align: center;
+            font-size: 16px;
+            margin-top: 30px;
+            color: #555;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="logo-header">
+          <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" />
+        </div>
+        <h2>NACHU COMPREHENSIVE SCHOOL</h2>
+        <h4>LEARNERS COUNT</h4>
+        <h4>561-00902 KIKUYU KENYA</h4>
+        <h4>Phone: +254-700-123456</h4>
+        <h4>School Motto: "Excellence Through Knowledge"</h4>
+        <h4>Year: 2025</h4>
+
+        ${content}
+
+        <div class="stamp">Official Stamp</div>
+        
+        <footer>
+          <p>All Rights Reserved © NACHU COMPREHENSIVE SCHOOL, 2025</p>
+        </footer>
+
+        <script>
+          setTimeout(() => { window.print(); window.close(); }, 500);
+        <\/script>
+      </body>
+    </html>
+  `);
+}
+// Function to create a custom modal
+function showModal(message, type = "info", callback = null) {
+    let modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+    modal.style.padding = "20px";
+    modal.style.backgroundColor = "#fff";
+    modal.style.border = "2px solid #333";
+    modal.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
+    modal.style.textAlign = "center";
+    modal.style.zIndex = "10000";
+    modal.style.borderRadius = "10px";
+
+    let color = type === "error" ? "red" : type === "success" ? "green" : "#333";
+    let textColor = type === "error" ? "white" : "black";
+
+    modal.innerHTML = `
+        <p style="color: ${textColor}; font-weight: bold;">${message}</p>
+        <button id="closeModal" style="padding: 8px 15px; margin-top: 10px; background: ${color}; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById("closeModal").onclick = () => {
+        document.body.removeChild(modal);
+        if (callback) callback();
+    };
+}
+
+// Function to create a custom prompt
+function showPrompt(message, callback) {
+    let modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+    modal.style.padding = "20px";
+    modal.style.backgroundColor = "#fff";
+    modal.style.border = "2px solid #333";
+    modal.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
+    modal.style.textAlign = "center";
+    modal.style.zIndex = "10000";
+    modal.style.borderRadius = "10px";
+
+    modal.innerHTML = `
+        <p style="font-weight: bold;">${message}</p>
+        <input type="text" id="modalInput" style="padding: 8px; margin-bottom: 10px; width: 80%;"><br>
+        <button id="confirmPrompt" style="padding: 8px 15px; background: green; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+        <button id="cancelPrompt" style="padding: 8px 15px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Cancel</button>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById("confirmPrompt").onclick = () => {
+        let value = document.getElementById("modalInput").value.trim();
+        document.body.removeChild(modal);
+        callback(value);
+    };
+
+    document.getElementById("cancelPrompt").onclick = () => {
+        document.body.removeChild(modal);
+        callback(null);
+    };
+}
+
+// Function to save the report
+function saveReport() {
+    showPrompt("Enter Grade to Save Report:", (grade) => {
+        if (!grade) {
+            showModal("Grade is required.", "error");
+            return;
+        }
+
+        showPrompt("Enter Exam Number (1-6):", (examNumber) => {
+            if (!examNumber || examNumber < 1 || examNumber > 6) {
+                showModal("Invalid exam number.", "error");
+                return;
+            }
+
+            let table = document.getElementById("pathwaysResultsTable");
+            let rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            let savedData = JSON.parse(localStorage.getItem(`Career_Report_Grade${grade}`)) || {};
+
+            for (let i = 0; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName("td");
+                let learnerName = cells[0].innerText;
+                let bestPathway = cells[cells.length - 1].innerText; 
+
+                if (!savedData[learnerName]) {
+                    savedData[learnerName] = { grade: grade, exams: {}, pathwayCount: {} };
+                }
+
+                savedData[learnerName].exams[`Exam${examNumber}`] = bestPathway;
+
+                savedData[learnerName].pathwayCount[bestPathway] = 
+                    (savedData[learnerName].pathwayCount[bestPathway] || 0) + 1;
+            }
+
+            localStorage.setItem(`Career_Report_Grade${grade}`, JSON.stringify(savedData));
+            showModal(`Report saved successfully for Grade ${grade}, Exam ${examNumber}.`, "success");
+        });
+    });
+}
+
+// Function to view saved reports
+function viewSavedReports() {
+    showPrompt("Enter Grade to View Report:", (selectedGrade) => {
+        if (!selectedGrade) {
+            showModal("Please enter a valid grade.", "error");
+            return;
+        }
+
+        let allKeys = Object.keys(localStorage).filter(key => key.startsWith("Career_Report_Grade"));
+        let savedData = {};
+
+        // Loop through all saved reports and check if they belong to the selected grade
+        allKeys.forEach(key => {
+            let gradeFromKey = key.replace("Career_Report_Grade", ""); // Extract the stored grade (e.g., "7A")
+
+            if (gradeFromKey.startsWith(selectedGrade)) { // Include "7A", "7B", etc.
+                let reportData = JSON.parse(localStorage.getItem(key));
+                Object.assign(savedData, reportData); // Merge data from matching grades
+            }
+        });
+
+        if (Object.keys(savedData).length === 0) {
+            showModal(`No saved reports found for Grade ${selectedGrade}.`, "error");
+            return;
+        }
+
+        let savedReportsTable = document.getElementById("savedReportsTable");
+        let savedReportsSection = document.getElementById("savedReportsSection");
+        savedReportsSection.style.display = "block";
+
+        savedReportsTable.getElementsByTagName("thead")[0].innerHTML = "";
+        savedReportsTable.getElementsByTagName("tbody")[0].innerHTML = "";
+
+        let theadContent = `<tr>
+            <th>No.</th>
+            <th>Learner Name</th>
+            <th>Grade</th>
+            <th>Exam 1</th>
+            <th>Exam 2</th>
+            <th>Exam 3</th>
+            <th>Exam 4</th>
+            <th>Exam 5</th>
+            <th>Exam 6</th>
+            <th>Best Career Pathway</th>
+        </tr>`;
+        savedReportsTable.getElementsByTagName("thead")[0].innerHTML = theadContent;
+
+        let tbodyContent = "";
+        let counter = 1;
+
+        for (let learner in savedData) {
+            let exams = savedData[learner].exams;
+            let pathwayCount = savedData[learner].pathwayCount;
+
+            let bestPathway = Object.keys(pathwayCount).reduce((a, b) => pathwayCount[a] > pathwayCount[b] ? a : b, "");
+
+            tbodyContent += `<tr>
+                <td>${counter++}</td>
+                <td>${learner}</td>
+                <td>${savedData[learner].grade}</td>
+                <td>${exams.Exam1 || "-"}</td>
+                <td>${exams.Exam2 || "-"}</td>
+                <td>${exams.Exam3 || "-"}</td>
+                <td>${exams.Exam4 || "-"}</td>
+                <td>${exams.Exam5 || "-"}</td>
+                <td>${exams.Exam6 || "-"}</td>
+                <td><strong>${bestPathway}</strong></td>
+            </tr>`;
+        }
+
+        savedReportsTable.getElementsByTagName("tbody")[0].innerHTML = tbodyContent;
+        document.getElementById("printButton").style.display = "block";
+    });
+}
+function printReport() {
+    let reportContent = document.getElementById("savedReportsSection").innerHTML;
+
+    let originalContent = document.body.innerHTML; // Store original page content
+
+    document.body.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="school_logo_url_here" alt="School Logo" style="width: 100px; height: auto;"><br>
+            <h2>Nachu Junior School  Compiled Pathway Report</h2>
+            <p>561-00902 Kikuyu KENYA</p>
+            <p>Phone: +254-700-123456</p>
+            <p><strong>School Motto:</strong> "Excellence Through Knowledge"</p>
+            <p><strong>Year:</strong> 2025</p>
+        </div>
+
+        ${reportContent}
+    `;
+
+    window.print(); // Print the page
+
+    document.body.innerHTML = originalContent; // Restore original content after printing
+    location.reload(); // Reload page to prevent display issues
+}
+function hideAllSections() {
+  const sectionsToHide = [
+    'feeCaptureForm',
+    'feeSummaryTableContainer',
+    'filteredFeeTableContainer',
+    'archivedFeesContainer',
+    'feeSummaryContainer',
+    'defaultersTableContainer',
+    'paymentSummaryContainer'
+  ];
+  
+  sectionsToHide.forEach(id => {
+    const section = document.getElementById(id);
+    if (section) section.style.display = 'none';
+  });
+
+  // Also hide print button if visible
+  const printBtn = document.getElementById("printSummaryBtn");
+  if (printBtn) printBtn.style.display = "none";
+}
+function hideLearnerSections() {
+  // Define all the sections that need to be hidden
+  const sectionsToHide = [
+    'registerLearnerSection',
+    'parentInfoTable',
+    'groupedByGradeContainer',
+    'groupedByGenderContainer',
+    'promoteLearnersContainer',
+    'undoPromotionContainer',
+    'printableLearnersTable',
+    'viewArchivesContainer',
+    'archivedExamsSection',
+    'learnerNamesList', // Specific section for learner names table
+    'printHeader', // Header of printable learner table
+  ];
+
+  // Loop through each section and hide it
+  sectionsToHide.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  // Optionally remove any dynamically generated content like reports
+  const printableLearnersTable = document.getElementById("printableLearnersTable");
+  if (printableLearnersTable) printableLearnersTable.innerHTML = ''; // Clear the content
+
+  // Scroll to the top of the page for better UX
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 </script>
