@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -2174,7 +2174,7 @@ button {
     <i class="fas fa-list-ol"></i> <strong>Merit List Here:</strong>
 </label>
 
-<select id="gradeSelect" style="
+<select id="gradeSelector" style="
     padding: 5px;
     font-size: 12px;
     border: 2px solid #4CAF50;
@@ -8786,7 +8786,7 @@ function showCustomConfirm(message, onConfirm) {
     });
 }
 function generateMeritList() {
-    let selectedGrade = document.getElementById("gradeSelect").value;
+    let selectedGrade = document.getElementById("gradeSelector").value;
 
     // Helper function to show a styled alert
     function showAlert(message, color) {
