@@ -568,30 +568,6 @@
         color: green;
         font-weight: bold;
     }
-.bottom-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
-  height: 50px; /* Consistent height for footer */
-}
-.bottom-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
-  height: 50px; /* Consistent height for footer */
-}
-
-
 #alertContainer div {
     animation: fadeInOut 3.5s;
 }
@@ -1002,7 +978,6 @@ button {
     border-top: 2px solid #4CAF50;
 }
 
-
     </style>
 </head>
 <body>
@@ -1333,12 +1308,6 @@ button {
 <!-- Learner Count Table Container -->
 <div id="learnerCountContainer" style="display: none; margin-top: 20px;"></div>
 
-<!-- Print Button -->
-<div style="text-align: center; margin-top: 10px;">
-  <button onclick="printLearnerCountTable()" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    <i class="fas fa-print"></i> Print Learner Count
-  </button>
-</div>
 <button onclick="sendSmsToAllDefaulters()" 
   style="margin: 20px 0; padding: 10px 20px; background: #FF5722; color: white; border: none; border-radius: 5px;">
   Send SMS to All Defaulters
@@ -1412,20 +1381,12 @@ button {
   <!-- Fee Summary Table Container (Wrapped with Grade Filter) -->
   <div id="feeSummaryTableContainer" style="display: none; text-align: center; padding: 20px; width: 100%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
     <h2 style="margin-bottom: 10px; color: #333;">Fee Summary</h2>
-    <!-- Grade Filter -->
-    <label for="gradeFilter"><strong>Filter by Grade:</strong></label>
-    <select id="gradeFilter" onchange="filterFeeRecords()">
-      <option value="">All Grades</option>
-      <option value="1">Grade 1</option>
-      <option value="2">Grade 2</option>
-      <option value="3">Grade 3</option>
-      <option value="4">Grade 4</option>
-      <option value="5">Grade 5</option>
-      <option value="6">Grade 6</option>
-      <option value="7">Grade 7</option>
-      <option value="8">Grade 8</option>
-      <option value="9">Grade 9</option>
-    </select>
+<!-- Grade Filter -->
+<label for="gradeFilter"><strong>Filter by Grade:</strong></label>
+<select id="gradeFilter" onchange="filterFeeRecords()">
+  <option value="">All Grades</option>
+</select>
+
 <!-- Search Input -->
 <input type="text" id="searchLearnerInput" onkeyup="searchLearnerByName()" 
   placeholder=" Search learner by name..." 
@@ -1620,20 +1581,10 @@ button {
 <!-- Defaulters List Container -->
 <div id="defaultersTableContainer" style="display: none; text-align: center; padding: 20px; width: 80%; margin: auto; background: #fff; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); border-radius: 10px;">
     <h2 style="background: red; color: white; padding: 10px;">Defaulters List</h2>
-    
-    <!-- Grade Filter -->
-   <label for="defaultersGradeFilter"><strong>Filter by Grade:</strong></label>
+  <!-- Grade Filter -->
+<label for="defaultersGradeFilter"><strong>Filter by Grade:</strong></label>
 <select id="defaultersGradeFilter" onchange="filterDefaulters()">
-  <option value="">All Grades</option>
-  <option value="1">Grade 1</option>
-  <option value="2">Grade 2</option>
-  <option value="3">Grade 3</option>
-  <option value="4">Grade 4</option>
-  <option value="5">Grade 5</option>
-  <option value="6">Grade 6</option>
-  <option value="7">Grade 7</option>
-  <option value="8">Grade 8</option>
-  <option value="9">Grade 9</option>
+  <!-- Options will be populated dynamically -->
 </select>
 
 
@@ -1751,7 +1702,10 @@ button {
 <div id="fireworks-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000;"></div>
    </div>
 <div id="registeredLearnersBox" style="display: none;">
-        <h2>Registered Learners</h2>
+      <h2 style="background-color: #4CAF50; color: #fff; padding: 10px; border-radius: 5px; display: flex; align-items: center; gap: 10px; width: fit-content;">
+    <i class="fas fa-user-graduate" style="color: #fff;"></i> Registered Learners
+</h2>
+
         <input type="text" id="searchLearner" onkeyup="searchLearner()" placeholder="Search for learner">
         <div class="menu-container">
 <button class="menu-button" aria-label="Learners Options" onclick="toggleLearnersMenu()">
@@ -1766,7 +1720,47 @@ button {
 <button onclick="printRegisteredLearners()" class="neon-button">
     <i class="fas fa-print" style="color: #2ecc71;"></i> Print Registered Learners
 </button>
-<h3>Parent Contact List by Grade</h3>
+
+<button onclick="groupLearnersByGrade()" class="neon-button">
+    <i class="fas fa-users" style="color: #3498db;"></i> Group by Grade
+</button>
+
+<button onclick="promoteLearners()" class="neon-button">
+    <i class="fas fa-arrow-up" style="color: #e67e22;"></i> Promote Learners to Next Grade
+</button>
+<!-- Show Learners by Gender per Grade -->
+<button onclick="displayGenderGroupedCounts()" class="neon-button">
+  <i class="fas fa-chart-pie" style="color: #00bcd4;"></i>
+  Show Learners Count per Grade
+</button>
+
+<!-- Print Gender Report -->
+<button onclick="printGenderSummary()" class="neon-button green">
+  <i class="fas fa-print" style="color: #4CAF50;"></i>
+  Print learner Count
+</button>
+
+<!-- Undo Promotion Button -->
+<button onclick="undoPromotion()" class="neon-button neon-red">
+    <i class="fas fa-undo" style="color: #c0392b;"></i> Undo Promotion
+</button>
+
+<button onclick="groupLearnersByGender()" class="neon-button">
+    <i class="fas fa-transgender-alt" style="color: #9b59b6;"></i> Group by Gender
+</button>
+
+<button onclick="printGroupedByGender()" class="neon-button">
+    <i class="fas fa-print" style="color: #2ecc71;"></i> Print Grouped by Gender
+</button>
+<h3 style="
+  background-color: yellow;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+">
+  Parent List by Grade
+</h3>
 
 <label for="gradeFilterDropdown">Select Grade:</label>
 <select id="gradeFilterDropdown" onchange="filterParentInfoByGrade()">
@@ -1792,44 +1786,12 @@ button {
   <tbody id="parentInfoBody"></tbody>
 </table>
 
-<button onclick="groupLearnersByGrade()" class="neon-button">
-    <i class="fas fa-users" style="color: #3498db;"></i> Group by Grade
-</button>
-
-<button onclick="promoteLearners()" class="neon-button">
-    <i class="fas fa-arrow-up" style="color: #e67e22;"></i> Promote Learners to Next Grade
-</button>
-
-<!-- Undo Promotion Button -->
-<button onclick="undoPromotion()" class="neon-button neon-red">
-    <i class="fas fa-undo" style="color: #c0392b;"></i> Undo Promotion
-</button>
-
-<button onclick="groupLearnersByGender()" class="neon-button">
-    <i class="fas fa-transgender-alt" style="color: #9b59b6;"></i> Group by Gender
-</button>
-
-<button onclick="printGroupedByGender()" class="neon-button">
-    <i class="fas fa-print" style="color: #2ecc71;"></i> Print Grouped by Gender
-</button>
 
 <div style="margin-top: 20px;">
   <label for="gradeDropdown"><strong>Select Grade:</strong></label>
   <select id="gradeDropdown" onchange="showLearnerNamesOnly()" style="margin-left: 10px;">
     <option value="">-- Select Grade --</option>
   </select>
-<!-- Show Learners by Gender per Grade -->
-<button onclick="displayGenderGroupedCounts()" class="neon-button">
-  <i class="fas fa-chart-pie" style="color: #00bcd4;"></i>
-  Show Learners Count per Grade
-</button>
-
-<!-- Print Gender Report -->
-<button onclick="printGenderSummary()" class="neon-button green">
-  <i class="fas fa-print" style="color: #4CAF50;"></i>
-  Print learner Count
-</button>
-
 
   <button onclick="printLearnersTable()" style="margin-left: 15px; padding: 6px 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
     <i class="fas fa-print"></i> Print
@@ -1839,7 +1801,7 @@ button {
   <div id="printableLearnersTable" style="margin-top: 20px;">
     <div id="printHeader" style="text-align: center; margin-bottom: 15px;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-height: 80px;"><br>
-      <h2 style="margin: 5px 0; color: black;">NACHU JUNIOR  SCHOOL</h2>
+      <h2 style="margin: 5px 0; color: black;">NACHU JUNIOR    SCHOOL</h2>
       <h3 style="margin: 5px 0; color: black;">Learner List - <span id="selectedGradeHeader"></span></h3>
     </div>
 
@@ -1854,12 +1816,7 @@ button {
     </table>
   </div>
 </div>
-
-  <!-- Back Button -->
-<button class="neon-button btn-back" onclick="hideLearnerSections()">
-    <span class="material-icons" style="color: #9b59b6;">arrow_back</span> Back
-</button>
-
+  
     <button class="neon-button btn-red" onclick="viewArchives()">
         <span class="material-icons" style="color: #d32f2f;">archive</span> View Archived Exams
     </button>
@@ -1893,17 +1850,23 @@ button {
             </thead>
             <tbody id="learnersList"></tbody>
         </table>
-    </div>
+</div>
 <div id="report"></div>
 <div id="teacherPromptModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fce4ec; padding: 20px; border: 2px solid #e91e63; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
     <h3 style="color: #e91e63;">Kindly Capture The Following</h3>
     <p id="subjectPromptText" style="margin: 10px 0; font-size: 16px; color: #333;">Enter the teacher's name for the subject:</p>
     <input type="text" id="teacherNameInput" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
-    <button id="submitTeacherName" style="background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Submit</button>
+   <button id="submitTeacherName" style="background-color: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+    <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Submit
+</button>
+
 </div>
 <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
 <div id="juniorMarksEntrySection" style="max-width: 400px; margin: auto; display: none;">
-<h2>Junior School Marks Entry Section</h2>
+<h2 style="color: white; background-color: gold; padding: 8px 8px; border-radius: 3px;">
+    Marks Entry Section
+</h2>
+
 <form id="marksForm">
     Grade:  
     <input type="text" id="marksGrade" placeholder="Enter Grade (e.g., 7A)" required><br>
@@ -1928,7 +1891,10 @@ button {
         Religious Education: <input type="number" id="religion" required><br>
         Creative Art: <input type="number" id="art" required><br>
     </div>
-    <button type="submit">Submit Marks</button>
+    <button type="submit" style="padding: 8px 12px; background: #3F51B5; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-paper-plane" style="margin-right: 6px;"></i> Submit Marks
+</button>
+
 </form>
 </div>
 <!-- Success Message -->
@@ -2128,6 +2094,9 @@ button {
 <button onclick="combineMeritListsByGrade()" class="neon-button">
   <i class="fas fa-sync-alt"></i> Get Overall Merit for Same Grade
 </button>
+<button onclick="deleteAllArchivedMarks()" style="background-color: red; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
+  <i class="fas fa-trash-alt"></i> Delete All Archived Marks
+</button>
 
 <div id="combinedMeritLists"></div>
 
@@ -2240,11 +2209,13 @@ button {
         <option value="subjectChampions">Subject Champions</option>
         <option value="subjectRanking">Subject Ranking</option>
         <option value="subjectPerformance">Subject Performance</option>
-        <option value="genderPerformance">Gender Performance</option> <!-- New option for Gender Performance -->
-    </select>
+   </select>
 </div>             
         </select>
-        <button onclick="printSelectedOption()">Print</button>
+      <button onclick="printSelectedOption()" style="padding: 8px 12px; background: #795548; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-print" style="margin-right: 6px;"></i> Print
+</button>
+
     </div>
 
 </div>
@@ -2346,8 +2317,8 @@ button {
 
         <label for="staffPosition" style="font-size: 16px;">Position:</label>
         <input type="text" id="staffPosition" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
-
-        <label for="staffGrade" style="font-size: 16px;">Grade Assigned:</label>
+ <label for="staffGrade" style="font-size: 16px;">Grade Assigned:</label>
+        <label for="staffGrade" style="font-size: 16px;">Actiom:</label>
         <select id="staffGrade" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
             <option value="" disabled selected>Select Grade</option>
             <option value="All">Grade All</option>
@@ -2375,7 +2346,10 @@ button {
 <div id="registeredStaffSection" style="display: none;">
 
     <h2>Registered Staff</h2>
-    <button onclick="printStaffTable()">Print Staff List</button>
+    <button onclick="printStaffTable()">
+    <i class="fas fa-print"></i> Print Staff List
+</button>
+
     <table id="staffTable" class="learners-table">
         <thead>
             <tr>
@@ -2403,19 +2377,30 @@ button {
                 <input type="text" id="supportStaffPosition" placeholder="Position" required>
                 <input type="date" id="supportStaffHireDate" required>
                 <input type="file" id="supportStaffPhoto" required>
-                <button type="button" onclick="registerSupportStaff()">Register</button>
+              <button type="button" onclick="registerSupportStaff()" style="padding: 8px 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-user-plus" style="margin-right: 6px;"></i> Register
+</button>
+
             </form>
         </div>
 
-        <button onclick="viewRegisteredStaff()">View Registered Support Staff</button>
-<button class="circle-button" onclick="printSupportStaffTable()">Print</button>
+      <!-- View Registered Support Staff -->
+<button onclick="viewRegisteredStaff()" style="padding: 8px 12px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-users" style="margin-right: 6px;"></i> View Registered Support Staff
+</button>
+
+<!-- Print Button -->
+<button onclick="printSupportStaffTable()" style="padding: 8px 12px; background: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-print"></i> Print
+</button>
+
 
 
         <div class="table-container">
             <table id="supportStaffTable">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>No</th>
                         <th>Staff ID</th>
                         <th>Name</th>
                         <th>Phone</th>
@@ -2441,7 +2426,10 @@ button {
         <h2>Bulk Report Generation</h2>
         <label for="bulkGradeSelect">Select Grade:</label>
         <select id="bulkGradeSelect"></select>
-        <button onclick="generateBulkReports()">Generate Bulk Reports</button>
+     <button onclick="generateBulkReports()" style="padding: 8px 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-file-download" style="margin-right: 6px;"></i> Generate Bulk Reports
+</button>
+
     </div>
 
     <!-- Generated Report Section -->
@@ -2589,26 +2577,30 @@ button {
 <div id="genderPerformanceContainer" style="margin-top: 30px;"></div>
 
 <!-- Learner Count Display Section -->
-<div id="learnerCountContainer" style="display: none; margin-top: 20px; font-weight: bold; text-align: center;">
-    <table style="width: 100%; margin: auto; border-collapse: collapse; border: 1px solid black;">
+<div id="learnerCountContainer" style="display: none; margin-top: 20px; text-align: center; font-weight: bold;">
+    <table style="width: 80%; margin: auto; border-collapse: collapse; border: 1px solid black;">
         <thead>
             <tr style="background-color: #f2f2f2;">
-                <th style="font-size: 20px;">No.</th>
-                <th style="font-size: 20px;">Grade</th>
-                <th style="font-size: 20px;">Boys</th>
-                <th style="font-size: 20px;">Girls</th>
-                <th style="font-size: 20px;">Total</th>
+                <th style="font-size: 20px; border: 1px solid black;">No.</th>
+                <th style="font-size: 20px; border: 1px solid black;">Grade</th>
+                <th style="font-size: 20px; border: 1px solid black;">Boys</th>
+                <th style="font-size: 20px; border: 1px solid black;">Girls</th>
+                <th style="font-size: 20px; border: 1px solid black;">Total</th>
             </tr>
         </thead>
-        <tbody id="learnerCountTableBody"></tbody>
+        <tbody id="learnerCountTableBody">
+            <!-- Data rows will be dynamically added here -->
+        </tbody>
     </table>
+<div id="customAlert" style="display: none; position: fixed; top: 20%; left: 50%; transform: translateX(-50%); background-color: #4CAF50; color: white; padding: 16px 24px; font-size: 16px; border-radius: 6px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); z-index: 10000;">
+    <span id="alertMessage">Success!</span>
+</div>
 
-    <!-- Footer Section -->
-    <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 5px 0; text-align: center;">
-        <p>&copy; 2025 NACHU COMPREHENSIVE SCHOOL | All Rights Reserved</p>
-    </footer>
-</body>
-   
+<!-- Footer Section -->
+<footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 10px 0; text-align: center; font-size: 14px;">
+    <p>&copy; 2025 NACHU COMPREHENSIVE SCHOOL | All Rights Reserved</p>
+</footer>
+
 <script>
     // ... (Other existing JavaScript code)
    // Function to update the grade field based on the selected learner
@@ -2950,48 +2942,159 @@ function toggleChampionsForm() {
     const form = document.getElementById("championsForm");
     form.style.display = form.style.display === "none" ? "block" : "none";
 }
+
 function sendToArchives() {
-    showLoadingSpinner(); // Show spinner
+    showLoadingSpinner(); // Start spinner immediately
 
-    setTimeout(() => {
-        let archivedMarks;
-        
-        // Retrieve existing archived marks safely
-        try {
-            archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
-        } catch (e) {
-            console.error("Error parsing archived marks:", e);
-            archivedMarks = [];
-        }
+    // Show custom styled prompts
+    showCustomPrompt("Enter the grade (e.g., 7A):", (grade) => {
+        if (!grade) return hideLoadingSpinner();
 
-        // Ensure marks exist before archiving
-        console.log("Marks before archiving:", marks);
-        if (!marks || marks.length === 0) {
-            alert("No marks available to archive!");
-            hideLoadingSpinner();
-            return;
-        }
+        showCustomPrompt("Enter the term (e.g., Term 1):", (term) => {
+            if (!term) return hideLoadingSpinner();
 
-        // Archive the marks
-        archivedMarks.push(...marks);
-        localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
+            showCustomPrompt("Enter the exam type (e.g., Midterm, End Term):", (exam) => {
+                if (!exam) return hideLoadingSpinner();
 
-        // Debugging: Verify saved data
-        console.log("Archived Marks after archiving:", JSON.parse(localStorage.getItem("archivedMarks")));
+                // Get rows from marksList
+                const rows = document.querySelectorAll("#marksList tr");
+                if (rows.length === 0) {
+                    hideLoadingSpinner();
+                    return alert("No marks found in the marklist.");
+                }
 
-        // Show success message
-        const successMessage = document.getElementById("saveSuccessMessage");
-        successMessage.textContent = "Marks successfully archived!";
-        successMessage.style.display = "block";
+                const headers = [
+                    "No.", "Learner", "Grade", "Eng", "Eng Lev", "Math", "Math Lev", "Pre-Tech", "Pre-Tech Lev",
+                    "Kiswa", "Kiswa Lev", "Scie", "Scie Lev", "Sst", "Sst Lev", "Agric", "Agric Lev", 
+                    "Cre", "Cre Lev", "C/A", "C/A Lev", "Total Marks", "Perform"
+                ];
 
-        setTimeout(() => {
-            successMessage.style.display = "none";
-            hideLoadingSpinner(); // Hide spinner after saving
-        }, 3000);
+                const marksToArchive = [];
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll("td");
+                    if (cells.length < 23) return;
 
-        updateArchivedMarksTable(); // Refresh archived marks display
-    }, 2000); // Simulated delay for saving process
+                    const rowGrade = cells[2].textContent.trim();
+                    if (rowGrade !== grade) return;
+
+                    const rowData = {};
+                    headers.forEach((header, index) => {
+                        rowData[header] = cells[index]?.textContent.trim() || "";
+                    });
+
+                    marksToArchive.push(rowData);
+                });
+
+                if (marksToArchive.length === 0) {
+                    hideLoadingSpinner();
+                    return alert(`No marks found for grade ${grade}.`);
+                }
+
+                const key = `archivedMarks_${grade}_${term}_${exam}`;
+                localStorage.setItem(key, JSON.stringify(marksToArchive));
+
+                hideLoadingSpinner();
+                showCenteredSuccess(`Marks for ${grade} (${term} - ${exam}) successfully archived!`);
+            });
+        });
+    });
 }
+
+function showCenteredSuccess(message) {
+    const msgDiv = document.createElement("div");
+    msgDiv.textContent = message;
+    Object.assign(msgDiv.style, {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        backgroundColor: "#d4edda",
+        color: "#155724",
+        border: "2px solid #28a745",
+        padding: "20px 30px",
+        fontSize: "18px",
+        fontWeight: "bold",
+        borderRadius: "10px",
+        zIndex: "1000",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+    });
+    document.body.appendChild(msgDiv);
+
+    setTimeout(() => msgDiv.remove(), 3000);
+}
+
+// Custom prompt function
+function showCustomPrompt(message, callback) {
+    // Remove existing prompt if present
+    const existingPrompt = document.getElementById("customPrompt");
+    if (existingPrompt) existingPrompt.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "customPrompt";
+    Object.assign(overlay.style, {
+        position: "fixed",
+        top: 0, left: 0,
+        width: "100%", height: "100%",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 9999
+    });
+
+    const promptBox = document.createElement("div");
+    Object.assign(promptBox.style, {
+        backgroundColor: "#fff",
+        padding: "25px",
+        borderRadius: "12px",
+        width: "300px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+        textAlign: "center"
+    });
+
+    const label = document.createElement("label");
+    label.textContent = message;
+    label.style.display = "block";
+    label.style.marginBottom = "12px";
+    label.style.fontWeight = "bold";
+    label.style.fontSize = "16px";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.style.width = "90%";
+    input.style.padding = "10px";
+    input.style.marginBottom = "15px";
+    input.style.borderRadius = "5px";
+    input.style.border = "1px solid #ccc";
+    input.style.fontSize = "14px";
+
+    const submitBtn = document.createElement("button");
+    submitBtn.textContent = "OK";
+    Object.assign(submitBtn.style, {
+        padding: "8px 18px",
+        backgroundColor: "#28a745",
+        color: "#fff",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer"
+    });
+
+    submitBtn.onclick = () => {
+        const value = input.value.trim();
+        overlay.remove();
+        callback(value);
+    };
+
+    promptBox.appendChild(label);
+    promptBox.appendChild(input);
+    promptBox.appendChild(submitBtn);
+    overlay.appendChild(promptBox);
+    document.body.appendChild(overlay);
+
+    input.focus();
+}
+
+
 function updateArchivedMarksTable() {
     let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
     const archivedMarksList = document.getElementById("archivedMarksList");
@@ -3099,7 +3202,6 @@ function loadTablesWithHeaders() {
         `;
     });
 }
-
 function combineMeritListsByGrade() {
     // Retrieve archived marks from localStorage
     const archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
@@ -3206,6 +3308,9 @@ function combineMeritListsByGrade() {
     // Optionally, save the combined merit lists
     localStorage.setItem("combinedMeritLists", JSON.stringify(allCombinedHtml));
 }
+
+
+
 function groupLearnersByGender() {
     const groupedByGender = learners.reduce((groups, learner) => {
         if (!groups[learner.gender]) {
@@ -3261,9 +3366,41 @@ function printGroupedByGender() {
     const groupedContent = document.getElementById("groupedByGender").innerHTML;
 
     if (!groupedContent) {
-        alert("No learners to print.");
+        showCustomAlert(`<span style="color: red; font-weight: bold;">⚠️ No learners to print.</span>`);
         return;
     }
+function showCustomAlert(message) {
+    let alertBox = document.createElement("div");
+    alertBox.innerHTML = `<div style="
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff0f0;
+        border: 2px solid red;
+        padding: 20px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        color: black;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
+        z-index: 1000;
+      ">
+        ${message}
+        <br><br>
+        <button onclick="this.parentElement.remove()" style="
+            background: red;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        ">OK</button>
+    </div>`;
+    document.body.appendChild(alertBox);
+}
 
     // URL or base64 string of your logo
     const logoUrl = " https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
@@ -3312,17 +3449,48 @@ function printGroupedByGender() {
 
 
 // Function to print a specific table by grade 
+
+
 function printArchivedTable(grade) {
-    const tableHtml = document.getElementById(`archivedTable-${grade}`).outerHTML;
+    const table = document.getElementById(`archivedTable-${grade}`);
+    if (!table) {
+        alert("Archived table not found.");
+        return;
+    }
 
-    // Retrieve information from the champions form fields
-    const schoolName = document.getElementById("schoolName").value || "School Name";
-    const gradeLevel = document.getElementById("gradeLevel").value || "Grade";
-    const year = document.getElementById("year").value || "Year";
-    const term = document.getElementById("term").value || "Term";
+    // Clone the table to avoid altering the original
+    const clonedTable = table.cloneNode(true);
 
-    // URL or base64 string of your logo
-    const logoUrl = " https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
+    // Find the index of the "Action" column by header text
+    const headerRow = clonedTable.querySelector("thead tr");
+    let actionColIndex = -1;
+
+    headerRow.querySelectorAll("th").forEach((th, index) => {
+        const text = th.textContent.trim().toLowerCase();
+        if (text === "action") {
+            actionColIndex = index;
+        }
+    });
+
+    // If "Action" column is found, remove that column from every row
+    if (actionColIndex !== -1) {
+        clonedTable.querySelectorAll("tr").forEach(row => {
+            if (row.cells.length > actionColIndex) {
+                row.deleteCell(actionColIndex);
+            }
+        });
+    }
+
+    // School info
+    const logoUrl = "https://i.imgur.com/UW65hfv.png";
+    const schoolName = "NACHU JUNIOR SCHOOL MERIT LIST";
+    const address = "P.O. BOX 561-00902 KIKUYU, KENYA";
+    const phone = "Phone: +254-700-123456";
+    const motto = `School Motto: "HARD WORK PAYS"`;
+
+    const gradeLevel = document.getElementById("gradeLevel")?.value || grade;
+    const year = document.getElementById("year")?.value || "Year";
+    const term = document.getElementById("term")?.value || "Term";
 
     const printWindow = window.open("", "_blank");
     printWindow.document.write(`
@@ -3330,38 +3498,48 @@ function printArchivedTable(grade) {
             <head>
                 <title>Archived Marks for Grade ${grade}</title>
                 <style>
-                    body { font-family: Arial, sans-serif; }
+                    body { font-family: Arial, sans-serif; text-align: center; }
+                    .logo { width: 100px; margin: 10px auto; display: block; }
+                    .header-section {
+                        margin-bottom: 10px;
+                    }
+                    .header-section h2 {
+                        margin: 5px 0;
+                    }
+                    .info {
+                        font-weight: bold;
+                        margin-top: 10px;
+                    }
                     .report-table {
                         width: 100%;
                         border-collapse: collapse;
-                        margin: 20px 0;
+                        margin-top: 20px;
                     }
                     .report-table th, .report-table td {
                         border: 2px solid black;
                         padding: 8px;
                         text-align: center;
-                    }
-                    .logo {
-                        display: block;
-                        margin: 0 auto;
-                        width: 100px; /* Adjust logo size */
-                        height: auto;
+                        font-size: 14px;
                     }
                 </style>
             </head>
             <body>
-                <img src="${logoUrl}" class="logo" alt="School Logo">
-                <p>School: ${schoolName}</p>
-                <p>Grade: ${gradeLevel}</p>
-                <p>Year: ${year}</p>
-                <p>Term: ${term}</p>
-                ${tableHtml}
+                <div class="header-section">
+                    <img src="${logoUrl}" alt="School Logo" class="logo" />
+                    <h2>${schoolName}</h2>
+                    <p>${address}</p>
+                    <p>${phone}</p>
+                    <p><em>${motto}</em></p>
+                    <p class="info">Year: ${year} | Term: ${term} | Grade: ${gradeLevel}</p>
+                </div>
+                ${clonedTable.outerHTML}
             </body>
         </html>
     `);
     printWindow.document.close();
     printWindow.print();
 }
+
 function saveLearners() { 
     const rows = learnersList.getElementsByTagName('tr');
     learners = Array.from(rows).map((row, index) => {
@@ -3815,48 +3993,32 @@ function loadFromStorage() {
 };
 // Function to view the archived marks grouped by grade
 function viewArchives() {
-    // Retrieve archived marks from localStorage
-    const archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+    const archivedHtmlSections = [];
+    let foundAny = false;
 
-    if (archivedMarks.length === 0) {
-        showAlertMessage("No archived marks available.");
-        return;
-    }
+    // Loop through all localStorage keys
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key.startsWith("archivedMarks_")) continue;
 
-    // Group marks by grade
-    const marksByGrade = archivedMarks.reduce((acc, mark) => {
-        if (!acc[mark.grade]) {
-            acc[mark.grade] = [];
-        }
-        acc[mark.grade].push(mark);
-        return acc;
-    }, {});
+        foundAny = true;
+        const data = JSON.parse(localStorage.getItem(key) || "[]");
+        if (data.length === 0) continue;
 
-    // Initialize the HTML for the View Archives section
-    let archivedHtml = `<button onclick="printArchivedMarks()">Print Archived Marks</button>`;
+        // Extract grade, term, and exam from the key
+        const [_, grade, term, exam] = key.split("_");
 
-    // Iterate through each grade and create a separate table
-    for (const [grade, marks] of Object.entries(marksByGrade)) {
-        const subjectTotals = Array(9).fill(0); // Assuming 9 subjects
-        let totalMarksSum = 0;
-
-        // Add the headers dynamically with editable school name, grade, and term
-        archivedHtml += `
+        // Display header
+        let html = `
             <div>
-                <h3 style="font-weight: bold; font-size: 16px;">Grade: ${grade}</h3>
-                <label for="schoolName-${grade}">School:</label>
-                <input type="text" id="schoolName-${grade}" value="${marks[0].schoolName || 'N/A'}" />
-                <label for="grade-${grade}">Grade:</label>
-                <input type="text" id="grade-${grade}" value="${marks[0].grade || 'N/A'}" />
-                <label for="term-${grade}">Term:</label>
-                <input type="text" id="term-${grade}" value="${marks[0].term || 'N/A'}" />
-                <button onclick="saveChanges('${grade}')"><i class="fas fa-save"></i> Save Changes</button>
-
+                <h3 style="font-weight: bold; font-size: 16px;">Grade: ${grade} | Term: ${term} | Exam: ${exam}</h3>
+                <label for="schoolName-${key}">School:</label>
+                <input type="text" id="schoolName-${key}" value="N/A" />
+             
+                <button onclick="printArchivedTable('${key}')"><i class="fas fa-print"></i> Print</button>
+                <button onclick="deleteArchivedTable('${key}')" class="btn-red">Delete</button>
             </div>
-           <button onclick="printArchivedTable('${grade}')"><i class="fas fa-print"></i> Print Grade ${grade}</button>
-  <button onclick="deleteArchivedTable('${grade}')" class="btn-red">Delete</button>
-
-            <table id="archivedTable-${grade}" class="report-table">
+            <table id="archivedTable-${key}" class="report-table">
                 <thead>
                     <tr>
                         <th>No.</th>
@@ -3865,7 +4027,7 @@ function viewArchives() {
                         <th>Eng</th><th>Lev</th>
                         <th>Math</th><th>Lev</th>
                         <th>Pre-Tech</th><th>Lev</th>
-                        <th>Kisw</th><th>Lev</th>
+                        <th>Kiswa</th><th>Lev</th>
                         <th>Scie</th><th>Lev</th>
                         <th>Sst</th><th>Lev</th>
                         <th>Agric</th><th>Lev</th>
@@ -3877,179 +4039,75 @@ function viewArchives() {
                 <tbody>
         `;
 
-        marks.forEach((mark, index) => {
-            // Update totals for each subject and overall
-            mark.scores.forEach((score, subjectIndex) => {
-                subjectTotals[subjectIndex] += score;
-            });
-            totalMarksSum += mark.totalMarks;
+        const subjectTotals = Array(9).fill(0);
+        let totalMarksSum = 0;
 
-            // Append each learner's row
-            archivedHtml += `
+        data.forEach((mark, index) => {
+            const scores = [
+                mark["Eng"], mark["Math"], mark["Pre-Tech"], mark["Kiswa"],
+                mark["Scie"], mark["Sst"], mark["Agric"], mark["Cre"], mark["C/A"]
+            ].map(Number);
+
+            scores.forEach((score, idx) => subjectTotals[idx] += score);
+            const total = parseInt(mark["Total Marks"]) || 0;
+            totalMarksSum += total;
+
+            html += `
                 <tr>
-                    <td>${index + 1}</td> <!-- Row Number -->
-                    <td>${mark.learner}</td>
-                    <td>${mark.grade}</td>
-                    ${mark.scores.map((score, subjectIndex) => `
-                        <td>${score}</td>
-                        <td>${getLevel(score)}</td>
-                    `).join('')}
-                    <td style="font-weight:bold;">${mark.totalMarks}</td>
-                    <td><button onclick="deleteArchivedMark(${index})">Delete</button></td>
+                    <td>${index + 1}</td>
+                    <td>${mark["Learner"]}</td>
+                    <td>${mark["Grade"]}</td>
+                    ${scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join("")}
+                    <td style="font-weight:bold;">${total}</td>
                 </tr>
             `;
         });
 
-        // Calculate averages
-        const averages = subjectTotals.map(total => (total / marks.length).toFixed(2));
-        const overallAverageMarks = (totalMarksSum / marks.length).toFixed(2);
+        const averages = subjectTotals.map(total => (total / data.length).toFixed(2));
+        const overallAverage = (totalMarksSum / data.length).toFixed(2);
 
-        // Add Totals row
-        archivedHtml += `
+        // Totals row
+        html += `
             <tr>
                 <td colspan="3"><strong>Total</strong></td>
-                ${subjectTotals.map(total => `<td><strong>${total}</strong></td><td></td>`).join('')}
+                ${subjectTotals.map(t => `<td><strong>${t}</strong></td><td></td>`).join("")}
                 <td><strong>${totalMarksSum}</strong></td>
             </tr>
-        `;
-
-        // Add Averages row
-        archivedHtml += `
             <tr>
                 <td colspan="3"><strong>Average</strong></td>
-                ${averages.map(avg => `<td><strong>${avg}</strong></td><td></td>`).join('')}
-                <td><strong>${overallAverageMarks}</strong></td>
+                ${averages.map(avg => `<td><strong>${avg}</strong></td><td></td>`).join("")}
+                <td><strong>${overallAverage}</strong></td>
             </tr>
         `;
 
-        archivedHtml += "</tbody></table><hr>";
+        html += "</tbody></table><hr>";
+        archivedHtmlSections.push(html);
     }
 
-    // Display the archived marks by grade
-    document.getElementById("archivedMarksList").innerHTML = archivedHtml;
-    document.getElementById("archivesSection").style.display = "block"; // Show the archives section
+    const container = document.getElementById("archivedMarksList");
+    container.innerHTML = foundAny ? archivedHtmlSections.join("") : "<p>No archived marks available.</p>";
+    document.getElementById("archivesSection").style.display = "block";
 }
-function deleteArchivedTable(grade) {
-    var tableElement = document.getElementById(`archivedTable-${grade}`);
 
-    if (tableElement) {
-        showCustomConfirm(
-            `Are you sure you want to delete <span style="color: red; font-weight: bold;">Grade ${grade} archived marks</span>?`, 
-            () => {
-                // Remove from UI
-                tableElement.parentElement.remove();
+function deleteArchivedTable(key) {
+    if (confirm("Are you sure you want to delete this archived table? This action cannot be undone.")) {
+        // Remove the data from localStorage
+        localStorage.removeItem(key);
 
-                // Retrieve archived marks from local storage
-                let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+        // Remove the table and its container div from the DOM
+        const tableElement = document.getElementById(`archivedTable-${key}`);
+        if (tableElement) {
+            tableElement.parentElement.remove(); // removes the entire div holding the heading, inputs, buttons, and table
+        }
 
-                // Filter out the deleted grade
-                archivedMarks = archivedMarks.filter(mark => mark.grade !== grade);
-
-                // Update local storage
-                localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
-
-                showCustomAlert(`<span style="color: green; font-weight: bold;">Archived marks for Grade ${grade} deleted successfully!</span>`);
-            }
-        );
-    } else {
-        showCustomAlert(`<span style="color: red; font-weight: bold;">Error: Table not found.</span>`);
+        // Optionally — if no archived tables remain, show the 'no data' message
+        if (![...localStorage.keys()].some(k => k.startsWith("archivedMarks_"))) {
+            document.getElementById("archivedMarksList").innerHTML = "<p>No archived marks available.</p>";
+        }
     }
 }
- // Function to show a custom-styled alert box
-function showCustomAlert(message) {
-    let alertBox = document.createElement("div");
-    alertBox.innerHTML = `<div style="
-        position: fixed; 
-        top: 20%; 
-        left: 50%; 
-        transform: translate(-50%, -50%);
-        background-color: #f8f9fa;
-        border: 2px solid green;
-        padding: 15px;
-        text-align: center;
-        font-size: 16px;
-        font-weight: bold;
-        color: black;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-        z-index: 1000;">
-        ${message}
-        <br><br>
-        <button onclick="this.parentElement.remove()" style="
-            background: green; 
-            color: white; 
-            padding: 8px 15px; 
-            border: none; 
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;">OK</button>
-    </div>`;
-    document.body.appendChild(alertBox);
-}
 
-// Function to show a custom-styled confirmation box
-function showCustomConfirm(message, onConfirm) {
-    let confirmBox = document.createElement("div");
-    confirmBox.innerHTML = `<div style="
-        position: fixed; 
-        top: 20%; 
-        left: 50%; 
-        transform: translate(-50%, -50%);
-        background-color: #fff3cd;
-        border: 2px solid orange;
-        padding: 15px;
-        text-align: center;
-        font-size: 16px;
-        font-weight: bold;
-        color: black;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-        z-index: 1000;">
-        ${message}
-        <br><br>
-        <button onclick="onConfirm(); this.parentElement.remove()" style="
-            background: red; 
-            color: white; 
-            padding: 8px 15px; 
-            border: none; 
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;">Yes</button>
-        <button onclick="this.parentElement.remove()" style="
-            background: gray; 
-            color: white; 
-            padding: 8px 15px; 
-            border: none; 
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;">No</button>
-    </div>`;
-    document.body.appendChild(confirmBox);
-}    
-// Function to display the alert message with custom styling
-function showAlertMessage(message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.innerHTML = message;
-    alertDiv.style.position = 'fixed';
-    alertDiv.style.top = '50%';
-    alertDiv.style.left = '50%';
-    alertDiv.style.transform = 'translate(-50%, -50%)';
-    alertDiv.style.padding = '20px';
-    alertDiv.style.backgroundColor = 'red';
-    alertDiv.style.color = 'white';
-    alertDiv.style.fontSize = '18px';
-    alertDiv.style.fontWeight = 'bold';
-    alertDiv.style.textAlign = 'center';
-    alertDiv.style.borderRadius = '10px';
-    alertDiv.style.zIndex = '1000';
 
-    document.body.appendChild(alertDiv);
-
-    // Remove the alert after 3 seconds
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 3000);
-}
 
 // Function to save the changes made to the school name, grade, and term
 function saveChanges(grade) {
@@ -4151,68 +4209,6 @@ function displaySuccessMessage(message) {
         successMessageDiv.remove();
     }, 3000);
 }
-
-function printArchivedMarks() {
-    // Retrieve information from the champions form fields
-    const schoolName = document.getElementById("schoolName").value || "School Name";
-    const gradeLevel = document.getElementById("gradeLevel").value || "Grade";
-    const year = document.getElementById("year").value || "Year";
-    const term = document.getElementById("term").value || "Term";
-
-    // URL or base64 string of your logo
-    const logoUrl = "https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
-
-    // Get the content for Archived Marks
-    const reportDiv = document.getElementById("report");
-    const performanceHtml = reportDiv.innerHTML;
-
-    // Open a new window to format and print the archived marks content
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>Archived Marks</title>
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    .report-table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-bottom: 20px;
-                    }
-                    .report-table th, .report-table td {
-                        border: 2px solid black;
-                        padding: 10px;
-                        text-align: center;
-                    }
-                    .header-info {
-                        margin-bottom: 20px;
-                        font-weight: bold;
-                    }
-                    .logo {
-                        display: block;
-                        margin: 0 auto;
-                        width: 100px; /* Adjust logo size */
-                        height: auto;
-                    }
-                </style>
-            </head>
-            <body>
-                <img src="${logoUrl}" class="logo" alt="School Logo">
-                <div class="header-info">
-                    <p>School: ${schoolName}</p>
-                    <p>Grade: ${gradeLevel}</p>
-                    <p>Year: ${year}</p>
-                    <p>Term: ${term}</p>
-                </div>
-                ${performanceHtml}
-            </body>
-        </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-}
-
-
         function updateLearnerSelect() {
             learnerSelect.innerHTML = learners.map(learner => `<option>${learner.name}</option>`).join("");
         }
@@ -5108,18 +5104,10 @@ function printAssessmentReport() {
 }
 
 function getPerformanceLevel(totalMarks) {
-    if (totalMarks >= 1 && totalMarks <= 200) return "Below expectations";
-    if (totalMarks >= 201 && totalMarks <= 400) return "Approaching expectations";
-    if (totalMarks >= 401 && totalMarks <= 600) return "Meeting expectations";
-    if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding expectations";
-    return "";
-}
-
-function getPerformanceLevel(totalMarks) {
-    if (totalMarks >= 1 && totalMarks <= 200) return "Below expectations";
-    if (totalMarks >= 201 && totalMarks <= 400) return "Approaching expectations";
-    if (totalMarks >= 401 && totalMarks <= 600) return "Meeting expectations";
-    if (totalMarks >= 601 && totalMarks <= 800) return "Exceeding expectations";
+    if (totalMarks >= 1 && totalMarks <= 225) return "Below expectations";
+    if (totalMarks >= 226 && totalMarks <= 449) return "Approaching expectations";
+    if (totalMarks >= 450 && totalMarks <= 675) return "Meeting expectations";
+    if (totalMarks >= 676 && totalMarks <= 900) return "Exceeding expectations";
     return "";
 }
 function printGroupedTable(grade) {
@@ -5717,167 +5705,119 @@ function printSelectedOption() {
   
  // Function to display a custom prompt box for input and print the staff table
 function printStaffTable() {
-    // Create the custom prompt box
-    const promptBox = document.createElement('div');
-    promptBox.style.position = 'fixed';
-    promptBox.style.top = '0';
-    promptBox.style.left = '0';
-    promptBox.style.width = '100%';
-    promptBox.style.height = '100%';
-    promptBox.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    promptBox.style.display = 'flex';
-    promptBox.style.justifyContent = 'center';
-    promptBox.style.alignItems = 'center';
-    promptBox.style.zIndex = '9999';
+    const staffTable = document.getElementById("staffTable");
 
-    // Create the inner modal content
-    const modal = document.createElement('div');
-    modal.style.backgroundColor = '#fff';
-    modal.style.padding = '20px';
-    modal.style.borderRadius = '8px';
-    modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-    modal.style.textAlign = 'center';
-    modal.style.width = '300px';
-
-    // Create the inputs for school name, year, and date
-    const schoolNameInput = createInputField('School Name:', 'schoolName', '2E8B57'); // Green
-    const yearInput = createInputField('Year:', 'year', 'FF6347'); // Red
-    const dateInput = createInputField('Date:', 'date', '1E90FF'); // Blue
-
-    // Append inputs and button to the modal
-    modal.appendChild(schoolNameInput.label);
-    modal.appendChild(schoolNameInput.input);
-    modal.appendChild(document.createElement('br'));
-    modal.appendChild(yearInput.label);
-    modal.appendChild(yearInput.input);
-    modal.appendChild(document.createElement('br'));
-    modal.appendChild(dateInput.label);
-    modal.appendChild(dateInput.input);
-    modal.appendChild(document.createElement('br'));
-    const submitButton = document.createElement('button');
-    submitButton.textContent = 'Submit';
-    submitButton.style.marginTop = '20px';
-    submitButton.style.padding = '10px 20px';
-    submitButton.style.backgroundColor = '#4CAF50';
-    submitButton.style.color = '#fff';
-    submitButton.style.border = 'none';
-    submitButton.style.borderRadius = '4px';
-    modal.appendChild(submitButton);
-
-    // Append modal to prompt box
-    promptBox.appendChild(modal);
-    document.body.appendChild(promptBox);
-
-    // Handle form submission
-    submitButton.onclick = function () {
-        const schoolName = schoolNameInput.input.value;
-        const year = yearInput.input.value;
-        const date = dateInput.input.value;
-
-        if (!schoolName || !year || !date) {
-            alert("Please provide all the details (School Name, Year, and Date) to proceed with printing.");
-            return;
-        }
-
-        // Close the prompt box
-        document.body.removeChild(promptBox);
-
-        // Get the staff table HTML content
-        const table = document.getElementById("staffTable").outerHTML;
-
-        // Open a new print window
-        const printWindow = window.open("", "_blank");
-
-        // Write the content for printing including the prompt details
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Registered Staff</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
-                        table { width: 100%; border-collapse: collapse; background-color: #ffffff; }
-                        th, td { border: 1px solid #dddddd; padding: 8px; text-align: center; }
-                        th { background-color: #4CAF50; color: white; font-size: 16px; } /* Set header background and text color */
-                        td { font-size: 14px; color: #333333; }
-                        .header-info { font-weight: bold; margin-bottom: 20px; font-size: 16px; color: #2C3E50; }
-                        h1 { color: #2C3E50; font-size: 18px; }
-                        p { font-size: 14px; }
-                        .school-name { color: #2E8B57; font-weight: bold; }
-                        .year { color: #FF6347; font-weight: bold; }
-                        .date { color: #1E90FF; font-weight: bold; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header-info">
-                        <p><strong>School:</strong> <span class="school-name">${schoolName}</span></p>
-                        <p><strong>Year:</strong> <span class="year">${year}</span></p>
-                        <p><strong>Date:</strong> <span class="date">${date}</span></p>
-                    </div>
-                    <h1>Registered Staff</h1>
-                    ${table}
-                </body>
-            </html>
-        `);
-
-        // Close the document and trigger the print dialog
-        printWindow.document.close();
-        printWindow.print();
-    };
-
-    // Function to create input fields with labels and colors
-    function createInputField(labelText, id, color) {
-        const label = document.createElement('label');
-        label.textContent = labelText;
-        label.style.color = `#${color}`;
-        label.style.fontWeight = 'bold';
-
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.id = id;
-        input.style.padding = '8px';
-        input.style.margin = '5px 0';
-        input.style.border = '1px solid #ccc';
-        input.style.borderRadius = '4px';
-
-        return { label, input };
+    if (!staffTable) {
+        alert("Staff table not found.");
+        return;
     }
+
+    const currentYear = new Date().getFullYear();
+    const currentDateTime = new Date().toLocaleString();
+
+    // Clone the table and remove delete buttons
+    const clonedTable = staffTable.cloneNode(true);
+    const deleteButtons = clonedTable.querySelectorAll('button, .delete-button');
+    deleteButtons.forEach(btn => btn.remove());
+
+    const tableHtml = `
+        <html>
+            <head>
+                <title>Registered Staff</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                        background-color: #fff;
+                        color: #000;
+                    }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 30px;
+                        color: #000;
+                    }
+                    .logo {
+                        width: 80px;
+                        height: 80px;
+                        object-fit: contain;
+                        margin-bottom: 10px;
+                    }
+                    h2, h3 {
+                        margin: 5px 0;
+                        color: #000;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        background-color: #fff;
+                        color: #000;
+                    }
+                    th, td {
+                        border: 1px solid #000;
+                        padding: 10px;
+                        text-align: center;
+                        color: #000;
+                    }
+                    th {
+                        background-color: #f2f2f2;
+                        color: #000;
+                        font-size: 16px;
+                    }
+                    td {
+                        font-size: 14px;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        text-align: center;
+                        font-size: 14px;
+                        color: #000;
+                    }
+                    .signature {
+                        margin-top: 60px;
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 0 50px;
+                    }
+                    .signature div {
+                        text-align: center;
+                        width: 40%;
+                        border-top: 1px solid #000;
+                        padding-top: 5px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <img src="https://i.imgur.com/uWrz8rt.png" class="logo" alt="School Logo" />
+                    <h2>NACHU COMPREHENSIVE SCHOOL STAFF DATA</h2>
+                    <h3>ADDRESS: PO BOX 561-00902 KIKUYU, KENYA</h3>
+                    <h3>Phone: +254-700-123456</h3>
+                    <h3>School Motto: "Excellence Through Knowledge"</h3>
+                    <h3>Year: ${currentYear}</h3>
+                </div>
+
+                <h2 style="text-align:center;">Registered Staff</h2>
+                ${clonedTable.outerHTML}
+
+                <div class="signature">
+                    <div>Prepared By</div>
+                    <div>Principal's Signature</div>
+                </div>
+
+                <div class="footer">
+                    Printed on: ${currentDateTime}
+                </div>
+            </body>
+        </html>
+    `;
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(tableHtml);
+    printWindow.document.close();
+    printWindow.print();
 }
 
 
-    function printTable(content) {
-        const printWindow = window.open("", "_blank");
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Print</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { 
-                            border: 2px solid black; 
-                            padding: 8px; 
-                            text-align: center; 
-                        }
-                        th { 
-                            background-color: #4CAF50; 
-                            color: white; 
-                            font-weight: bold; 
-                        }
-                        td { 
-                            font-size: 14px; 
-                            font-weight: normal; 
-                        }
-                        h2, h3, p { margin: 0; padding: 5px; }
-                    </style>
-                </head>
-                <body>
-                    ${content}
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-    }
 
     function hideDeleteButtons() {
         document.querySelectorAll("button").forEach(button => {
@@ -5987,10 +5927,16 @@ function updateSupportStaffTable() {
                 <td>${staff.hireDate}</td>
                 <td><img src="${staff.photo}" alt="Staff Photo" class="staff-photo"></td>
                 <td>
-                    <button onclick="generateIdCard('${staff.staffId}')">Generate ID</button>
-                    <button onclick="deleteStaff('${staff.staffId}')">Delete</button>
-                    <button onclick="printIdCard('${staff.staffId}')">Print</button>
-                </td>
+                 <button onclick="generateIdCard('${staff.staffId}')">
+    <i class="fas fa-id-card"></i> Generate ID
+</button>
+<button onclick="deleteStaff('${staff.staffId}')">
+    <i class="fas fa-trash-alt"></i> Delete
+</button>
+<button onclick="printIdCard('${staff.staffId}')">
+    <i class="fas fa-print"></i> Print
+</button>
+  </td>
             </tr>
         `;
         supportStaffTableBody.innerHTML += row;
@@ -6032,7 +5978,7 @@ function showFeedbackMessage(message, type = "success") {
             <div class="id-card">
                 <div class="header">
                     <h1> Nachu Junior School </h1>
-                    <p class="school-tagline">"Excellence and Integrity"</p>
+                    <p class="school-tagline">"HARD WORK PAYS"</p>
                 </div>
                 <div class="id-card-content">
                     <img src="${staff.photo}" alt="Staff Photo" class="id-card-photo">
@@ -6112,7 +6058,7 @@ function showFeedbackMessage(message, type = "success") {
                             <p><strong>Date of Hire:</strong> ${staff.hireDate}</p>
                         </div>
                         <div class="id-card-footer">
-                            This ID is generated from online powered by RASM.
+                            This ID is generated from online powered by RASM TECH.
                             <p class="school-email">Email: ${schoolEmail}</p>
                         </div>
                     </div>
@@ -6143,7 +6089,9 @@ function printSupportStaffList() {
     const table = document.getElementById("supportStaffTable").outerHTML;
 
     // URL or base64 string of your logo
-    const logoUrl = " https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
+    const logoUrl = "https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
+
+    const currentDateTime = new Date().toLocaleString();
 
     const printWindow = window.open("", "_blank");
     printWindow.document.write(`
@@ -6151,19 +6099,76 @@ function printSupportStaffList() {
             <head>
                 <title>Support Staff List</title>
                 <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    h1 { text-align: center; margin-bottom: 20px; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid black; padding: 8px; text-align: center; }
-                    th { background-color: #f2f2f2; font-size: 16px; }
-                    td { font-size: 14px; }
-                    .logo { display: block; margin: 0 auto; width: 100px; height: auto; }
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                        color: #000;
+                        background-color: #fff;
+                    }
+                    h1 {
+                        text-align: center;
+                        margin-bottom: 20px;
+                        font-size: 24px;
+                        color: #000;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 20px;
+                    }
+                    th, td {
+                        border: 1px solid black;
+                        padding: 10px;
+                        text-align: center;
+                        font-size: 14px;
+                        color: #000;
+                    }
+                    th {
+                        background-color: #4CAF50;
+                        color: white;
+                    }
+                    td {
+                        background-color: #f9f9f9;
+                    }
+                    .logo {
+                        display: block;
+                        margin: 0 auto;
+                        width: 100px;
+                        height: auto;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        text-align: center;
+                        font-size: 14px;
+                        color: #000;
+                    }
+                    .signature {
+                        margin-top: 60px;
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 0 50px;
+                    }
+                    .signature div {
+                        text-align: center;
+                        width: 40%;
+                        border-top: 1px solid #000;
+                        padding-top: 5px;
+                    }
                 </style>
             </head>
             <body>
                 <img src="${logoUrl}" class="logo" alt="School Logo">
                 <h1>Registered Support Staff</h1>
                 ${table}
+                
+                <div class="signature">
+                    <div>Prepared By</div>
+                    <div>Principal's Signature</div>
+                </div>
+
+                <div class="footer">
+                    Printed on: ${currentDateTime}
+                </div>
             </body>
         </html>
     `);
@@ -6171,6 +6176,7 @@ function printSupportStaffList() {
     printWindow.document.close();
     printWindow.print();
 }
+
 
 // Function to toggle visibility of the registration section
 function toggleRegisterSupportStaff() {
@@ -6217,7 +6223,12 @@ function updateLearnersTable() {
             <td contenteditable="true">${learner.phone}</td>
             <td contenteditable="true">${learner.birthCertificateNo}</td>
             <td contenteditable="true">${learner.admissionNumber}</td>
-            <td><button onclick="confirmDeleteLearner(${index})">Remove</button></td>
+            <td>
+  <button onclick="confirmDeleteLearner(${index})" style="padding: 6px 10px; background: #e53935; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    <i class="fas fa-trash-alt"></i> Remove
+  </button>
+</td>
+
         </tr>
     `).join("");
 
@@ -6339,31 +6350,71 @@ function undoPromotion() {
     console.log("Undoing promotion...");
 
     if (Object.keys(previousGrades).length === 0) {
-        alert("No previous promotion records found!");
+        showCustomAlert("⚠️ No previous promotion records found!");
         return;
     }
 
-    // Iterate and revert grades
     learners.forEach(learner => {
         if (previousGrades[learner.name]) {
-            learner.grade = previousGrades[learner.name]; // Restore original grade
+            learner.grade = previousGrades[learner.name];
             console.log(`Reverted ${learner.name} to ${learner.grade}`);
         }
     });
 
-    // Update storage and UI
     if (useIndexedDB) {
         saveLearnersToIndexedDB();
     } else {
         saveLearnersToLocalStorage();
     }
-    updateLearnersTable();
 
-    // Clear the stored previous grades
+    updateLearnersTable();
     previousGrades = {};
 
-    alert("Promotion undone successfully!");
+    showCustomAlert("✅ Promotion undone successfully!");
 }
+function showCustomAlert(message) {
+    const existingAlert = document.getElementById('customAlertModal');
+    if (existingAlert) existingAlert.remove();
+
+    const alertDiv = document.createElement('div');
+    alertDiv.id = 'customAlertModal';
+    alertDiv.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
+
+    const contentDiv = document.createElement('div');
+    contentDiv.style.cssText = `
+        background: #fff;
+        padding: 20px 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        max-width: 400px;
+    `;
+
+    contentDiv.innerHTML = `
+        <h3 style="margin-bottom: 15px; color: #2c3e50;">Notification</h3>
+        <p style="margin-bottom: 20px; font-size: 16px;">${message}</p>
+        <button style="
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        " onclick="document.getElementById('customAlertModal').remove()">OK</button>
+    `;
+
+    alertDiv.appendChild(contentDiv);
+    document.body.appendChild(alertDiv);
+}
+
 // Helper to detect storage type
 const useIndexedDB = window.indexedDB ? true : false;
 
@@ -6565,79 +6616,99 @@ function displayMessage() {
     `;
 }
     // Print Entire Support Staff Table
-    function printSupportStaffTable() {
-        const supportStaffList = JSON.parse(localStorage.getItem("supportStaff")) || [];
+   function printSupportStaffTable() {
+    const supportStaffList = JSON.parse(localStorage.getItem("supportStaff")) || [];
 
-        if (supportStaffList.length === 0) {
-            alert("No support staff to print.");
-            return;
-        }
-
-        const tableHtml = `
-            <html>
-                <head>
-                    <title>Support Staff List</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
-                        table th, table td {
-                            border: 1px solid #ddd;
-                            padding: 10px;
-                            text-align: center;
-                        }
-                        table th {
-                            background-color: #4CAF50;
-                            color: white;
-                        }
-                        table td img {
-                            width: 50px;
-                            height: 50px;
-                            border-radius: 50%;
-                            object-fit: cover;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Support Staff List -Nachu Junior School  </h1>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Staff ID</th>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Position</th>
-                                <th>Hire Date</th>
-                                <th>Photo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${supportStaffList.map((staff, index) => `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${staff.staffId}</td>
-                                    <td>${staff.name}</td>
-                                    <td>${staff.phone}</td>
-                                    <td>${staff.position}</td>
-                                    <td>${staff.hireDate}</td>
-                                    <td><img src="${staff.photo}" alt="Staff Photo"></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </body>
-            </html>
-        `;
-
-        // Open a new window and write the table HTML to it
-        const printWindow = window.open("", "Print", "width=800,height=600");
-        printWindow.document.write(tableHtml);
-        printWindow.document.close();
-        printWindow.print();
+    if (supportStaffList.length === 0) {
+        showCustomAlert("⚠️ No support staff to print.");
+        return;
     }
+
+    const currentYear = new Date().getFullYear();
+
+    const tableHtml = `
+        <html>
+            <head>
+                <title>Support Staff List</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 30px;
+                    }
+                    .logo {
+                        width: 80px;
+                        height: 80px;
+                        object-fit: contain;
+                        margin-bottom: 10px;
+                    }
+                    h2, h3 { margin: 5px 0; }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    th, td {
+                        border: 1px solid #000;
+                        padding: 10px;
+                        text-align: center;
+                    }
+                    th {
+                        background-color: #4CAF50;
+                        color: white;
+                    }
+                    td img {
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <img src="https://i.imgur.com/uWrz8rt.png" class="logo" alt="School Logo" />
+                    <h2>NACHU COMPREHENSIVE SCHOOL SUPPORT STAFF DATA</h2>
+                    <h3>ADDRESS: PO BOX 561-00902 KIKUYU, KENYA</h3>
+                    <h3>Phone: +254-700-123456</h3>
+                    <h3>School Motto: "Excellence Through Knowledge"</h3>
+                    <h3>Year: ${currentYear}</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Staff ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Position</th>
+                            <th>Hire Date</th>
+                            <th>Photo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${supportStaffList.map((staff, index) => `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${staff.staffId}</td>
+                                <td>${staff.name}</td>
+                                <td>${staff.phone}</td>
+                                <td>${staff.position}</td>
+                                <td>${staff.hireDate}</td>
+                                <td><img src="${staff.photo}" alt="Staff Photo"></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </body>
+        </html>
+    `;
+
+    const printWindow = window.open("", "Print", "width=800,height=600");
+    printWindow.document.write(tableHtml);
+    printWindow.document.close();
+    printWindow.print();
+}
+
 function hideGeneratedReports() {
     // IDs of all sections that may display reports
     const reportSections = [
@@ -6730,9 +6801,10 @@ function updateMarksTable() {
                 <td style="font-weight:bold; border: 2px solid black;">${mark.totalMarks}</td>
                 <td>${getPerformanceLevel(mark.totalMarks)}</td> <!-- Performance Level -->
                 <td>
-                    <button onclick="deleteMarks(${index})" class="circle-button">
-                        <i class="fas fa-trash-alt"></i> Del
-                    </button>
+                    <button onclick="deleteMarks(${index})">
+    <i class="fas fa-trash-alt" style="color: red;"></i> Del
+</button>
+
                 </td>
             </tr>
         `;
@@ -8023,9 +8095,9 @@ function deleteLearner(admissionNumber) {
 
         const deleteRequest = objectStore.delete(admissionNumber);
         deleteRequest.onsuccess = function () {
-            learners = learners.filter(learner => learner.admissionNumber !== admissionNumber); // Update local array
-            updateLearnersTable(); // Refresh table
-            alert("Learner deleted successfully.");
+            learners = learners.filter(learner => learner.admissionNumber !== admissionNumber);
+            updateLearnersTable();
+            showCustomAlert("Learner deleted successfully.");
         };
         deleteRequest.onerror = function (event) {
             console.error("Error deleting learner:", event.target.error);
@@ -8034,6 +8106,17 @@ function deleteLearner(admissionNumber) {
     request.onerror = function (event) {
         console.error("Error opening IndexedDB:", event.target.error);
     };
+}
+function showCustomAlert(message) {
+    const alertBox = document.getElementById("customAlert");
+    const alertMessage = document.getElementById("alertMessage");
+
+    alertMessage.textContent = message;
+    alertBox.style.display = "block";
+
+    setTimeout(() => {
+        alertBox.style.display = "none";
+    }, 2500);
 }
 function updateLearnerField(index, field, value) {
     learners[index][field] = value; // Update local array
@@ -9988,7 +10071,7 @@ table.style.display = filtered.length ? 'table' : 'none';
 function printParentInfoTable() {
     const table = document.getElementById('parentInfoTable');
     if (table.style.display === 'none') {
-        alert("No data to print. Please select a grade.");
+        showCustomAlert("No data to print. Please select a grade first.");
         return;
     }
 
@@ -10020,12 +10103,12 @@ function printParentInfoTable() {
         </head>
         <body>
             <div class="header">
-                <img src=" https://i.imgur.com/uWrz8rt.png" class="logo" alt="School Logo" />
-                <h2>NACHU COMPREHENSIVE  SCHOOL PARENTS ATTENDANCE REGISTER</h2>
+                <img src="https://i.imgur.com/uWrz8rt.png" class="logo" alt="School Logo" />
+                <h2>NACHU COMPREHENSIVE SCHOOL PARENTS ATTENDANCE REGISTER</h2>
                 <h3>ADDRESS: PO BOX 561-00902 KIKUYU, KENYA</h3>
                 <h3>Phone: +254-700-123456</h3>
                 <h3>School Motto: "HARD WORK PAYS"</h3>
-               <h3>Year: ${currentYear} / GRADE: ${grade}</h3>
+                <h3>Year: ${currentYear} / GRADE: ${grade}</h3>
             </div>
             ${table.outerHTML}
         </body>
@@ -10035,6 +10118,50 @@ function printParentInfoTable() {
     printWindow.document.close();
     printWindow.print();
 }
+function showCustomAlert(message) {
+    // If an alert already exists, remove it
+    const existingAlert = document.getElementById('customAlertModal');
+    if (existingAlert) existingAlert.remove();
+
+    const alertDiv = document.createElement('div');
+    alertDiv.id = 'customAlertModal';
+    alertDiv.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
+
+    const contentDiv = document.createElement('div');
+    contentDiv.style.cssText = `
+        background: #fff;
+        padding: 20px 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        max-width: 400px;
+    `;
+
+    contentDiv.innerHTML = `
+        <h3 style="margin-bottom: 15px; color: #e74c3c;">⚠️ Alert</h3>
+        <p style="margin-bottom: 20px; font-size: 16px;">${message}</p>
+        <button style="
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        " onclick="document.getElementById('customAlertModal').remove()">OK</button>
+    `;
+
+    alertDiv.appendChild(contentDiv);
+    document.body.appendChild(alertDiv);
+}
+
 
 function toggleLearnerCountTable() {
   const container = document.getElementById("learnerCountContainer");
@@ -11146,13 +11273,14 @@ function displayCategoryCollectionSummary() {
     const cells = row.getElementsByTagName("td");
     if (cells.length > 1) {
       const grade = cells[2].textContent.trim();
-      const securityFee = parseFloat(cells[3].textContent) || 0;
-      const bomFee = parseFloat(cells[4].textContent) || 0;
-      const tuitionFee = parseFloat(cells[5].textContent) || 0;
-      const exam1Fee = parseFloat(cells[6].textContent) || 0;
-      const exam2Fee = parseFloat(cells[7].textContent) || 0;
-      const exam3Fee = parseFloat(cells[8].textContent) || 0;
-      const activityFee = parseFloat(cells[9].textContent) || 0;
+
+      const securityFee = parseFloat(cells[4].textContent) || 0;
+      const bomFee = parseFloat(cells[5].textContent) || 0;
+      const tuitionFee = parseFloat(cells[6].textContent) || 0;
+      const exam1Fee = parseFloat(cells[7].textContent) || 0;
+      const exam2Fee = parseFloat(cells[8].textContent) || 0;
+      const exam3Fee = parseFloat(cells[9].textContent) || 0;
+      const activityFee = parseFloat(cells[10].textContent) || 0;
       const totalPaid = parseFloat(cells[11].textContent) || 0;
 
       if (!categoryTotals[grade]) {
@@ -11176,8 +11304,9 @@ function displayCategoryCollectionSummary() {
       <thead>
         <tr style="background: #4CAF50; color: white;">
           <th style="border: 1px solid black; padding: 10px;">Grade</th>
-          <th style="border: 1px solid black; padding: 10px;">Security Fee</th>
-          <th style="border: 1px solid black; padding: 10px;">BOM Fee</th>
+     
+          <th style="border: 1px solid black; padding: 10px;">Sercurity Fee</th>
+           <th style="border: 1px solid black; padding: 10px;">BOM Fee</th>
           <th style="border: 1px solid black; padding: 10px;">Tuition Fee</th>
           <th style="border: 1px solid black; padding: 10px;">Exam 1 Fee</th>
           <th style="border: 1px solid black; padding: 10px;">Exam 2 Fee</th>
@@ -12332,6 +12461,285 @@ function hideLearnerSections() {
 
   // Scroll to the top of the page for better UX
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function populateGradeFilter() {
+  const feeTable = document.getElementById("feeSummaryTableBody");
+  const gradeSelect = document.getElementById("defaultersGradeFilter");
+
+  if (!feeTable || !gradeSelect) {
+    console.error("Fee table or grade filter select element not found.");
+    return;
+  }
+
+  const grades = new Set(); // Using a Set to ensure unique values
+
+  // Iterate over each row in the fee table to extract the grades
+  feeTable.querySelectorAll("tr").forEach(row => {
+    const cells = row.getElementsByTagName("td");
+    if (cells.length > 1) {
+      const grade = cells[2].textContent.trim(); // Assuming grade is in the 3rd column (index 2)
+      if (grade) {
+        grades.add(grade);
+      }
+    }
+  });
+
+  // Sort the grades numerically
+  const sortedGrades = Array.from(grades).sort((a, b) => a - b);
+
+  // Clear existing options and populate the dropdown with the dynamic grades
+  gradeSelect.innerHTML = '<option value="">All Grades</option>'; // Add the "All Grades" option
+
+  sortedGrades.forEach(grade => {
+    const option = document.createElement("option");
+    option.value = grade;
+    option.textContent = `Grade ${grade}`;
+    gradeSelect.appendChild(option);
+  });
+}
+
+// Call this function to populate the grades dropdown when the page loads or when the fee table is updated
+populateGradeFilter();
+function populateGradeFilterFromTable() {
+    const tableBody = document.getElementById('feeSummaryTableBody');
+    const gradeSet = new Set();
+    const rows = tableBody.getElementsByTagName('tr');
+
+    for (let row of rows) {
+      const gradeCell = row.cells[2]; // 3rd column (index 2)
+      if (gradeCell) {
+        gradeSet.add(gradeCell.textContent.trim());
+      }
+    }
+
+    const gradeFilter = document.getElementById('gradeFilter');
+    
+    // Clear existing options except the "All Grades"
+    gradeFilter.length = 1;
+
+    // Add unique grades
+    Array.from(gradeSet).sort().forEach(grade => {
+      const option = document.createElement('option');
+      option.value = grade;
+      option.textContent = grade;
+      gradeFilter.appendChild(option);
+    });
+  }
+
+  // Call this function after fee data is rendered in the table
+  // For example, if you're loading fee data with JS, call it after filling in #feeSummaryTableBody
+  window.onload = function () {
+    populateGradeFilterFromTable();
+  };
+
+function deleteAllArchivedMarks() {
+    if (confirm("⚠️ Are you absolutely sure you want to permanently delete *all* archived marks? This cannot be undone!")) {
+        // Delete all archived marks from localStorage
+        let found = false;
+        for (let key in localStorage) {
+            if (key.startsWith("archivedMarks_")) {
+                localStorage.removeItem(key);
+                found = true;
+            }
+        }
+
+        // Clear the container display
+        const archivedContainer = document.getElementById("archivedMarksList");
+        if (archivedContainer) {
+            archivedContainer.innerHTML = "<p>No archived marks available.</p>";
+        }
+
+        const messageContainer = document.createElement('div');
+        messageContainer.style.padding = '10px';
+        messageContainer.style.borderRadius = '5px';
+        messageContainer.style.marginTop = '10px';
+        messageContainer.style.fontWeight = 'bold';
+        
+        if (found) {
+            messageContainer.style.backgroundColor = '#4CAF50'; // Green for success
+            messageContainer.innerText = "✅ Success! All archived marks have been permanently removed.";
+        } else {
+            messageContainer.style.backgroundColor = '#FFEB3B'; // Yellow for no items found
+            messageContainer.innerText = "📁 There were no archived marks to delete.";
+        }
+
+        // Append the message to the body or a specific section
+        document.body.appendChild(messageContainer);
+
+        // Remove the message after 4 seconds
+        setTimeout(() => {
+            messageContainer.remove();
+        }, 4000); // 4000ms = 4 seconds
+    } else {
+        const messageContainer = document.createElement('div');
+        messageContainer.style.padding = '10px';
+        messageContainer.style.borderRadius = '5px';
+        messageContainer.style.marginTop = '10px';
+        messageContainer.style.fontWeight = 'bold';
+        messageContainer.style.backgroundColor = '#F44336'; // Red for cancellation
+        messageContainer.innerText = "❌ Deletion aborted. Your archived marks are safe.";
+
+        // Append the message to the body or a specific section
+        document.body.appendChild(messageContainer);
+
+        // Remove the message after 4 seconds
+        setTimeout(() => {
+            messageContainer.remove();
+        }, 4000); // 4000ms = 4 seconds
+    }
+}
+// Reusable modal class with fade animations
+class CustomModal {
+    constructor() {
+        this.wrapper = document.createElement("div");
+        this.wrapper.style.position = "fixed";
+        this.wrapper.style.top = "0";
+        this.wrapper.style.left = "0";
+        this.wrapper.style.width = "100vw";
+        this.wrapper.style.height = "100vh";
+        this.wrapper.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+        this.wrapper.style.display = "flex";
+        this.wrapper.style.alignItems = "center";
+        this.wrapper.style.justifyContent = "center";
+        this.wrapper.style.zIndex = "1000";
+        this.wrapper.style.opacity = "0";
+        this.wrapper.style.transition = "opacity 0.3s ease";
+    }
+
+    confirm(message, onConfirm) {
+        this.clear();
+
+        const box = document.createElement("div");
+        box.style.backgroundColor = "#fff3cd";
+        box.style.border = "2px solid orange";
+        box.style.padding = "20px";
+        box.style.borderRadius = "10px";
+        box.style.fontSize = "16px";
+        box.style.fontWeight = "bold";
+        box.style.textAlign = "center";
+        box.style.color = "black";
+        box.style.boxShadow = "0px 4px 10px rgba(0,0,0,0.3)";
+
+        const msg = document.createElement("div");
+        msg.innerHTML = message;
+        box.appendChild(msg);
+
+        const btnYes = document.createElement("button");
+        btnYes.textContent = "Yes";
+        btnYes.style.background = "red";
+        btnYes.style.color = "white";
+        btnYes.style.padding = "8px 15px";
+        btnYes.style.margin = "10px";
+        btnYes.style.border = "none";
+        btnYes.style.borderRadius = "5px";
+        btnYes.style.fontWeight = "bold";
+        btnYes.style.cursor = "pointer";
+        btnYes.onclick = () => {
+            onConfirm();
+            this.clear();
+        };
+
+        const btnNo = document.createElement("button");
+        btnNo.textContent = "No";
+        btnNo.style.background = "gray";
+        btnNo.style.color = "white";
+        btnNo.style.padding = "8px 15px";
+        btnNo.style.margin = "10px";
+        btnNo.style.border = "none";
+        btnNo.style.borderRadius = "5px";
+        btnNo.style.fontWeight = "bold";
+        btnNo.style.cursor = "pointer";
+        btnNo.onclick = () => this.clear();
+
+        box.appendChild(btnYes);
+        box.appendChild(btnNo);
+
+        this.wrapper.appendChild(box);
+        document.body.appendChild(this.wrapper);
+
+        setTimeout(() => (this.wrapper.style.opacity = "1"), 10);
+    }
+
+    alert(message) {
+        this.clear();
+
+        const box = document.createElement("div");
+        box.style.backgroundColor = "#f8f9fa";
+        box.style.border = "2px solid green";
+        box.style.padding = "20px";
+        box.style.borderRadius = "10px";
+        box.style.fontSize = "16px";
+        box.style.fontWeight = "bold";
+        box.style.textAlign = "center";
+        box.style.color = "black";
+        box.style.boxShadow = "0px 4px 10px rgba(0,0,0,0.3)";
+
+        const msg = document.createElement("div");
+        msg.innerHTML = message;
+        box.appendChild(msg);
+
+        const btnOK = document.createElement("button");
+        btnOK.textContent = "OK";
+        btnOK.style.background = "green";
+        btnOK.style.color = "white";
+        btnOK.style.padding = "8px 15px";
+        btnOK.style.marginTop = "10px";
+        btnOK.style.border = "none";
+        btnOK.style.borderRadius = "5px";
+        btnOK.style.fontWeight = "bold";
+        btnOK.style.cursor = "pointer";
+        btnOK.onclick = () => this.clear();
+
+        box.appendChild(btnOK);
+
+        this.wrapper.appendChild(box);
+        document.body.appendChild(this.wrapper);
+
+        setTimeout(() => (this.wrapper.style.opacity = "1"), 10);
+    }
+
+    clear() {
+        if (this.wrapper.parentElement) {
+            this.wrapper.style.opacity = "0";
+            setTimeout(() => {
+                if (this.wrapper.parentElement) {
+                    this.wrapper.parentElement.removeChild(this.wrapper);
+                }
+            }, 300);
+        }
+    }
+}
+
+// Instantiate one modal instance globally
+const modal = new CustomModal();
+
+// Updated deleteArchivedTable function
+function deleteArchivedTable(grade) {
+    var tableElement = document.getElementById(`archivedTable-${grade}`);
+
+    if (tableElement) {
+        modal.confirm(
+            `Are you sure you want to delete <span style="color: red; font-weight: bold;">Grade ${grade} archived marks</span>?`,
+            function () {
+                // Remove from UI
+                tableElement.parentElement.remove();
+
+                // Retrieve archived marks from local storage
+                let archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
+
+                // Filter out the deleted grade
+                archivedMarks = archivedMarks.filter(mark => mark.grade !== grade);
+
+                // Update local storage
+                localStorage.setItem("archivedMarks", JSON.stringify(archivedMarks));
+
+                // Show success alert
+                modal.alert(`<span style="color: green; font-weight: bold;">Archived marks for Grade ${grade} deleted successfully!</span>`);
+            }
+        );
+    } else {
+        modal.alert(`<span style="color: red; font-weight: bold;">Error: Table not found.</span>`);
+    }
 }
 
 </script>
