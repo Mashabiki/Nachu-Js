@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1752,15 +1752,8 @@ button {
 <button onclick="printGroupedByGender()" class="neon-button">
     <i class="fas fa-print" style="color: #2ecc71;"></i> Print Grouped by Gender
 </button>
-<h3 style="
-  background-color: yellow;
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-">
-  Parent List by Grade
-</h3>
+<h3 style="background-color: yellow; display: inline-block; padding: 4px 8px; border-radius: 4px;">Parent List by Grade</h3>
+
 
 <label for="gradeFilterDropdown">Select Grade:</label>
 <select id="gradeFilterDropdown" onchange="filterParentInfoByGrade()">
@@ -1786,7 +1779,15 @@ button {
   <tbody id="parentInfoBody"></tbody>
 </table>
 
+<!-- Button to Toggle Learners Count --> 
+<button id="toggleLearnersCountButton" onclick="toggleLearnersCount()" class="neon-button">
+    <i class="fas fa-eye" style="color: #f1c40f;"></i> Show Learners Count
+</button>
 
+<!-- Button to Print Learners Count -->
+<button onclick="printLearnersCount()" class="neon-button orange-neon">
+    <i class="fas fa-print" style="color: #e74c3c;"></i> Print Learners Count
+</button>
 <div style="margin-top: 20px;">
   <label for="gradeDropdown"><strong>Select Grade:</strong></label>
   <select id="gradeDropdown" onchange="showLearnerNamesOnly()" style="margin-left: 10px;">
@@ -2083,7 +2084,8 @@ button {
     <i class="fas fa-print"></i> Print Subject Levels
 </button>
 
-    </div>
+
+  </div>
 <!-- Archived Marks Section -->
 <div id="archivesSection" class="hidden-section">
    <h2 style="background-color: #ffeb3b; color: #000; padding: 10px; border-radius: 5px; display: flex; align-items: center; gap: 10px; width: fit-content;">
@@ -2091,18 +2093,76 @@ button {
 </h2>
 
     <div id="archivedMarksList"></div>
-<button onclick="combineMeritListsByGrade()" class="neon-button">
-  <i class="fas fa-sync-alt"></i> Get Overall Merit for Same Grade
-</button>
+
 <button onclick="deleteAllArchivedMarks()" style="background-color: red; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
   <i class="fas fa-trash-alt"></i> Delete All Archived Marks
 </button>
+<!-- Toggle button -->
+<button onclick="toggleMeritListForm()" style="
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin: 10px 0;
+">
+  <i class="fas fa-chevron-down"></i> Show/Hide Merit List Form
+</button>
+
+<!-- The form container (hidden by default) -->
+<div id="meritListForm" style="display: none;">
+
+  <div style="
+      background: #f0f8ff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      max-width: 400px;
+      margin: 20px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  ">
+    <h3 style="margin-top: 0; color: #003366; font-size: 20px;">Generate Combined Merit List</h3>
+
+    <div style="margin-bottom: 12px;">
+      <label style="font-weight: bold; color: #003366;">Select Grades (comma separated e.g. 5A,5B):</label><br>
+      <input type="text" id="meritGrades" placeholder="5A,5B" style="padding: 6px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label style="font-weight: bold; color: #003366;">Term:</label><br>
+      <input type="text" id="meritTerm" placeholder="Term1" style="padding: 6px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <label style="font-weight: bold; color: #003366;">Exam:</label><br>
+      <input type="text" id="meritExam" placeholder="Midterm" style="padding: 6px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+
+    <button onclick="generateCombinedMeritListFromInput()" class="btn-blue" style="
+        background: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 15px;
+    ">
+      <i class="fas fa-list-alt"></i> Generate Combined Merit List
+    </button>
+  </div>
+
+</div>
+
+
+<div id="combinedMeritSection" style="display:none; margin-top:20px;">
+  <div id="combinedMeritList"></div>
+</div>
 
 <div id="combinedMeritLists"></div>
-
-<button onclick="printCombinedMeritList()" class="neon-button">
-  <i class="fas fa-print"></i> Print Overall  Merit
-</button>
 </div>
 <div id="loadingSpinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
     <div style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
@@ -2174,7 +2234,7 @@ button {
     <i class="fas fa-list-ol"></i> <strong>Merit List Here:</strong>
 </label>
 
-<select id="gradeSelector" style="
+<select id="gradeSelect" style="
     padding: 5px;
     font-size: 12px;
     border: 2px solid #4CAF50;
@@ -3202,114 +3262,6 @@ function loadTablesWithHeaders() {
         `;
     });
 }
-function combineMeritListsByGrade() {
-    // Retrieve archived marks from localStorage
-    const archivedMarks = JSON.parse(localStorage.getItem("archivedMarks")) || [];
-    const storedLearners = JSON.parse(localStorage.getItem("learners")) || [];
-
-    // Get all unique grades
-    const uniqueGrades = [...new Set(archivedMarks.map(mark => mark.grade.match(/^\d+/)[0]))];
-
-    let allCombinedHtml = '';
-
-    uniqueGrades.forEach(gradeNumber => {
-        // Filter learners for the current grade (e.g., Grade 7 includes 7A, 7B)
-        const gradeMarks = archivedMarks.filter(mark => mark.grade.startsWith(gradeNumber));
-
-        if (gradeMarks.length > 0) {
-            // Combine all learners for the grade
-            const combinedMeritList = [...gradeMarks];
-
-            // Sort the combined list by total marks in descending order
-            combinedMeritList.sort((a, b) => b.totalMarks - a.totalMarks);
-
-            // Create the HTML for the combined merit list
-            let combinedHtml = `
-                <h3>Combined Merit List for Grade ${gradeNumber}</h3>
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Name</th>
-                            <th>Grade</th>
-                            <th>Eng</th><th>Lev</th>
-                            <th>Math</th><th>Lev</th>
-                            <th>Pre-Tech</th><th>Lev</th>
-                            <th>Kiswahili</th><th>Lev</th>
-                            <th>Science</th><th>Lev</th>
-                            <th>Social</th><th>Lev</th>
-                            <th>Agriculture</th><th>Lev</th>
-                            <th>CRE</th><th>Lev</th>
-                            <th>Creative Art</th><th>Lev</th>
-                            <th>Total Marks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            combinedMeritList.forEach((learnerData, index) => {
-                // Get learner information
-                const learnerInfo = storedLearners.find(l => l.admissionNumber === learnerData.admissionNumber);
-                const learnerName = learnerInfo?.name || learnerData.learner || "Name Missing";
-                const learnerGrade = learnerInfo?.grade || learnerData.grade || "Grade N/A";
-                const scores = learnerData.scores || [];
-                const totalMarks = learnerData.totalMarks || 0;
-
-                // Add learner's data to the table
-                combinedHtml += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${learnerName}</td>
-                        <td>${learnerGrade}</td>
-                        ${scores.map(score => {
-                            const numericScore = Number(score) || 0;
-                            return `<td>${numericScore}</td><td>${getLevel(numericScore)}</td>`;
-                        }).join('')}
-                        <td style="font-weight: bold;">${totalMarks}</td>
-                    </tr>
-                `;
-            });
-
-            // Calculate subject totals and averages for the current grade
-            const subjectTotals = Array(9).fill(0);
-            let totalMarksSum = 0;
-            combinedMeritList.forEach(learner => {
-                learner.scores.forEach((score, index) => {
-                    subjectTotals[index] += Number(score) || 0;
-                });
-                totalMarksSum += learner.totalMarks || 0;
-            });
-
-            const averages = subjectTotals.map(total => (total / combinedMeritList.length).toFixed(2));
-            const overallAverage = (totalMarksSum / combinedMeritList.length).toFixed(2);
-
-            // Add totals and averages rows
-            combinedHtml += `
-                <tr>
-                    <td colspan="3" style="font-weight: bold;">Total</td>
-                    ${subjectTotals.map(total => `<td style="font-weight: bold;">${total}</td><td></td>`).join('')}
-                    <td style="font-weight: bold;">${totalMarksSum}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="font-weight: bold;">Average</td>
-                    ${averages.map(avg => `<td style="font-weight: bold;">${avg}</td><td></td>`).join('')}
-                    <td style="font-weight: bold;">${overallAverage}</td>
-                </tr>
-            `;
-
-            combinedHtml += "</tbody></table>";
-            allCombinedHtml += combinedHtml;
-        }
-    });
-
-    // Display all combined merit lists for all grades
-    document.getElementById("combinedMeritLists").innerHTML = allCombinedHtml;
-
-    // Optionally, save the combined merit lists
-    localStorage.setItem("combinedMeritLists", JSON.stringify(allCombinedHtml));
-}
-
-
 
 function groupLearnersByGender() {
     const groupedByGender = learners.reduce((groups, learner) => {
@@ -3366,41 +3318,9 @@ function printGroupedByGender() {
     const groupedContent = document.getElementById("groupedByGender").innerHTML;
 
     if (!groupedContent) {
-        showCustomAlert(`<span style="color: red; font-weight: bold;">⚠️ No learners to print.</span>`);
+        alert("No learners to print.");
         return;
     }
-function showCustomAlert(message) {
-    let alertBox = document.createElement("div");
-    alertBox.innerHTML = `<div style="
-        position: fixed;
-        top: 20%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #fff0f0;
-        border: 2px solid red;
-        padding: 20px;
-        text-align: center;
-        font-size: 16px;
-        font-weight: bold;
-        color: black;
-        border-radius: 10px;
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
-        z-index: 1000;
-      ">
-        ${message}
-        <br><br>
-        <button onclick="this.parentElement.remove()" style="
-            background: red;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        ">OK</button>
-    </div>`;
-    document.body.appendChild(alertBox);
-}
 
     // URL or base64 string of your logo
     const logoUrl = " https://i.imgur.com/UW65hfv.png"; // Replace with your logo's URL or base64 string
@@ -8786,7 +8706,7 @@ function showCustomConfirm(message, onConfirm) {
     });
 }
 function generateMeritList() {
-    let selectedGrade = document.getElementById("gradeSelector").value;
+    let selectedGrade = document.getElementById("gradeSelect").value;
 
     // Helper function to show a styled alert
     function showAlert(message, color) {
@@ -12742,6 +12662,204 @@ function deleteArchivedTable(grade) {
     }
 }
 
+function generateCombinedMeritListFromInput() {
+    const grades = document.getElementById("meritGrades").value.split(",").map(g => g.trim());
+    const term = document.getElementById("meritTerm").value.trim();
+    const exam = document.getElementById("meritExam").value.trim();
+
+    if (grades.length === 0 || term === "" || exam === "") {
+        alert("Please fill in grades, term and exam.");
+        return;
+    }
+
+    generateCombinedMeritList(grades, term, exam);
+}
+function generateCombinedMeritList(grades, term, exam) {
+    const combinedData = [];
+    const subjects = ["Eng", "Math", "Pre-Tech", "Kiswa", "Scie", "Sst", "Agric", "Cre", "C/A"];
+    const subjectTotals = Array(subjects.length).fill(0);
+    let totalMarksSum = 0;
+
+    const gradesSet = new Set(grades.map(g => g.trim()));
+
+    // Loop through all localStorage keys
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key.startsWith("archivedMarks_")) continue;
+
+        const parts = key.split("_");
+        const keyTerm = parts[2];
+        const keyExam = parts[3];
+
+        // Only check keys for matching term + exam
+        if (keyTerm === term && keyExam === exam) {
+            const data = JSON.parse(localStorage.getItem(key) || "[]");
+            const filteredData = data.filter(d => gradesSet.has(d["Grade"]));
+            combinedData.push(...filteredData);
+        }
+    }
+
+    if (combinedData.length === 0) {
+        alert("No records found for the selected grades, term and exam.");
+        return;
+    }
+
+    // Sort by Total Marks
+    combinedData.sort((a, b) => (parseInt(b["Total Marks"]) || 0) - (parseInt(a["Total Marks"]) || 0));
+
+    let html = `
+        <h3 style="font-weight: bold;">Combined Merit List for ${grades.join(", ")} | Term: ${term} | Exam: ${exam}</h3>
+        <button onclick="printCombinedMeritList()">Print</button>
+        <button onclick="exportCombinedMeritListToCSV()">Export CSV</button>
+        <table class="report-table">
+        <thead>
+            <tr>
+                <th>Pos</th>
+                <th>Learner</th>
+                <th>Grade</th>
+                ${subjects.map(s => `<th>${s}</th><th>Lev</th>`).join("")}
+                <th>Total</th>
+            </tr>
+        </thead><tbody>
+    `;
+
+    combinedData.forEach((mark, index) => {
+        const scores = subjects.map(sub => parseInt(mark[sub]) || 0);
+        scores.forEach((score, idx) => subjectTotals[idx] += score);
+        const total = parseInt(mark["Total Marks"]) || 0;
+        totalMarksSum += total;
+
+        html += `<tr>
+            <td>${index + 1}</td>
+            <td>${mark["Learner"]}</td>
+            <td>${mark["Grade"]}</td>
+            ${scores.map(score => `<td>${score}</td><td>${getLevel(score)}</td>`).join("")}
+            <td><strong>${total}</strong></td>
+        </tr>`;
+    });
+
+    const averages = subjectTotals.map(t => (t / combinedData.length).toFixed(2));
+    const overallAverage = (totalMarksSum / combinedData.length).toFixed(2);
+
+    html += `
+        <tr>
+            <td colspan="3"><strong>Total</strong></td>
+            ${subjectTotals.map(t => `<td><strong>${t}</strong></td><td></td>`).join("")}
+            <td><strong>${totalMarksSum}</strong></td>
+        </tr>
+        <tr>
+            <td colspan="3"><strong>Average</strong></td>
+            ${averages.map(avg => `<td><strong>${avg}</strong></td><td></td>`).join("")}
+            <td><strong>${overallAverage}</strong></td>
+        </tr>
+    `;
+
+    html += "</tbody></table>";
+
+    document.getElementById("combinedMeritList").innerHTML = html;
+    document.getElementById("combinedMeritSection").style.display = "block";
+}
+function printCombinedMeritList() {
+    // Locate the table element only
+    const tableEl = document.querySelector("#combinedMeritList table");
+    if (!tableEl) {
+        alert("No merit list table found.");
+        return;
+    }
+    const tableHTML = tableEl.outerHTML;
+
+    const headerLogoURL = "https://i.imgur.com/uWrz8rt.png";
+    const year = new Date().getFullYear();
+    const term = document.getElementById("meritTerm").value.trim();
+    const grades = document.getElementById("meritGrades").value.trim();
+
+    // Build clean print document without on‑screen headers/buttons
+    const html = `
+    <html>
+      <head>
+        <title>Combined Merit List</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 40px; }
+          .header { text-align: center; }
+          .header img { max-width: 100px; }
+          .header h1 { margin: 5px 0; font-size: 24px; }
+          .header p { margin: 2px 0; }
+          .meta { text-align: center; margin: 20px 0; font-weight: bold; }
+          .report-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          .report-table th, .report-table td { border: 1px solid #333; padding: 6px; text-align: center; }
+          .report-table th { background: #eee; }
+          .footer { margin-top: 60px; display: flex; justify-content: space-between; }
+          .signature { width: 45%; text-align: center; }
+          .signature-line { margin-top: 60px; border-top: 1px solid #333; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <img src="${headerLogoURL}" alt="School Logo">
+          <h1>NACHU JUNIOR SCHOOL COMBINED MERIT LIST</h1>
+          <p>P.O. BOX 561-00902 KIKUYU, KENYA | Phone: +254-700-123456</p>
+          <p>School Motto: "HARD WORK PAYS"</p>
+        </div>
+        
+        <div class="meta">
+          Year: ${year} &nbsp;&nbsp;|&nbsp;&nbsp; Term: ${term} &nbsp;&nbsp;|&nbsp;&nbsp; Grades: ${grades}
+        </div>
+
+        <!-- Only the merit table -->
+        ${tableHTML}
+
+        <div class="footer">
+          <div class="signature">
+            <div class="signature-line"></div>
+            Class Teacher
+          </div>
+          <div class="signature">
+            <div class="signature-line"></div>
+            Exam Officer
+          </div>
+        </div>
+      </body>
+    </html>`;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    win.print();
+    win.close();
+}
+function exportCombinedMeritListToCSV() {
+    // Find the merit list table
+    const table = document.querySelector("#combinedMeritList table");
+    if (!table) {
+        alert("No merit list found to export.");
+        return;
+    }
+
+    const rows = Array.from(table.querySelectorAll("tr"));
+    const csvLines = rows.map(row => {
+        const cells = Array.from(row.querySelectorAll("th, td"));
+        // Grab innerText, escape quotes by doubling
+        const values = cells.map(cell => `"${cell.innerText.replace(/"/g, '""')}"`);
+        return values.join(",");
+    });
+
+    // Combine lines into single CSV string
+    const csvContent = csvLines.join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    // Create download link and click it
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "CombinedMeritList.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+function toggleMeritListForm() {
+    const form = document.getElementById("meritListForm");
+    form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+}
 </script>
 
                 
