@@ -40,7 +40,32 @@
     position: relative;
     display: inline-block;
   }
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 120%;
+  background-color: #c0392b;  /* red background */
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 16px;
+  overflow: hidden;
+}
 
+.footer-text {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
   .menu-button {
     background-color: #4CAF50; /* Adjust as needed */
     color: white;
@@ -1025,36 +1050,38 @@ button {
 <p style="color: red; font-weight: bold;">NACHU COMPREHENSIVE SCHOOL</p>
 </header>
 
+
 <button class="btn-bright green" onclick="toggleSection('registeredLearnersBox')">
-    <span class="material-icons" style="color: #2ecc71;">groups</span> Learners Database
+    <span class="material-icons" style="color: #2ecc71;">groups</span> Enrollment Database
 </button>
 
 <button class="btn-actions" onclick="toggleSection('juniorSchoolActions')">
-    <span class="material-icons">school</span> Assessment Actions
+    <span class="material-icons">school</span> Assessment Dashboard
 </button>
 
 <!-- Menu Button -->
 <button id="menuToggle" class="btn-toggle" onclick="toggleSection('menuActions')">
-    <span class="material-icons" style="color: #3498db;">group</span> Manage Staff
+    <span class="material-icons" style="color: #3498db;">group</span> Exam & Staff Panel"
 </button>
 
 <!-- Button to Show/Hide Fee Management Menu -->
 <button onclick="toggleFeeActionsMenu()" style="background-color: #d32f2f; color: white; border: none; padding: 10px 15px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-bottom: 10px;">
-    <i class="fas fa-cogs" style="color: #ffeb3b;"></i> Manage Fees
+    <i class="fas fa-cogs" style="color: #ffeb3b;"></i>Finance Operations
 </button>
 
-<section id="library-records"> 
- 
-  <!-- Toggle Button -->
-  <button
-    type="button"
-    onclick="toggleLibraryManagement()"
-    style="display: flex; align-items: center; gap: 5px;"
-  >
-    <i class="fas fa-book" style="font-size: 16px;"></i> Library Records 
-  </button>
+<!-- Library Records Toggle Button -->
+<button
+  type="button"
+  onclick="toggleLibraryManagement()"
+  style="display: flex; align-items: center; gap: 5px;"
+>
+  <i class="fas fa-book" style="font-size: 16px;"></i> "Library Catalog"
+</button>
 
-  <!-- Library Management Section -->
+<!-- Library Management Section -->
+<section id="library-records">
+
+  <!-- Library Management Container -->
   <div id="library-management" style="display: none; margin-top: 20px;">
 
     <!-- Toggle Form Visibility Button -->
@@ -1069,6 +1096,7 @@ button {
 
     <!-- Add Record Form -->
     <form id="record-form" onsubmit="addRecord(event)" style="display: none;">
+
       <label>
         Name:
         <input type="text" id="name" required />
@@ -1089,7 +1117,7 @@ button {
         <input type="date" id="date" readonly />
       </label>
 
-      <!-- Issued Books -->
+      <!-- Issued Books Fieldset -->
       <fieldset>
         <legend>Issued Books</legend>
         <label>
@@ -1639,29 +1667,95 @@ button {
   <button onclick="closeSmsModal()" style="background:grey; color:white; padding:8px 15px; border:none; border-radius:5px; margin-left:10px;">Cancel</button>
 </div>
 
-<!-- Collapsible Menu Actions --> 
-<div id="menuActions" style="display: none;">
-  <div class="menu-container">
-<button class="menu-button" aria-label="Registration Options" onclick="toggleRegistrationMenu()"> 
-  <i class="fas fa-cogs"></i> Registration Options 
-</button> 
+<!-- Collapsible Menu Actions -->
+<div id="menuActions" style="display: none; margin: 20px 0;">
+  <div class="menu-container" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-start;">
 
-<div class="dropdown" id="registrationMenu">
-  
-  <button onclick="toggleSection('staffRegistrationSection')" class="neon-button" style="width: 90px; padding: 10px;">
-    <i class="fas fa-chalkboard-teacher"></i> Register Staff
-  </button>
-  <button onclick="toggleRegisterSupportStaff()" class="neon-button">
-    <i class="fas fa-users-cog"></i> Register Support Staff
-  </button>
- 
-  <button onclick="toggleSection('registeredStaffSection')" class="neon-button" style="width: 90px; padding: 10px;">
-    <i class="fas fa-users"></i> View Staff
-  </button>
+    <!-- Registration Options Button -->
+    <button class="menu-button" aria-label="Registration Options" onclick="toggleRegistrationMenu()">
+      <i class="fas fa-cogs"></i> Registration Options
+    </button>
 
+    <!-- Dropdown Registration Menu -->
+    <div class="dropdown" id="registrationMenu" style="
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    ">
+
+      <button onclick="toggleSection('staffRegistrationSection')" class="neon-button" style="width: 180px; padding: 10px;">
+        <i class="fas fa-chalkboard-teacher"></i> Register Staff
+      </button>
+
+      <button onclick="toggleRegisterSupportStaff()" class="neon-button" style="width: 180px; padding: 10px;">
+        <i class="fas fa-users-cog"></i> Register Support Staff
+      </button>
+
+      <button class="neon-button btn-red" onclick="viewArchives()" style="width: 180px; padding: 10px;">
+        <span class="material-icons" style="color: #d32f2f;">archive</span> View Archived Exams
+      </button>
+
+      <button class="neon-button btn-red" onclick="toggleArchives()" style="height: 45px;">
+        <span class="material-icons" style="color: #0288d1;">visibility</span> View Archived
+      </button>
+
+      <!-- Merit List Selection -->
+      <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 10px;">
+        <label for="gradeSelector" style="font-size: 14px; font-weight: bold; color: #4CAF50;">
+          <i class="fas fa-list-ol"></i> <strong>Merit List Here:</strong>
+        </label>
+
+        <select id="gradeSelector" style="
+          padding: 5px;
+          font-size: 12px;
+          border: 2px solid #4CAF50;
+          border-radius: 5px;
+          background-color: #e8f5e9;
+          color: #333;
+          width: 160px;
+        ">
+          <option value="">--Select Grade--</option>
+          <option value="4">Grade 4</option>
+          <option value="4A">Grade 4A</option>
+          <option value="4B">Grade 4B</option>
+          <option value="4C">Grade 4C</option>
+          <option value="5">Grade 5</option>
+          <option value="5A">Grade 5A</option>
+          <option value="5B">Grade 5B</option>
+          <option value="5C">Grade 5C</option>
+          <option value="6">Grade 6</option>
+          <option value="6A">Grade 6A</option>
+          <option value="6B">Grade 6B</option>
+          <option value="6C">Grade 6C</option>
+        </select>
+
+        <!-- Merit List Control Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px;">
+          <button onclick="generateMeritList()" class="neon-button btn-ranking">
+            <i class="fas fa-chart-line" style="color: #f39c12;"></i> Get Merit List
+          </button>
+
+          <button onclick="toggleMeritList()" class="neon-button btn-toggle" id="toggleBtn">
+            <i class="fas fa-eye-slash" style="color: #e74c3c;"></i> Hide Merit List
+          </button>
+
+          <button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
+            <i class="fas fa-print" style="color: #2ecc71;"></i> Print
+          </button>
+        </div>
+      </div>
     </div>
+
+    <!-- Merit List Display Container (outside dropdown) -->
+    <div id="meritListContainer" style="display:none; margin-top: 10px;"></div>
+
   </div>
 </div>
+
 
 <div id="registerLearnerSection" style="max-width: 400px; margin: auto; display: none;">
     <h2>Register Learner</h2>
@@ -1675,7 +1769,7 @@ button {
         <label>Birth Certificate No:</label> <input type="number" id="birthCertificate" required><br>
         <label>Admission Number:</label> <input type="text" id="admissionNumber" required><br>
 
-        <!-- Photo Upload -->
+       <!-- Photo Upload -->
         <label>Photo:</label> <input type="file" id="learnerPhoto" accept="image/*" onchange="previewPhoto(event)"><br>
 
         <!-- Image Preview -->
@@ -1752,7 +1846,16 @@ button {
 <button onclick="printGroupedByGender()" class="neon-button">
     <i class="fas fa-print" style="color: #2ecc71;"></i> Print Grouped by Gender
 </button>
-<h3 style="background-color: yellow; display: inline-block; padding: 4px 8px; border-radius: 4px;">Parent List by Grade</h3>
+<h3 style="
+  background-color: yellow;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+">
+  Parent List by Grade
+</h3>
+
 
 
 <label for="gradeFilterDropdown">Select Grade:</label>
@@ -1770,6 +1873,7 @@ button {
     <tr>
     <th>Number</th>
 <th>Parent Name</th>
+<th>Learner Name</th>
 <th>Phone Number</th>
 <th>Grade</th>
 <th>Signature</th>
@@ -1779,15 +1883,6 @@ button {
   <tbody id="parentInfoBody"></tbody>
 </table>
 
-<!-- Button to Toggle Learners Count --> 
-<button id="toggleLearnersCountButton" onclick="toggleLearnersCount()" class="neon-button">
-    <i class="fas fa-eye" style="color: #f1c40f;"></i> Show Learners Count
-</button>
-
-<!-- Button to Print Learners Count -->
-<button onclick="printLearnersCount()" class="neon-button orange-neon">
-    <i class="fas fa-print" style="color: #e74c3c;"></i> Print Learners Count
-</button>
 <div style="margin-top: 20px;">
   <label for="gradeDropdown"><strong>Select Grade:</strong></label>
   <select id="gradeDropdown" onchange="showLearnerNamesOnly()" style="margin-left: 10px;">
@@ -1802,7 +1897,7 @@ button {
   <div id="printableLearnersTable" style="margin-top: 20px;">
     <div id="printHeader" style="text-align: center; margin-bottom: 15px;">
       <img src="https://i.imgur.com/uWrz8rt.png" alt="School Logo" style="max-height: 80px;"><br>
-      <h2 style="margin: 5px 0; color: black;">NACHU JUNIOR    SCHOOL</h2>
+      <h2 style="margin: 5px 0; color: black;">NACHU PRIMARY   SCHOOL</h2>
       <h3 style="margin: 5px 0; color: black;">Learner List - <span id="selectedGradeHeader"></span></h3>
     </div>
 
@@ -1817,16 +1912,7 @@ button {
     </table>
   </div>
 </div>
-  
-    <button class="neon-button btn-red" onclick="viewArchives()">
-        <span class="material-icons" style="color: #d32f2f;">archive</span> View Archived Exams
-    </button>
-    
-    <a href="https://drive.google.com/file/d/14qlKVZ_0nsgHqthYDAdks4qpHkZV6iN3/view?usp=drivesdk" download>Download Admission Form</a>
-    
-    <button class="neon-button btn-red" onclick="toggleArchives()">
-        <span class="material-icons" style="color: #0288d1;">visibility</span> View Archived
-    </button>
+
 
 </div>
 </div>
@@ -2209,54 +2295,13 @@ button {
   <i class="fas fa-project-diagram" style="color: #16a085;"></i> Group Learners by Pathways
 </button>
 
-<!-- Merit List Control Buttons -->
-<button onclick="generateMeritList()" class="neon-button btn-ranking">
-    <i class="fas fa-chart-line" style="color: #f39c12;"></i> Get Merit List
-</button>
-
-<button onclick="toggleMeritList()" class="neon-button btn-toggle" id="toggleBtn">
-    <i class="fas fa-eye-slash" style="color: #e74c3c;"></i> Hide Merit List
-</button>
-
-<button onclick="printMeritList()" id="printBtn" class="neon-button btn-print" style="display:none;">
-    <i class="fas fa-print" style="color: #2ecc71;"></i> Print
-</button>
 <button onclick="toggleSection('championsForm')" class="neon-button btn-toggle">
-    <span class="material-icons" style="color: #e74c3c;">admin_panel_settings</span> Admin Details
+    <span class="material-icons" style="color: #e74c3c;">admin_panel_settings</span> ADetails
 </button>
 
  <button onclick="hideGeneratedReports()" class="neon-button btn-red circle-button">
     <i class="fas fa-arrow-left" style="color: #c0392b;"></i> Back
   </button>
-
-<!-- Merit List Selection -->
-<label for="gradeSelect" style="font-size: 14px; font-weight: bold; color: #4CAF50;">
-    <i class="fas fa-list-ol"></i> <strong>Merit List Here:</strong>
-</label>
-
-<select id="gradeSelect" style="
-    padding: 5px;
-    font-size: 12px;
-    border: 2px solid #4CAF50;
-    border-radius: 5px;
-    background-color: #e8f5e9;
-    color: #333;
-    margin-right: 2px;">
-    <option value="">--Select Grade--</option>
-    <option value="7">Grade 7</option>
-    <option value="7A">Grade 7A</option>
-    <option value="7B">Grade 7B</option>
-    <option value="7C">Grade 7C</option>
-    <option value="8">Grade 8</option>
-    <option value="8A">Grade 8A</option>
-    <option value="8B">Grade 8B</option>
-    <option value="8C">Grade 8C</option>
-    <option value="9">Grade 9</option>
-    <option value="9A">Grade 9A</option>
-    <option value="9B">Grade 9B</option>
-    <option value="9C">Grade 9C</option>
-</select>
-<div id="meritListContainer" style="display:none; margin-top:20px;"></div>
 
 </div>
 </div>
@@ -2656,10 +2701,14 @@ button {
     <span id="alertMessage">Success!</span>
 </div>
 
+</div>
+
 <!-- Footer Section -->
 <footer id="footer" style="display: none; background-color: #2196F3; color: white; padding: 10px 0; text-align: center; font-size: 14px;">
     <p>&copy; 2025 NACHU COMPREHENSIVE SCHOOL | All Rights Reserved</p>
 </footer>
+
+
 
 <script>
     // ... (Other existing JavaScript code)
@@ -8706,7 +8755,7 @@ function showCustomConfirm(message, onConfirm) {
     });
 }
 function generateMeritList() {
-    let selectedGrade = document.getElementById("gradeSelect").value;
+    let selectedGrade = document.getElementById("gradeSelector").value;
 
     // Helper function to show a styled alert
     function showAlert(message, color) {
@@ -9904,6 +9953,7 @@ function getLearnersFromTable() {
         if (cells.length >= 8) {
             learners.push({
                 parentName: cells[6].textContent.trim(),
+               nameName: cells[2].textContent.trim(),
                 phone: cells[7].textContent.trim(),
                 grade: cells[4].textContent.trim()
             });
@@ -9978,6 +10028,7 @@ function filterParentInfoByGrade() {
     row.innerHTML = `
         <td>${index + 1}</td> <!-- Dynamically display the index as Number -->
         <td>${l.parentName}</td>
+        <td>${l.nameName}</td>
         <td>${l.phone}</td>
         <td>${l.grade}</td>
         <td>${l.signature || ''}</td> <!-- Include the signature column -->
@@ -10002,7 +10053,7 @@ function printParentInfoTable() {
     const firstRow = table.querySelector('tbody tr');
     if (firstRow) {
         const cells = firstRow.querySelectorAll('td');
-        if (cells.length >= 4) {
+        if (cells.length >= 5) {
             grade = cells[3].textContent.trim();
         }
     }
